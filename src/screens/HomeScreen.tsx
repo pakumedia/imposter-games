@@ -7,8 +7,9 @@ import {
   HeroGameCard, 
   BottomNav,
 } from '@/components/ui-kit';
-import { Mascot, ImpostorMascot } from '@/components/mascots';
+import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
+import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.jpg';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
@@ -21,7 +22,7 @@ interface GameInfo {
   color: CardColor;
   mascotVariant: 'yellow' | 'blue' | 'purple' | 'pink' | 'orange';
   onlineCount: number;
-  isImpostor?: boolean;
+  backgroundImage?: string;
 }
 
 const GAMES: GameInfo[] = [
@@ -29,10 +30,10 @@ const GAMES: GameInfo[] = [
     id: 'impostor',
     title: 'Impostor Secret Word',
     subtitle: 'Find the liar • 3-10 Players',
-    color: 'orange',
+    color: 'dark',
     mascotVariant: 'yellow',
     onlineCount: 1247,
-    isImpostor: true,
+    backgroundImage: impostorSecretWordBg,
   },
   {
     id: 'impostor-drawing',
@@ -133,13 +134,8 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
                   subtitle={game.subtitle}
                   color={game.color}
                   onlineCount={game.onlineCount}
-                  mascot={
-                    game.isImpostor ? (
-                      <ImpostorMascot size="lg" />
-                    ) : (
-                      <Mascot variant={game.mascotVariant} size="lg" />
-                    )
-                  }
+                  backgroundImage={game.backgroundImage}
+                  mascot={!game.backgroundImage ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
                   onPlay={() => onSelectGame(game.id)}
                 />
               </div>
