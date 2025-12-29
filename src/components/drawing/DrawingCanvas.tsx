@@ -34,9 +34,13 @@ export function DrawingCanvas({
       }
     };
 
-    updateSize();
+    // Small delay to ensure container is rendered
+    const timer = setTimeout(updateSize, 10);
     window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateSize);
+    };
   }, []);
 
   // Draw all lines on canvas
@@ -84,9 +88,14 @@ export function DrawingCanvas({
     }
   }, [lines, currentPoints, playerColor, strokeWidth]);
 
+  // Redraw when canvas size changes or lines change
   useEffect(() => {
-    drawCanvas();
-  }, [drawCanvas]);
+    // Small delay to ensure canvas is fully sized
+    const timer = setTimeout(() => {
+      drawCanvas();
+    }, 20);
+    return () => clearTimeout(timer);
+  }, [drawCanvas, canvasSize]);
 
   const getCoordinates = (e: React.TouchEvent | React.MouseEvent): DrawingPoint | null => {
     const canvas = canvasRef.current;
