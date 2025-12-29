@@ -32,7 +32,7 @@ export function HeroGameCard({
   const hasBackground = backgroundImage || backgroundVideo;
   
   return (
-    <GameCard color={color} className={cn('relative h-[500px] sm:h-[550px] md:h-[620px] flex flex-col overflow-hidden', className)}>
+    <GameCard color={color} className={cn('relative h-[525px] sm:h-[578px] md:h-[651px] flex flex-col overflow-hidden', className)}>
       {/* Background video */}
       {backgroundVideo && (
         <video
