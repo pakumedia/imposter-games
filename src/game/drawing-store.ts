@@ -17,6 +17,7 @@ interface DrawingGameStore extends DrawingGameState {
   setPhase: (phase: DrawingGamePhase) => void;
   nextPlayer: () => void;
   addLine: (line: DrawingLine) => void;
+  undoLastLine: (playerId: string) => boolean;
   finishDrawingTurn: () => void;
   castVote: (voterId: string, votedForId: string) => void;
   calculateResults: () => { impostorCaught: boolean; impostorName: string };
@@ -108,6 +109,22 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
     set(state => ({
       lines: [...state.lines, line]
     }));
+  },
+
+  undoLastLine: (playerId: string) => {
+    const { lines } = get();
+    // Find the last line drawn by this player
+    const lastLineIndex = lines.map((l, i) => ({ l, i }))
+      .reverse()
+      .find(({ l }) => l.playerId === playerId)?.i;
+    
+    if (lastLineIndex !== undefined) {
+      set(state => ({
+        lines: state.lines.filter((_, i) => i !== lastLineIndex)
+      }));
+      return true;
+    }
+    return false;
   },
 
   finishDrawingTurn: () => {

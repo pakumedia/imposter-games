@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AppShell, GameCard, PillButton, TimerChip, GameHeader } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, TimerChip, GameHeader, IconButton } from '@/components/ui-kit';
 import { DrawingCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
 import { DrawingLine, PALETTE_COLORS } from '@/game/drawing-types';
-import { Check } from 'lucide-react';
+import { Check, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DrawingTurnScreenProps {
@@ -16,7 +16,8 @@ export function DrawingTurnScreen({ onTurnComplete, onExit }: DrawingTurnScreenP
     players, 
     currentPlayerIndex, 
     lines, 
-    addLine, 
+    addLine,
+    undoLastLine,
     finishDrawingTurn,
     drawingTimePerPlayer,
     currentRound,
@@ -60,9 +61,14 @@ export function DrawingTurnScreen({ onTurnComplete, onExit }: DrawingTurnScreenP
   const handleLineComplete = useCallback((line: DrawingLine) => {
     addLine(line);
     setHasDrawn(true);
-    // Automatically finish turn when player lifts finger/mouse
-    handleFinishTurn();
-  }, [addLine, handleFinishTurn]);
+  }, [addLine]);
+
+  const handleUndo = useCallback(() => {
+    const undone = undoLastLine(currentPlayer.id);
+    if (undone) {
+      setHasDrawn(false);
+    }
+  }, [undoLastLine, currentPlayer.id]);
 
   return (
     <AppShell>
@@ -100,9 +106,22 @@ export function DrawingTurnScreen({ onTurnComplete, onExit }: DrawingTurnScreenP
           </GameCard>
         </div>
 
-        {/* Color Palette */}
+        {/* Color Palette + Undo */}
         <div className="py-4">
           <div className="flex items-center justify-center gap-2 flex-wrap">
+            {/* Undo Button */}
+            <IconButton
+              onClick={handleUndo}
+              disabled={!hasDrawn}
+              className={cn(
+                'mr-2',
+                !hasDrawn && 'opacity-50 cursor-not-allowed'
+              )}
+              aria-label="Undo last line"
+            >
+              <Undo2 className="w-5 h-5" />
+            </IconButton>
+            
             {PALETTE_COLORS.map((color) => (
               <button
                 key={color}
