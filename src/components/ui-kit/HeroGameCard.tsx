@@ -66,15 +66,6 @@ export function HeroGameCard({
           </div>
         </div>
         
-        {/* Online count */}
-        {onlineCount !== undefined && (
-          <div className="px-5 mt-1">
-            <div className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm rounded-pill px-3 py-1.5">
-              <span className="w-2 h-2 rounded-full bg-game-green animate-pulse-soft" />
-              <span className="text-caption text-foreground font-semibold">{onlineCount} online</span>
-            </div>
-          </div>
-        )}
         
         {/* Mascot area - only show if no background */}
         {!hasBackground && (
