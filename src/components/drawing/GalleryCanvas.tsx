@@ -55,8 +55,12 @@ export function GalleryCanvas({
   }, [lines, highlightPlayerId]);
 
   useEffect(() => {
-    drawCanvas();
-  }, [drawCanvas]);
+    // Small delay to ensure canvas is mounted
+    const timer = setTimeout(() => {
+      drawCanvas();
+    }, 20);
+    return () => clearTimeout(timer);
+  }, [drawCanvas, size]);
 
   return (
     <canvas
