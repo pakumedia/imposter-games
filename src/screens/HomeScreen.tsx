@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Flame, Gamepad2, User } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { 
   AppShell, 
   TopBar, 
   HeroGameCard, 
-  ProgressDots, 
   BottomNav,
-  IconButton
 } from '@/components/ui-kit';
 import { Mascot, ImpostorMascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
@@ -76,29 +75,33 @@ const NAV_ITEMS = [
 ];
 
 export function HomeScreen({ onSelectGame }: HomeScreenProps) {
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [activeNav, setActiveNav] = useState('games');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'center',
+    loop: false,
+    skipSnaps: false,
+    dragFree: false,
+  });
 
-  const scrollToCard = (index: number) => {
-    const container = document.getElementById('game-carousel');
-    if (container) {
-      const cardWidth = container.children[0]?.clientWidth || 300;
-      container.scrollTo({
-        left: index * (cardWidth + 16), // 16 = gap
-        behavior: 'smooth'
-      });
-    }
-  };
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const container = e.currentTarget;
-    const cardWidth = container.children[0]?.clientWidth || 300;
-    const scrollLeft = container.scrollLeft;
-    const newIndex = Math.round(scrollLeft / (cardWidth + 16));
-    if (newIndex !== currentSlide && newIndex >= 0 && newIndex < GAMES.length) {
-      setCurrentSlide(newIndex);
-    }
-  };
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const scrollTo = useCallback((index: number) => {
+    emblaApi?.scrollTo(index);
+  }, [emblaApi]);
 
   return (
     <AppShell>
@@ -117,39 +120,31 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
           </h1>
         </div>
 
-        {/* Game Cards Carousel */}
-        <div 
-          id="game-carousel"
-          onScroll={handleScroll}
-          className="flex gap-4 overflow-x-scroll snap-x snap-mandatory px-6 pb-4"
-          style={{ 
-            scrollbarWidth: 'none',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          {GAMES.map((game, index) => (
-            <div 
-              key={game.id} 
-              className="flex-none w-[80vw] max-w-[340px] snap-center"
-            >
-              <HeroGameCard
-                title={game.title}
-                subtitle={game.subtitle}
-                color={game.color}
-                onlineCount={game.onlineCount}
-                mascot={
-                  game.isImpostor ? (
-                    <ImpostorMascot size="lg" />
-                  ) : (
-                    <Mascot variant={game.mascotVariant} size="lg" />
-                  )
-                }
-                onPlay={() => onSelectGame(game.id)}
-              />
-            </div>
-          ))}
-          {/* End spacer for last card */}
-          <div className="flex-none w-4" />
+        {/* Game Cards Carousel - Embla */}
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex gap-4 px-6">
+            {GAMES.map((game) => (
+              <div 
+                key={game.id} 
+                className="flex-none w-[80vw] max-w-[340px]"
+              >
+                <HeroGameCard
+                  title={game.title}
+                  subtitle={game.subtitle}
+                  color={game.color}
+                  onlineCount={game.onlineCount}
+                  mascot={
+                    game.isImpostor ? (
+                      <ImpostorMascot size="lg" />
+                    ) : (
+                      <Mascot variant={game.mascotVariant} size="lg" />
+                    )
+                  }
+                  onPlay={() => onSelectGame(game.id)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Progress Dots - clickable */}
@@ -157,10 +152,10 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
           {GAMES.map((_, index) => (
             <button
               key={index}
-              onClick={() => scrollToCard(index)}
+              onClick={() => scrollTo(index)}
               className={cn(
                 'rounded-full transition-all duration-300 tap-scale',
-                index === currentSlide 
+                index === selectedIndex 
                   ? 'w-6 h-2 bg-foreground' 
                   : 'w-2 h-2 bg-foreground/20 hover:bg-foreground/40'
               )}
@@ -175,13 +170,6 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
         activeId={activeNav}
         onSelect={setActiveNav}
       />
-
-      {/* Hide scrollbar */}
-      <style>{`
-        #game-carousel::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </AppShell>
   );
 }
