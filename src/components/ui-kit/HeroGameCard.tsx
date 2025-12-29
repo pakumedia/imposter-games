@@ -15,6 +15,7 @@ interface HeroGameCardProps {
   buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange' | 'skyblue';
   onPlay?: () => void;
   className?: string;
+  comingSoon?: boolean;
 }
 
 export function HeroGameCard({
@@ -27,12 +28,21 @@ export function HeroGameCard({
   backgroundVideo,
   buttonVariant = 'dark',
   onPlay,
-  className = ''
+  className = '',
+  comingSoon = false
 }: HeroGameCardProps) {
   const hasBackground = backgroundImage || backgroundVideo;
   
   return (
     <GameCard color={color} className={cn('relative h-[525px] sm:h-[578px] md:h-[651px] flex flex-col overflow-hidden', className)}>
+      {/* Coming soon overlay */}
+      {comingSoon && (
+        <div className="absolute inset-0 z-20 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
+          <div className="bg-card/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-border/50">
+            <span className="text-lg font-semibold text-muted-foreground">Coming Soon</span>
+          </div>
+        </div>
+      )}
       {/* Background video */}
       {backgroundVideo && (
         <video

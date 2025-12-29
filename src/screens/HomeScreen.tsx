@@ -29,6 +29,7 @@ interface GameInfo {
   backgroundImage?: string;
   backgroundVideo?: string;
   buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange' | 'skyblue';
+  comingSoon?: boolean;
 }
 
 const GAMES: GameInfo[] = [
@@ -61,6 +62,7 @@ const GAMES: GameInfo[] = [
     onlineCount: 634,
     backgroundImage: impostorCharadesBg,
     buttonVariant: 'primary',
+    comingSoon: true,
   },
   {
     id: 'impostor-sounds',
@@ -71,6 +73,7 @@ const GAMES: GameInfo[] = [
     onlineCount: 421,
     backgroundImage: impostorSoundsBg,
     buttonVariant: 'orange',
+    comingSoon: true,
   },
 ];
 
@@ -128,8 +131,9 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
               backgroundImage={game.backgroundImage}
               backgroundVideo={game.backgroundVideo}
               buttonVariant={game.buttonVariant}
+              comingSoon={game.comingSoon}
               mascot={!game.backgroundImage && !game.backgroundVideo ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
-              onPlay={() => onSelectGame(game.id)}
+              onPlay={() => !game.comingSoon && onSelectGame(game.id)}
             />
           ))}
         </CurvedCarousel>
