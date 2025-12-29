@@ -9,9 +9,9 @@ import {
 } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
+import { ProfileScreen } from './ProfileScreen';
 import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.png';
 import impostorDrawingBg from '@/assets/impostor-drawing-bg.png';
-
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
 }
@@ -110,9 +110,7 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
     emblaApi?.scrollTo(index);
   }, [emblaApi]);
 
-  // Show Profile Screen when profile nav is active
   if (activeNav === 'profile') {
-    const { ProfileScreen } = require('./ProfileScreen');
     return (
       <>
         <ProfileScreen />
