@@ -9,7 +9,7 @@ import {
 } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
-import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.jpg';
+import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.png';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
