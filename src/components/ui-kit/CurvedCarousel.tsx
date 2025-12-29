@@ -92,7 +92,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
             <div
               key={index}
               onClick={() => !hasMoved.current && handleSelect(index)}
-              className="absolute w-[280px]"
+              className="absolute w-[294px]"
               style={{
                 ...getCardStyle(index),
                 transformStyle: 'preserve-3d',
