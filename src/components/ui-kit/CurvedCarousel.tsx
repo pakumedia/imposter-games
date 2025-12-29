@@ -81,6 +81,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
       opacity: Math.max(0.3, opacity),
       zIndex,
       filter: absDiff > 0 ? `blur(${absDiff * 0.5}px)` : 'none',
+      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, filter 0.4s ease',
     };
   };
 
