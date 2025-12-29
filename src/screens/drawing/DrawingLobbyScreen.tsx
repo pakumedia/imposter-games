@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users, ArrowLeft, Palette, Clock } from 'lucide-react';
-import { AppShell, GameCard, PillButton, ListRowPill, IconButton } from '@/components/ui-kit';
+import { Plus, X, Play, Users, ArrowLeft, Palette, Clock, HelpCircle } from 'lucide-react';
+import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog } from '@/components/ui-kit';
 import { useDrawingStore } from '@/game/drawing-store';
 
 interface DrawingLobbyScreenProps {
@@ -10,6 +10,7 @@ interface DrawingLobbyScreenProps {
 
 export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const { 
     players, 
     addPlayer, 
@@ -193,17 +194,22 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
           </PillButton>
         </div>
 
-        {/* Rules hint */}
-        <GameCard color="orange" className="mt-6 p-4">
-          <h3 className="font-bold text-body text-foreground mb-2">🎨 How to Play</h3>
-          <ul className="text-caption text-foreground/80 space-y-1">
-            <li>• Everyone draws the same thing except the Fake Artist</li>
-            <li>• Each player adds ONE line to the drawing</li>
-            <li>• The Fake Artist must blend in without knowing the word!</li>
-            <li>• Vote to find the Fake Artist!</li>
-          </ul>
-        </GameCard>
+        {/* How to Play Button */}
+        <button 
+          onClick={() => setShowHowToPlay(true)}
+          className="w-full mt-6 flex items-center justify-center gap-2 py-3.5 bg-game-blue/10 hover:bg-game-blue/20 text-game-blue rounded-2xl transition-colors tap-scale"
+        >
+          <HelpCircle className="w-5 h-5" />
+          <span className="font-bold">How to Play</span>
+        </button>
       </div>
+
+      {/* How to Play Dialog */}
+      <HowToPlayDialog 
+        open={showHowToPlay} 
+        onOpenChange={setShowHowToPlay}
+        gameMode="drawing"
+      />
     </AppShell>
   );
 }

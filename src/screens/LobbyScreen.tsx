@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users, ArrowLeft } from 'lucide-react';
-import { AppShell, GameCard, PillButton, ListRowPill, IconButton } from '@/components/ui-kit';
+import { Plus, X, Play, Users, ArrowLeft, HelpCircle } from 'lucide-react';
+import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog } from '@/components/ui-kit';
 import { useGameStore } from '@/game/store';
 
 interface LobbyScreenProps {
@@ -10,6 +10,7 @@ interface LobbyScreenProps {
 
 export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const { players, addPlayer, removePlayer } = useGameStore();
 
   const handleAddPlayer = () => {
@@ -128,16 +129,22 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
           </PillButton>
         </div>
 
-        {/* Rules hint */}
-        <GameCard color="yellow" className="mt-6 p-4">
-          <h3 className="font-bold text-body text-foreground mb-2">🎭 How to Play</h3>
-          <ul className="text-caption text-foreground/80 space-y-1">
-            <li>• Everyone gets the same secret word except the Impostor</li>
-            <li>• Take turns giving 1-word hints</li>
-            <li>• Vote to find the Impostor!</li>
-          </ul>
-        </GameCard>
+        {/* How to Play Button */}
+        <button 
+          onClick={() => setShowHowToPlay(true)}
+          className="w-full mt-6 flex items-center justify-center gap-2 py-3.5 bg-game-orange/10 hover:bg-game-orange/20 text-game-orange rounded-2xl transition-colors tap-scale"
+        >
+          <HelpCircle className="w-5 h-5" />
+          <span className="font-bold">How to Play</span>
+        </button>
       </div>
+
+      {/* How to Play Dialog */}
+      <HowToPlayDialog 
+        open={showHowToPlay} 
+        onOpenChange={setShowHowToPlay}
+        gameMode="secret-word"
+      />
     </AppShell>
   );
 }

@@ -14,3 +14,4 @@ export { BottomNav } from './BottomNav';
 export { AnswerPill } from './AnswerPill';
 export { TimerChip } from './TimerChip';
 export { LanguageDialog } from './LanguageDialog';
+export { HowToPlayDialog } from './HowToPlayDialog';
