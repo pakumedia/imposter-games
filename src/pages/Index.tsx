@@ -13,6 +13,7 @@ import {
   DrawingLobbyScreen,
   DrawingPassScreen,
   DrawingRevealScreen,
+  DrawingPassTurnScreen,
   DrawingTurnScreen,
   DrawingGalleryScreen,
   DrawingDiscussionScreen,
@@ -110,16 +111,13 @@ const Index = () => {
     nextDrawingPlayer();
   };
 
+  const handleDrawingPassTurnConfirm = () => {
+    // Go directly to drawing
+    setDrawingPhase('drawing');
+  };
+
   const handleDrawingTurnComplete = () => {
-    // finishDrawingTurn is called inside the component
-    // Check if we need to show pass screen or continue drawing
-    const state = useDrawingStore.getState();
-    if (state.phase === 'gallery') {
-      // Stay on gallery
-    } else {
-      // Show pass screen for next player
-      setDrawingPhase('pass');
-    }
+    // finishDrawingTurn handles the phase transition to drawingPass or gallery
   };
 
   const handleDrawingStartDiscussion = () => {
@@ -185,6 +183,8 @@ const Index = () => {
         return <DrawingPassScreen onConfirm={handleDrawingConfirmPlayer} />;
       case 'reveal':
         return <DrawingRevealScreen onDone={handleDrawingRevealDone} />;
+      case 'drawingPass':
+        return <DrawingPassTurnScreen onConfirm={handleDrawingPassTurnConfirm} />;
       case 'drawing':
         return <DrawingTurnScreen onTurnComplete={handleDrawingTurnComplete} />;
       case 'gallery':

@@ -1,6 +1,7 @@
 export { DrawingLobbyScreen } from './DrawingLobbyScreen';
 export { DrawingPassScreen } from './DrawingPassScreen';
 export { DrawingRevealScreen } from './DrawingRevealScreen';
+export { DrawingPassTurnScreen } from './DrawingPassTurnScreen';
 export { DrawingTurnScreen } from './DrawingTurnScreen';
 export { DrawingGalleryScreen } from './DrawingGalleryScreen';
 export { DrawingDiscussionScreen } from './DrawingDiscussionScreen';

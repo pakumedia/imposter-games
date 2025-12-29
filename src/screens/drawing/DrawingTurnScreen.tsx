@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { AppShell, GameCard, PillButton, TimerChip } from '@/components/ui-kit';
 import { DrawingCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
-import { DrawingLine } from '@/game/drawing-types';
-import { Check, Palette } from 'lucide-react';
+import { DrawingLine, PALETTE_COLORS } from '@/game/drawing-types';
+import { Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface DrawingTurnScreenProps {
   onTurnComplete: () => void;
@@ -24,6 +25,7 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
   const currentPlayer = players[currentPlayerIndex];
   const [timeLeft, setTimeLeft] = useState(drawingTimePerPlayer);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(PALETTE_COLORS[0]); // Black default
   const hasFinishedRef = useRef(false);
 
   const handleFinishTurn = useCallback(() => {
@@ -33,11 +35,12 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
     onTurnComplete();
   }, [finishDrawingTurn, onTurnComplete]);
 
-  // Timer countdown
+  // Timer countdown - reset when player changes
   useEffect(() => {
     hasFinishedRef.current = false;
     setHasDrawn(false);
     setTimeLeft(drawingTimePerPlayer);
+    setSelectedColor(PALETTE_COLORS[0]); // Reset to black
     
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -60,18 +63,19 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
 
   return (
     <AppShell>
-      <div className="flex-1 flex flex-col screen-padding py-6 animate-fade-in">
+      <div className="flex-1 flex flex-col screen-padding py-4 animate-fade-in">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center text-foreground font-bold"
-              style={{ backgroundColor: currentPlayer.drawingColor }}
+              className={`w-10 h-10 rounded-full ${currentPlayer.avatarColor} flex items-center justify-center`}
             >
-              {currentPlayer.name.charAt(0).toUpperCase()}
+              <span className="text-primary-foreground font-bold">
+                {currentPlayer.name.charAt(0).toUpperCase()}
+              </span>
             </div>
             <div>
-              <h2 className="text-h3 text-foreground">{currentPlayer.name}'s Turn</h2>
+              <h2 className="text-h3 text-foreground">{currentPlayer.name}</h2>
               <p className="text-caption text-muted-foreground">
                 Round {currentRound}/{maxDrawingRounds} • Draw ONE line!
               </p>
@@ -81,30 +85,43 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
         </div>
 
         {/* Canvas area */}
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <GameCard color="white" className="w-full max-w-[400px] p-4">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+          <GameCard color="white" className="w-full max-w-[400px] p-3">
             <DrawingCanvas
               lines={lines}
-              playerColor={currentPlayer.drawingColor}
+              playerColor={selectedColor}
               playerId={currentPlayer.id}
               isDrawingEnabled={!hasDrawn}
               onLineComplete={handleLineComplete}
             />
           </GameCard>
+        </div>
 
-          {/* Color indicator */}
-          <div className="mt-4 flex items-center gap-2 text-muted-foreground">
-            <Palette className="w-4 h-4" />
-            <span className="text-caption">Your color:</span>
-            <div 
-              className="w-6 h-6 rounded-full border-2 border-foreground/20"
-              style={{ backgroundColor: currentPlayer.drawingColor }}
-            />
+        {/* Color Palette */}
+        <div className="py-4">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {PALETTE_COLORS.map((color) => (
+              <button
+                key={color}
+                onClick={() => !hasDrawn && setSelectedColor(color)}
+                disabled={hasDrawn}
+                className={cn(
+                  'w-9 h-9 rounded-full transition-all tap-scale',
+                  'border-2',
+                  selectedColor === color 
+                    ? 'border-foreground scale-110 shadow-button' 
+                    : 'border-border',
+                  hasDrawn && 'opacity-50 cursor-not-allowed',
+                  color === '#FFFFFF' && 'border-muted-foreground'
+                )}
+                style={{ backgroundColor: color }}
+              />
+            ))}
           </div>
         </div>
 
         {/* Action button */}
-        <div className="mt-6">
+        <div>
           <PillButton
             variant={hasDrawn ? 'primary' : 'secondary'}
             fullWidth
@@ -117,7 +134,7 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
         </div>
 
         {/* Progress */}
-        <div className="mt-4 text-center text-caption text-muted-foreground">
+        <div className="mt-3 text-center text-caption text-muted-foreground">
           Player {currentPlayerIndex + 1} of {players.length}
         </div>
       </div>
