@@ -15,3 +15,4 @@ export { AnswerPill } from './AnswerPill';
 export { TimerChip } from './TimerChip';
 export { LanguageDialog } from './LanguageDialog';
 export { HowToPlayDialog } from './HowToPlayDialog';
+export { CurvedCarousel } from './CurvedCarousel';
