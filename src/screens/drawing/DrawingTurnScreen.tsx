@@ -61,7 +61,9 @@ export function DrawingTurnScreen({ onTurnComplete, onExit }: DrawingTurnScreenP
   const handleLineComplete = useCallback((line: DrawingLine) => {
     addLine(line);
     setHasDrawn(true);
-  }, [addLine]);
+    // Automatically advance to next player when line is completed
+    handleFinishTurn();
+  }, [addLine, handleFinishTurn]);
 
   const handleUndo = useCallback(() => {
     const undone = undoLastLine(currentPlayer.id);
