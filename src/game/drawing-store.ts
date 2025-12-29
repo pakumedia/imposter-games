@@ -129,17 +129,19 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
           currentPlayerIndex: 0 
         });
       } else {
-        // Next round
+        // Next round - show pass screen for first player
         const resetPlayers = updatedPlayers.map(p => ({ ...p, hasDrawn: false }));
         set({ 
+          phase: 'drawingPass',
           currentRound: currentRound + 1, 
           currentPlayerIndex: 0,
           players: resetPlayers
         });
       }
     } else {
-      // Next player draws
+      // Next player draws - show pass screen
       set({ 
+        phase: 'drawingPass',
         currentPlayerIndex: nextIndex,
         players: updatedPlayers
       });
