@@ -121,7 +121,7 @@ export function DrawingResultsScreen({ onPlayAgain, onBackToLobby }: DrawingResu
                 avatarColor={player.avatarColor}
                 name={player.name}
                 subtitle={`${player.votes || 0} votes`}
-                highlight={player.id === impostorId}
+                isHighlighted={player.id === impostorId}
                 rightContent={
                   <div className="flex items-center gap-2">
                     <div 

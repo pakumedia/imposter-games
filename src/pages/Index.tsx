@@ -9,22 +9,48 @@ import {
   VotingScreen,
   ResultsScreen 
 } from '@/screens';
+import {
+  DrawingLobbyScreen,
+  DrawingPassScreen,
+  DrawingRevealScreen,
+  DrawingTurnScreen,
+  DrawingGalleryScreen,
+  DrawingDiscussionScreen,
+  DrawingVotingScreen,
+  DrawingResultsScreen,
+} from '@/screens/drawing';
 import { useGameStore } from '@/game/store';
+import { useDrawingStore } from '@/game/drawing-store';
 import { toast } from 'sonner';
 
-type AppScreen = 'home' | 'game';
+type AppScreen = 'home' | 'impostor' | 'impostor-drawing';
 
 const Index = () => {
   const [screen, setScreen] = useState<AppScreen>('home');
-  const [currentGameId, setCurrentGameId] = useState<string>('impostor');
-  const { phase, startGame, setPhase, nextPlayer } = useGameStore();
+  
+  // Impostor Secret Word store
+  const { 
+    phase: impostorPhase, 
+    startGame: startImpostorGame, 
+    setPhase: setImpostorPhase, 
+    nextPlayer: nextImpostorPlayer 
+  } = useGameStore();
+  
+  // Impostor Drawing store
+  const {
+    phase: drawingPhase,
+    startGame: startDrawingGame,
+    setPhase: setDrawingPhase,
+    nextPlayer: nextDrawingPlayer,
+    finishDrawingTurn,
+  } = useDrawingStore();
 
   const handleSelectGame = (gameId: string) => {
     if (gameId === 'impostor') {
-      setCurrentGameId(gameId);
-      setScreen('game');
+      setScreen('impostor');
+    } else if (gameId === 'impostor-drawing') {
+      setScreen('impostor-drawing');
     } else {
-      // Mockup games - show coming soon toast
       toast('Coming Soon!', {
         description: 'This game mode is under development.',
         duration: 2000,
@@ -32,79 +58,154 @@ const Index = () => {
     }
   };
 
-  const handleStartGame = () => {
-    startGame();
-  };
-
-  const handleConfirmPlayer = () => {
-    setPhase('reveal');
-  };
-
-  const handleRevealDone = () => {
-    setPhase('lockScreen');
-  };
-
-  const handleLockContinue = () => {
-    nextPlayer();
-  };
-
-  const handleGoToVoting = () => {
-    setPhase('voting');
-  };
-
-  const handleVotingComplete = () => {
-    setPhase('results');
-  };
-
-  const handlePlayAgain = () => {
-    startGame();
-  };
-
-  const handleBackToLobby = () => {
-    setPhase('lobby');
-  };
-
   const handleBackToHome = () => {
     setScreen('home');
     useGameStore.getState().resetGame();
+    useDrawingStore.getState().resetGame();
   };
 
+  // ============ IMPOSTOR SECRET WORD HANDLERS ============
+  const handleImpostorStart = () => {
+    startImpostorGame();
+  };
+
+  const handleImpostorConfirmPlayer = () => {
+    setImpostorPhase('reveal');
+  };
+
+  const handleImpostorRevealDone = () => {
+    setImpostorPhase('lockScreen');
+  };
+
+  const handleImpostorLockContinue = () => {
+    nextImpostorPlayer();
+  };
+
+  const handleImpostorGoToVoting = () => {
+    setImpostorPhase('voting');
+  };
+
+  const handleImpostorVotingComplete = () => {
+    setImpostorPhase('results');
+  };
+
+  const handleImpostorPlayAgain = () => {
+    startImpostorGame();
+  };
+
+  const handleImpostorBackToLobby = () => {
+    setImpostorPhase('lobby');
+  };
+
+  // ============ IMPOSTOR DRAWING HANDLERS ============
+  const handleDrawingStart = () => {
+    startDrawingGame();
+  };
+
+  const handleDrawingConfirmPlayer = () => {
+    setDrawingPhase('reveal');
+  };
+
+  const handleDrawingRevealDone = () => {
+    nextDrawingPlayer();
+  };
+
+  const handleDrawingTurnComplete = () => {
+    // finishDrawingTurn is called inside the component
+    // Check if we need to show pass screen or continue drawing
+    const state = useDrawingStore.getState();
+    if (state.phase === 'gallery') {
+      // Stay on gallery
+    } else {
+      // Show pass screen for next player
+      setDrawingPhase('pass');
+    }
+  };
+
+  const handleDrawingStartDiscussion = () => {
+    setDrawingPhase('discussion');
+  };
+
+  const handleDrawingGoToVoting = () => {
+    setDrawingPhase('voting');
+  };
+
+  const handleDrawingVotingComplete = () => {
+    setDrawingPhase('results');
+  };
+
+  const handleDrawingPlayAgain = () => {
+    startDrawingGame();
+  };
+
+  const handleDrawingBackToLobby = () => {
+    setDrawingPhase('lobby');
+  };
+
+  // ============ RENDER ============
+  
   // Home screen
   if (screen === 'home') {
     return <HomeScreen onSelectGame={handleSelectGame} />;
   }
 
-  // Game screens based on phase
-  switch (phase) {
-    case 'lobby':
-      return <LobbyScreen onStart={handleStartGame} onBack={handleBackToHome} />;
-    
-    case 'pass':
-      return <PassScreen onConfirm={handleConfirmPlayer} />;
-    
-    case 'reveal':
-      return <RevealScreen onDone={handleRevealDone} />;
-    
-    case 'lockScreen':
-      return <LockScreen onContinue={handleLockContinue} />;
-    
-    case 'discussion':
-      return <DiscussionScreen onGoToVoting={handleGoToVoting} />;
-    
-    case 'voting':
-      return <VotingScreen onComplete={handleVotingComplete} />;
-    
-    case 'results':
-      return (
-        <ResultsScreen 
-          onPlayAgain={handlePlayAgain} 
-          onBackToLobby={handleBackToLobby}
-        />
-      );
-    
-    default:
-      return <LobbyScreen onStart={handleStartGame} onBack={handleBackToHome} />;
+  // Impostor Secret Word game screens
+  if (screen === 'impostor') {
+    switch (impostorPhase) {
+      case 'lobby':
+        return <LobbyScreen onStart={handleImpostorStart} onBack={handleBackToHome} />;
+      case 'pass':
+        return <PassScreen onConfirm={handleImpostorConfirmPlayer} />;
+      case 'reveal':
+        return <RevealScreen onDone={handleImpostorRevealDone} />;
+      case 'lockScreen':
+        return <LockScreen onContinue={handleImpostorLockContinue} />;
+      case 'discussion':
+        return <DiscussionScreen onGoToVoting={handleImpostorGoToVoting} />;
+      case 'voting':
+        return <VotingScreen onComplete={handleImpostorVotingComplete} />;
+      case 'results':
+        return (
+          <ResultsScreen 
+            onPlayAgain={handleImpostorPlayAgain} 
+            onBackToLobby={handleImpostorBackToLobby}
+          />
+        );
+      default:
+        return <LobbyScreen onStart={handleImpostorStart} onBack={handleBackToHome} />;
+    }
   }
+
+  // Impostor Drawing game screens
+  if (screen === 'impostor-drawing') {
+    switch (drawingPhase) {
+      case 'lobby':
+        return <DrawingLobbyScreen onStart={handleDrawingStart} onBack={handleBackToHome} />;
+      case 'pass':
+        return <DrawingPassScreen onConfirm={handleDrawingConfirmPlayer} />;
+      case 'reveal':
+        return <DrawingRevealScreen onDone={handleDrawingRevealDone} />;
+      case 'drawing':
+        return <DrawingTurnScreen onTurnComplete={handleDrawingTurnComplete} />;
+      case 'gallery':
+        return <DrawingGalleryScreen onStartDiscussion={handleDrawingStartDiscussion} />;
+      case 'discussion':
+        return <DrawingDiscussionScreen onGoToVoting={handleDrawingGoToVoting} />;
+      case 'voting':
+        return <DrawingVotingScreen onComplete={handleDrawingVotingComplete} />;
+      case 'results':
+        return (
+          <DrawingResultsScreen 
+            onPlayAgain={handleDrawingPlayAgain} 
+            onBackToLobby={handleDrawingBackToLobby}
+          />
+        );
+      default:
+        return <DrawingLobbyScreen onStart={handleDrawingStart} onBack={handleBackToHome} />;
+    }
+  }
+
+  return <HomeScreen onSelectGame={handleSelectGame} />;
 };
 
 export default Index;
