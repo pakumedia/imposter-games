@@ -87,7 +87,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
   return (
     <div 
       ref={containerRef}
-      className="relative h-[480px] w-full overflow-hidden"
+      className="relative h-[520px] w-full"
       style={{ perspective: '1200px' }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -117,10 +117,6 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
           </div>
         ))}
       </div>
-
-      {/* Gradient overlays for depth effect */}
-      <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent pointer-events-none z-20" />
-      <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent pointer-events-none z-20" />
 
       {/* Progress indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
