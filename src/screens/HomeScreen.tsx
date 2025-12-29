@@ -9,7 +9,7 @@ import {
 } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
-import impostorSecretWordVideo from '@/assets/impostor-secret-word-bg.mp4';
+import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.jpg';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
@@ -35,7 +35,7 @@ const GAMES: GameInfo[] = [
     color: 'dark',
     mascotVariant: 'yellow',
     onlineCount: 1247,
-    backgroundVideo: impostorSecretWordVideo,
+    backgroundImage: impostorSecretWordBg,
     buttonVariant: 'orange',
   },
   {
