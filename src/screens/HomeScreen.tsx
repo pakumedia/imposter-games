@@ -72,14 +72,6 @@ const GAMES: GameInfo[] = [
     backgroundImage: impostorSoundsBg,
     buttonVariant: 'orange',
   },
-  {
-    id: 'impostor-questions',
-    title: 'Odd One Out',
-    subtitle: 'Answer differently • 4-12 Players',
-    color: 'teal',
-    mascotVariant: 'orange',
-    onlineCount: 756,
-  },
 ];
 
 const NAV_ITEMS = [
