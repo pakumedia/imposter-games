@@ -165,41 +165,42 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
   };
 
   return (
-    <div 
-      ref={containerRef}
-      className="relative h-[520px] w-full"
-      style={{ perspective: '1200px' }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={() => { isDraggingRef.current = false; }}
-    >
-      {/* 3D Scene */}
+    <div className="relative">
       <div 
-        className="absolute inset-0 flex items-center justify-center"
-        style={{ transformStyle: 'preserve-3d' }}
+        ref={containerRef}
+        className="relative h-[480px] w-full touch-pan-y"
+        style={{ perspective: '1200px' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => { isDraggingRef.current = false; }}
       >
-        {children.map((child, index) => (
-          <div
-            key={index}
-            onClick={() => handleSelect(index)}
-            className={cn(
-              'absolute w-[280px] cursor-pointer transition-all duration-500 ease-out',
-              index === selectedIndex ? 'pointer-events-auto' : 'pointer-events-auto'
-            )}
-            style={{
-              ...getCardStyle(index),
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            {child}
-          </div>
-        ))}
+        {/* 3D Scene */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {children.map((child, index) => (
+            <div
+              key={index}
+              onClick={() => handleSelect(index)}
+              className={cn(
+                'absolute w-[280px] cursor-pointer pointer-events-auto',
+              )}
+              style={{
+                ...getCardStyle(index),
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              {child}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Progress indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+      {/* Progress indicators - outside the carousel */}
+      <div className="flex justify-center gap-2 mt-4">
         {children.map((_, index) => (
           <button
             key={index}
