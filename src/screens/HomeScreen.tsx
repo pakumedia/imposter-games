@@ -121,13 +121,17 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
         <div 
           ref={carouselRef}
           onScroll={handleScroll}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth px-6 pb-4 hide-scrollbar"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth px-6 pb-4 touch-pan-x"
+          style={{ 
+            scrollbarWidth: 'none', 
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           {GAMES.map((game) => (
             <div 
               key={game.id} 
-              className="flex-shrink-0 w-[calc(100%-24px)] snap-center"
+              className="flex-shrink-0 w-[85vw] max-w-[360px] snap-center"
             >
               <HeroGameCard
                 title={game.title}
@@ -164,7 +168,7 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
 
       {/* Hide scrollbar styles */}
       <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
+        div::-webkit-scrollbar {
           display: none;
         }
       `}</style>

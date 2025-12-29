@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users } from 'lucide-react';
+import { Plus, X, Play, Users, ArrowLeft } from 'lucide-react';
 import { AppShell, GameCard, PillButton, ListRowPill, IconButton } from '@/components/ui-kit';
 import { useGameStore } from '@/game/store';
-import { cn } from '@/lib/utils';
 
 interface LobbyScreenProps {
   onStart: () => void;
+  onBack?: () => void;
 }
 
-export function LobbyScreen({ onStart }: LobbyScreenProps) {
+export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
   const { players, addPlayer, removePlayer } = useGameStore();
 
@@ -30,6 +30,17 @@ export function LobbyScreen({ onStart }: LobbyScreenProps) {
   return (
     <AppShell>
       <div className="flex-1 screen-padding py-6 pb-32 animate-fade-in">
+        {/* Back button */}
+        {onBack && (
+          <button 
+            onClick={onBack}
+            className="flex items-center gap-2 text-muted-foreground mb-4 tap-scale"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-body font-medium">Back to Games</span>
+          </button>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-h1 text-foreground leading-tight">

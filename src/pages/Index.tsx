@@ -68,7 +68,7 @@ const Index = () => {
   // Game screens based on phase
   switch (phase) {
     case 'lobby':
-      return <LobbyScreen onStart={handleStartGame} />;
+      return <LobbyScreen onStart={handleStartGame} onBack={handleBackToHome} />;
     
     case 'pass':
       return <PassScreen onConfirm={handleConfirmPlayer} />;
@@ -94,7 +94,7 @@ const Index = () => {
       );
     
     default:
-      return <LobbyScreen onStart={handleStartGame} />;
+      return <LobbyScreen onStart={handleStartGame} onBack={handleBackToHome} />;
   }
 };
 
