@@ -65,6 +65,7 @@ export default {
           teal: "hsl(var(--game-teal))",
           'teal-dark': "hsl(var(--game-teal-dark))",
           orange: "hsl(var(--game-orange))",
+          'orange-dark': "hsl(var(--game-orange-dark))",
           pink: "hsl(var(--game-pink))",
           blue: "hsl(var(--game-blue))",
           purple: "hsl(var(--game-purple))",

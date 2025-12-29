@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 interface PillButtonProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'dark' | 'outline' | 'ghost' | 'success' | 'danger';
+  variant?: 'primary' | 'secondary' | 'dark' | 'outline' | 'ghost' | 'success' | 'danger' | 'orange';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   icon?: ReactNode;
@@ -27,6 +27,7 @@ const variantClasses = {
   ghost: 'bg-transparent text-foreground hover:bg-secondary',
   success: 'bg-game-green text-primary-foreground shadow-button hover:opacity-90',
   danger: 'bg-destructive text-destructive-foreground shadow-button hover:opacity-90',
+  orange: 'bg-game-orange text-primary-foreground shadow-button hover:bg-game-orange-dark',
 };
 
 export function PillButton({ 

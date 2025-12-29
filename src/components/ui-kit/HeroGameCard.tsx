@@ -11,6 +11,7 @@ interface HeroGameCardProps {
   color: CardColor;
   mascot?: React.ReactNode;
   backgroundImage?: string;
+  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
   onPlay?: () => void;
   className?: string;
 }
@@ -22,6 +23,7 @@ export function HeroGameCard({
   color,
   mascot,
   backgroundImage,
+  buttonVariant = 'dark',
   onPlay,
   className = ''
 }: HeroGameCardProps) {
@@ -75,7 +77,7 @@ export function HeroGameCard({
         {/* Play button */}
         <div className="absolute bottom-5 left-5 right-5">
           <PillButton
-            variant="dark"
+            variant={buttonVariant}
             fullWidth
             icon={<Play className="w-5 h-5 fill-current" />}
             onClick={onPlay}

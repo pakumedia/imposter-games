@@ -54,7 +54,8 @@
     --game-green: 127 48% 57%; /* #61C36A */
     --game-teal: 163 85% 35%; /* #0FA37F */
     --game-teal-dark: 163 85% 30%; /* #0B8E74 */
-    --game-orange: 32 86% 62%; /* #F2A64A */
+    --game-orange: 24 85% 54%; /* #ED7524 */
+    --game-orange-dark: 24 85% 46%; /* darker hover */
     --game-pink: 344 100% 68%; /* #FF5E8A */
     --game-blue: 199 80% 71%; /* #77C7F2 */
     --game-purple: 248 85% 70%; /* #7B6CF6 */
