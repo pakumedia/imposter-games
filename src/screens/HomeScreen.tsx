@@ -13,6 +13,7 @@ import { ProfileScreen } from './ProfileScreen';
 import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.png';
 import impostorDrawingBg from '@/assets/impostor-drawing-bg.png';
 import impostorCharadesBg from '@/assets/impostor-charades-bg.png';
+import impostorSoundsBg from '@/assets/impostor-sounds-bg.png';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
@@ -68,6 +69,8 @@ const GAMES: GameInfo[] = [
     color: 'pink',
     mascotVariant: 'pink',
     onlineCount: 421,
+    backgroundImage: impostorSoundsBg,
+    buttonVariant: 'orange',
   },
   {
     id: 'impostor-questions',
