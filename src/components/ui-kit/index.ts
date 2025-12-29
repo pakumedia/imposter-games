@@ -13,3 +13,4 @@ export { ProgressDots } from './ProgressDots';
 export { BottomNav } from './BottomNav';
 export { AnswerPill } from './AnswerPill';
 export { TimerChip } from './TimerChip';
+export { LanguageDialog } from './LanguageDialog';
