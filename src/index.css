@@ -226,6 +226,12 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Safe area as a block element (for notch spacer) */
+  .safe-area-top {
+    height: env(safe-area-inset-top, 0px);
+    min-height: env(safe-area-inset-top, 0px);
+  }
+
   /* Screen padding */
   .screen-padding {
     @apply px-6;
