@@ -59,7 +59,9 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
   const handleLineComplete = useCallback((line: DrawingLine) => {
     addLine(line);
     setHasDrawn(true);
-  }, [addLine]);
+    // Automatically finish turn when player lifts finger/mouse
+    handleFinishTurn();
+  }, [addLine, handleFinishTurn]);
 
   return (
     <AppShell>
