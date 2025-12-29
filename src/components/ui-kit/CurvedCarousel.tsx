@@ -75,7 +75,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
   };
 
   return (
-    <div className="relative">
+    <div className="relative pt-8">
       <div 
         className="relative h-[480px] w-full cursor-grab active:cursor-grabbing select-none"
         style={{ perspective: '1200px', touchAction: 'pan-y' }}
@@ -105,7 +105,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
       </div>
 
       {/* Progress indicators */}
-      <div className="flex justify-center gap-2 mt-4">
+      <div className="flex justify-center gap-2 mt-8">
         {children.map((_, index) => (
           <button
             key={index}
