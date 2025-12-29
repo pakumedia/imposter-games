@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface PillButtonProps {
@@ -31,7 +31,7 @@ const variantClasses = {
   skyblue: 'bg-[#70BBED] text-primary-foreground shadow-button hover:bg-[#5AAAD8]',
 };
 
-export function PillButton({ 
+export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(({ 
   children, 
   onClick, 
   variant = 'primary',
@@ -41,9 +41,10 @@ export function PillButton({
   iconPosition = 'right',
   className = '',
   disabled = false
-}: PillButtonProps) {
+}, ref) => {
   return (
     <button
+      ref={ref}
       onClick={onClick}
       disabled={disabled}
       className={cn(
@@ -60,4 +61,6 @@ export function PillButton({
       {icon && iconPosition === 'right' && <span className="flex-shrink-0">{icon}</span>}
     </button>
   );
-}
+});
+
+PillButton.displayName = 'PillButton';
