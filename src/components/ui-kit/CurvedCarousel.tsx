@@ -49,23 +49,25 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
     const absDiff = Math.abs(diff);
     
     const rotateY = diff * 35;
-    const translateZ = -absDiff * 80;
-    const translateX = diff * 180;
-    const scale = 1 - absDiff * 0.15;
-    const opacity = Math.max(0, 1 - absDiff * 0.3);
-    const zIndex = 10 - absDiff;
+    const translateZ = -absDiff * 120;
+    const translateX = diff * 200;
+    const scale = 1 - absDiff * 0.18;
+    const opacity = Math.max(0, 1 - absDiff * 0.35);
+    const zIndex = 100 - absDiff * 10;
 
     return {
       transform: `
         translateX(${translateX}px) 
         translateZ(${translateZ}px) 
         rotateY(${rotateY}deg)
-        scale(${Math.max(0.7, scale)})
+        scale(${Math.max(0.65, scale)})
       `,
-      opacity: Math.max(0.3, opacity),
+      opacity: Math.max(0.2, opacity),
       zIndex,
-      filter: absDiff > 0 ? `blur(${absDiff * 0.5}px)` : 'none',
-      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, filter 0.4s ease',
+      filter: absDiff > 0 ? `blur(${absDiff * 1}px)` : 'none',
+      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, filter 0.4s ease, z-index 0s',
+      backfaceVisibility: 'hidden' as const,
+      willChange: 'transform, opacity',
     };
   };
 
