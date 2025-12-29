@@ -49,25 +49,28 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
     const absDiff = Math.abs(diff);
     
     const rotateY = diff * 35;
-    const translateZ = -absDiff * 120;
-    const translateX = diff * 200;
-    const scale = 1 - absDiff * 0.18;
-    const opacity = Math.max(0, 1 - absDiff * 0.35);
-    const zIndex = 100 - absDiff * 10;
+    const translateZ = -absDiff * 150;
+    const translateX = diff * 220;
+    const scale = 1 - absDiff * 0.2;
+    const opacity = Math.max(0, 1 - absDiff * 0.4);
+    // Higher base z-index, and ensure center card is always on top
+    const zIndex = absDiff === 0 ? 1000 : 100 - absDiff * 20;
 
     return {
       transform: `
+        perspective(1200px)
         translateX(${translateX}px) 
         translateZ(${translateZ}px) 
         rotateY(${rotateY}deg)
-        scale(${Math.max(0.65, scale)})
+        scale(${Math.max(0.6, scale)})
       `,
-      opacity: Math.max(0.2, opacity),
+      opacity: Math.max(0.15, opacity),
       zIndex,
-      filter: absDiff > 0 ? `blur(${absDiff * 1}px)` : 'none',
-      transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, filter 0.4s ease, z-index 0s',
+      filter: absDiff > 0 ? `blur(${absDiff * 1.5}px)` : 'none',
+      transition: 'transform 0.35s ease-out, opacity 0.35s ease-out, filter 0.35s ease-out',
       backfaceVisibility: 'hidden' as const,
-      willChange: 'transform, opacity',
+      WebkitBackfaceVisibility: 'hidden' as const,
+      isolation: 'isolate' as const,
     };
   };
 
