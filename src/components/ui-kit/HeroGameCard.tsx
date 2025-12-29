@@ -12,7 +12,7 @@ interface HeroGameCardProps {
   mascot?: React.ReactNode;
   backgroundImage?: string;
   backgroundVideo?: string;
-  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
+  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange' | 'skyblue';
   onPlay?: () => void;
   className?: string;
 }

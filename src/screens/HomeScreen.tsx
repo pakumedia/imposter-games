@@ -10,6 +10,7 @@ import {
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
 import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.png';
+import impostorDrawingBg from '@/assets/impostor-drawing-bg.png';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
@@ -24,7 +25,7 @@ interface GameInfo {
   onlineCount: number;
   backgroundImage?: string;
   backgroundVideo?: string;
-  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
+  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange' | 'skyblue';
 }
 
 const GAMES: GameInfo[] = [
@@ -45,6 +46,8 @@ const GAMES: GameInfo[] = [
     color: 'blue',
     mascotVariant: 'blue',
     onlineCount: 892,
+    backgroundImage: impostorDrawingBg,
+    buttonVariant: 'skyblue',
   },
   {
     id: 'impostor-charades',
