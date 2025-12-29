@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AppShell, GameCard, PillButton, TimerChip } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, TimerChip, GameHeader } from '@/components/ui-kit';
 import { DrawingCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
 import { DrawingLine, PALETTE_COLORS } from '@/game/drawing-types';
@@ -8,10 +8,11 @@ import { cn } from '@/lib/utils';
 
 interface DrawingTurnScreenProps {
   onTurnComplete: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
-  const { 
+export function DrawingTurnScreen({ onTurnComplete, onExit }: DrawingTurnScreenProps) {
+  const {
     players, 
     currentPlayerIndex, 
     lines, 
@@ -65,8 +66,8 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col screen-padding py-4 animate-fade-in">
-        {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div 

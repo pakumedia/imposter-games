@@ -1,13 +1,14 @@
-import { AppShell, GameCard, PillButton } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, GameHeader } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { ArrowRight, Palette } from 'lucide-react';
 import { useDrawingStore } from '@/game/drawing-store';
 
 interface DrawingPassScreenProps {
   onConfirm: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingPassScreen({ onConfirm }: DrawingPassScreenProps) {
+export function DrawingPassScreen({ onConfirm, onExit }: DrawingPassScreenProps) {
   const { players, currentPlayerIndex } = useDrawingStore();
   const currentPlayer = players[currentPlayerIndex];
 
@@ -16,6 +17,7 @@ export function DrawingPassScreen({ onConfirm }: DrawingPassScreenProps) {
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col items-center justify-center screen-padding py-10 animate-fade-in">
         <GameCard color="white" className="w-full max-w-sm p-8 text-center">
           {/* Mascot */}

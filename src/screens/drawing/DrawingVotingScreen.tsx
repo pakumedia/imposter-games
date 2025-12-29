@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { AppShell, GameCard, PillButton, TimerChip, ListRowPill } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, TimerChip, ListRowPill, GameHeader } from '@/components/ui-kit';
 import { useDrawingStore } from '@/game/drawing-store';
 import { Vote, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DrawingVotingScreenProps {
   onComplete: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingVotingScreen({ onComplete }: DrawingVotingScreenProps) {
+export function DrawingVotingScreen({ onComplete, onExit }: DrawingVotingScreenProps) {
   const { players, votingTimeSeconds, castVote, votes } = useDrawingStore();
   const [timeLeft, setTimeLeft] = useState(votingTimeSeconds);
   const [currentVoterId, setCurrentVoterId] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export function DrawingVotingScreen({ onComplete }: DrawingVotingScreenProps) {
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col screen-padding py-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

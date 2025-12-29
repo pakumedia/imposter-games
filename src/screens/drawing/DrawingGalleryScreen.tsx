@@ -1,17 +1,19 @@
-import { AppShell, GameCard, PillButton } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, GameHeader } from '@/components/ui-kit';
 import { GalleryCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
 import { MessageCircle, Palette } from 'lucide-react';
 
 interface DrawingGalleryScreenProps {
   onStartDiscussion: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingGalleryScreen({ onStartDiscussion }: DrawingGalleryScreenProps) {
+export function DrawingGalleryScreen({ onStartDiscussion, onExit }: DrawingGalleryScreenProps) {
   const { lines, players, secretWord, category } = useDrawingStore();
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col items-center screen-padding py-8 animate-fade-in">
         {/* Header */}
         <div className="text-center mb-6">

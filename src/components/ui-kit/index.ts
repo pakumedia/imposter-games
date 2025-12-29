@@ -1,5 +1,6 @@
 // UI Kit exports
 export { AppShell } from './AppShell';
+export { GameHeader } from './GameHeader';
 export { TopBar } from './TopBar';
 export { IconButton } from './IconButton';
 export { PillButton } from './PillButton';
