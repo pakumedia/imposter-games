@@ -23,6 +23,7 @@ interface GameInfo {
   mascotVariant: 'yellow' | 'blue' | 'purple' | 'pink' | 'orange';
   onlineCount: number;
   backgroundImage?: string;
+  buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
 }
 
 const GAMES: GameInfo[] = [
@@ -34,6 +35,7 @@ const GAMES: GameInfo[] = [
     mascotVariant: 'yellow',
     onlineCount: 1247,
     backgroundImage: impostorSecretWordBg,
+    buttonVariant: 'orange',
   },
   {
     id: 'impostor-drawing',
@@ -135,6 +137,7 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
                   color={game.color}
                   onlineCount={game.onlineCount}
                   backgroundImage={game.backgroundImage}
+                  buttonVariant={game.buttonVariant}
                   mascot={!game.backgroundImage ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
                   onPlay={() => onSelectGame(game.id)}
                 />
