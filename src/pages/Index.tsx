@@ -180,19 +180,19 @@ const Index = () => {
       case 'lobby':
         return <DrawingLobbyScreen onStart={handleDrawingStart} onBack={handleBackToHome} />;
       case 'pass':
-        return <DrawingPassScreen onConfirm={handleDrawingConfirmPlayer} />;
+        return <DrawingPassScreen onConfirm={handleDrawingConfirmPlayer} onExit={handleBackToHome} />;
       case 'reveal':
-        return <DrawingRevealScreen onDone={handleDrawingRevealDone} />;
+        return <DrawingRevealScreen onDone={handleDrawingRevealDone} onExit={handleBackToHome} />;
       case 'drawingPass':
-        return <DrawingPassTurnScreen onConfirm={handleDrawingPassTurnConfirm} />;
+        return <DrawingPassTurnScreen onConfirm={handleDrawingPassTurnConfirm} onExit={handleBackToHome} />;
       case 'drawing':
-        return <DrawingTurnScreen onTurnComplete={handleDrawingTurnComplete} />;
+        return <DrawingTurnScreen onTurnComplete={handleDrawingTurnComplete} onExit={handleBackToHome} />;
       case 'gallery':
-        return <DrawingGalleryScreen onStartDiscussion={handleDrawingStartDiscussion} />;
+        return <DrawingGalleryScreen onStartDiscussion={handleDrawingStartDiscussion} onExit={handleBackToHome} />;
       case 'discussion':
-        return <DrawingDiscussionScreen onGoToVoting={handleDrawingGoToVoting} />;
+        return <DrawingDiscussionScreen onGoToVoting={handleDrawingGoToVoting} onExit={handleBackToHome} />;
       case 'voting':
-        return <DrawingVotingScreen onComplete={handleDrawingVotingComplete} />;
+        return <DrawingVotingScreen onComplete={handleDrawingVotingComplete} onExit={handleBackToHome} />;
       case 'results':
         return (
           <DrawingResultsScreen 

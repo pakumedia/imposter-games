@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AppShell, GameCard, PillButton, Sparkles } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, Sparkles, GameHeader } from '@/components/ui-kit';
 import { Mascot, ImpostorMascot } from '@/components/mascots';
 import { Eye, EyeOff, Palette } from 'lucide-react';
 import { useDrawingStore } from '@/game/drawing-store';
@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 
 interface DrawingRevealScreenProps {
   onDone: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingRevealScreen({ onDone }: DrawingRevealScreenProps) {
+export function DrawingRevealScreen({ onDone, onExit }: DrawingRevealScreenProps) {
   const [isRevealed, setIsRevealed] = useState(false);
   const [autoHideTimer, setAutoHideTimer] = useState<number | null>(null);
   const { players, currentPlayerIndex, secretWord, category, impostorId } = useDrawingStore();
@@ -47,6 +48,7 @@ export function DrawingRevealScreen({ onDone }: DrawingRevealScreenProps) {
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col items-center justify-center screen-padding py-10 animate-fade-in">
         <div className="w-full max-w-sm">
           {/* Player name */}

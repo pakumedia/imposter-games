@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { AppShell, GameCard, PillButton, TimerChip, ListRowPill } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, TimerChip, ListRowPill, GameHeader } from '@/components/ui-kit';
 import { GalleryCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
 import { Vote, MessageCircle } from 'lucide-react';
 
 interface DrawingDiscussionScreenProps {
   onGoToVoting: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingDiscussionScreen({ onGoToVoting }: DrawingDiscussionScreenProps) {
+export function DrawingDiscussionScreen({ onGoToVoting, onExit }: DrawingDiscussionScreenProps) {
   const { lines, players, discussionTimeSeconds } = useDrawingStore();
   const [timeLeft, setTimeLeft] = useState(discussionTimeSeconds);
 
@@ -34,6 +35,7 @@ export function DrawingDiscussionScreen({ onGoToVoting }: DrawingDiscussionScree
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col screen-padding py-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

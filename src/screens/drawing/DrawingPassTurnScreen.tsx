@@ -1,17 +1,19 @@
-import { AppShell, GameCard, PillButton } from '@/components/ui-kit';
+import { AppShell, GameCard, PillButton, GameHeader } from '@/components/ui-kit';
 import { Palette, ArrowRight } from 'lucide-react';
 import { useDrawingStore } from '@/game/drawing-store';
 
 interface DrawingPassTurnScreenProps {
   onConfirm: () => void;
+  onExit?: () => void;
 }
 
-export function DrawingPassTurnScreen({ onConfirm }: DrawingPassTurnScreenProps) {
+export function DrawingPassTurnScreen({ onConfirm, onExit }: DrawingPassTurnScreenProps) {
   const { players, currentPlayerIndex, currentRound, maxDrawingRounds } = useDrawingStore();
   const currentPlayer = players[currentPlayerIndex];
 
   return (
     <AppShell>
+      <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col items-center justify-center screen-padding py-10">
         <GameCard 
           color="white" 
