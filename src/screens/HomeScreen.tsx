@@ -110,6 +110,21 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
     emblaApi?.scrollTo(index);
   }, [emblaApi]);
 
+  // Show Profile Screen when profile nav is active
+  if (activeNav === 'profile') {
+    const { ProfileScreen } = require('./ProfileScreen');
+    return (
+      <>
+        <ProfileScreen />
+        <BottomNav
+          items={NAV_ITEMS}
+          activeId={activeNav}
+          onSelect={setActiveNav}
+        />
+      </>
+    );
+  }
+
   return (
     <AppShell>
       {/* Top Bar */}

@@ -6,3 +6,4 @@ export { LockScreen } from './LockScreen';
 export { DiscussionScreen } from './DiscussionScreen';
 export { VotingScreen } from './VotingScreen';
 export { ResultsScreen } from './ResultsScreen';
+export { ProfileScreen } from './ProfileScreen';
