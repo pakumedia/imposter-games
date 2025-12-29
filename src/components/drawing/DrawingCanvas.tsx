@@ -20,8 +20,9 @@ export function DrawingCanvas({
 }: DrawingCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [currentPoints, setCurrentPoints] = useState<DrawingPoint[]>([]);
+  const isDrawingRef = useRef(false);
+  const currentPointsRef = useRef<DrawingPoint[]>([]);
+  const lastPointRef = useRef<DrawingPoint | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 300, height: 300 });
 
   // Resize canvas to fit container
@@ -34,7 +35,6 @@ export function DrawingCanvas({
       }
     };
 
-    // Small delay to ensure container is rendered
     const timer = setTimeout(updateSize, 10);
     window.addEventListener('resize', updateSize);
     return () => {
@@ -43,8 +43,8 @@ export function DrawingCanvas({
     };
   }, []);
 
-  // Draw all lines on canvas
-  const drawCanvas = useCallback(() => {
+  // Draw all completed lines on canvas
+  const drawAllLines = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -71,80 +71,90 @@ export function DrawingCanvas({
       }
       ctx.stroke();
     });
-
-    // Draw current line being drawn
-    if (currentPoints.length > 1) {
-      ctx.beginPath();
-      ctx.strokeStyle = playerColor;
-      ctx.lineWidth = strokeWidth;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.moveTo(currentPoints[0].x, currentPoints[0].y);
-      for (let i = 1; i < currentPoints.length; i++) {
-        ctx.lineTo(currentPoints[i].x, currentPoints[i].y);
-      }
-      ctx.stroke();
-    }
-  }, [lines, currentPoints, playerColor, strokeWidth]);
+  }, [lines]);
 
   // Redraw when canvas size changes or lines change
   useEffect(() => {
-    // Small delay to ensure canvas is fully sized
     const timer = setTimeout(() => {
-      drawCanvas();
+      drawAllLines();
     }, 20);
     return () => clearTimeout(timer);
-  }, [drawCanvas, canvasSize]);
+  }, [drawAllLines, canvasSize]);
 
-  const getCoordinates = (e: React.TouchEvent | React.MouseEvent): DrawingPoint | null => {
+  // Draw a line segment directly on canvas (no React state)
+  const drawLineSegment = useCallback((from: DrawingPoint, to: DrawingPoint) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.beginPath();
+    ctx.strokeStyle = playerColor;
+    ctx.lineWidth = strokeWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+  }, [playerColor, strokeWidth]);
+
+  const getCoordinates = useCallback((e: React.TouchEvent | React.MouseEvent): DrawingPoint | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
 
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
     
     if ('touches' in e) {
       const touch = e.touches[0];
+      if (!touch) return null;
       return {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top,
+        x: (touch.clientX - rect.left) * scaleX,
+        y: (touch.clientY - rect.top) * scaleY,
       };
     } else {
       return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
       };
     }
-  };
+  }, []);
 
-  const handleStart = (e: React.TouchEvent | React.MouseEvent) => {
+  const handleStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if (!isDrawingEnabled) return;
     e.preventDefault();
     
     const point = getCoordinates(e);
     if (point) {
-      setIsDrawing(true);
-      setCurrentPoints([point]);
+      isDrawingRef.current = true;
+      currentPointsRef.current = [point];
+      lastPointRef.current = point;
     }
-  };
+  }, [isDrawingEnabled, getCoordinates]);
 
-  const handleMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!isDrawing || !isDrawingEnabled) return;
+  const handleMove = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDrawingRef.current || !isDrawingEnabled) return;
     e.preventDefault();
 
     const point = getCoordinates(e);
-    if (point) {
-      setCurrentPoints(prev => [...prev, point]);
+    if (point && lastPointRef.current) {
+      // Draw immediately on canvas
+      drawLineSegment(lastPointRef.current, point);
+      // Store point for final line
+      currentPointsRef.current.push(point);
+      lastPointRef.current = point;
     }
-  };
+  }, [isDrawingEnabled, getCoordinates, drawLineSegment]);
 
-  const handleEnd = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!isDrawing || !isDrawingEnabled) return;
+  const handleEnd = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDrawingRef.current || !isDrawingEnabled) return;
     e.preventDefault();
 
-    if (currentPoints.length > 1) {
+    if (currentPointsRef.current.length > 1) {
       const newLine: DrawingLine = {
-        points: currentPoints,
+        points: [...currentPointsRef.current],
         playerId,
         color: playerColor,
         strokeWidth,
@@ -152,9 +162,10 @@ export function DrawingCanvas({
       onLineComplete(newLine);
     }
 
-    setIsDrawing(false);
-    setCurrentPoints([]);
-  };
+    isDrawingRef.current = false;
+    currentPointsRef.current = [];
+    lastPointRef.current = null;
+  }, [isDrawingEnabled, playerId, playerColor, strokeWidth, onLineComplete]);
 
   return (
     <div 
