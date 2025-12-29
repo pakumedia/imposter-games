@@ -1,17 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { Gamepad2, User } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
 import { 
   AppShell, 
   TopBar, 
   HeroGameCard, 
   BottomNav,
+  CurvedCarousel,
 } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
 import { ProfileScreen } from './ProfileScreen';
 import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.png';
 import impostorDrawingBg from '@/assets/impostor-drawing-bg.png';
+
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
 }
@@ -83,31 +84,6 @@ const NAV_ITEMS = [
 export function HomeScreen({ onSelectGame }: HomeScreenProps) {
   const [activeNav, setActiveNav] = useState('games');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'center',
-    loop: false,
-    skipSnaps: false,
-    dragFree: false,
-  });
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-    emblaApi.on('select', onSelect);
-    return () => {
-      emblaApi.off('select', onSelect);
-    };
-  }, [emblaApi, onSelect]);
-
-  const scrollTo = useCallback((index: number) => {
-    emblaApi?.scrollTo(index);
-  }, [emblaApi]);
 
   if (activeNav === 'profile') {
     return (
@@ -133,54 +109,35 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
       {/* Main Content */}
       <main className="flex-1 pb-28 animate-fade-in overflow-hidden">
         {/* Title */}
-        <div className="screen-padding mt-4 mb-6">
+        <div className="screen-padding mt-4 mb-4">
           <h1 className="text-h1 text-foreground leading-tight">
             Pick Game<br />To Play
           </h1>
         </div>
 
-        {/* Game Cards Carousel - Embla */}
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4 px-6">
-            {GAMES.map((game) => (
-              <div 
-                key={game.id} 
-                className="flex-none w-[80vw] max-w-[340px]"
-              >
-                <HeroGameCard
-                  title={game.title}
-                  subtitle={game.subtitle}
-                  color={game.color}
-                  onlineCount={game.onlineCount}
-                  backgroundImage={game.backgroundImage}
-                  backgroundVideo={game.backgroundVideo}
-                  buttonVariant={game.buttonVariant}
-                  mascot={!game.backgroundImage && !game.backgroundVideo ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
-                  onPlay={() => onSelectGame(game.id)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Progress Dots - clickable */}
-        <div className="flex items-center justify-center gap-2 mt-4">
-          {GAMES.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className={cn(
-                'rounded-full transition-all duration-300 tap-scale',
-                index === selectedIndex 
-                  ? 'w-6 h-2 bg-foreground' 
-                  : 'w-2 h-2 bg-foreground/20 hover:bg-foreground/40'
-              )}
+        {/* 3D Curved Carousel */}
+        <CurvedCarousel
+          selectedIndex={selectedIndex}
+          onSelect={setSelectedIndex}
+        >
+          {GAMES.map((game) => (
+            <HeroGameCard
+              key={game.id}
+              title={game.title}
+              subtitle={game.subtitle}
+              color={game.color}
+              onlineCount={game.onlineCount}
+              backgroundImage={game.backgroundImage}
+              backgroundVideo={game.backgroundVideo}
+              buttonVariant={game.buttonVariant}
+              mascot={!game.backgroundImage && !game.backgroundVideo ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
+              onPlay={() => onSelectGame(game.id)}
             />
           ))}
-        </div>
+        </CurvedCarousel>
       </main>
 
-      {/* Bottom Navigation - Clean 3-icon style */}
+      {/* Bottom Navigation */}
       <BottomNav
         items={NAV_ITEMS}
         activeId={activeNav}
@@ -188,8 +145,4 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
       />
     </AppShell>
   );
-}
-
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
 }
