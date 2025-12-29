@@ -17,12 +17,12 @@ export function DrawingPassTurnScreen({ onConfirm, onExit }: DrawingPassTurnScre
     <AppShell>
       <GameHeader onExit={onExit} />
       <div className="flex-1 flex flex-col items-center justify-center screen-padding py-6">
-        {/* Preview of current drawing if exists */}
+        {/* Large Preview of current drawing */}
         {hasExistingLines && (
-          <div className="mb-4 animate-[fade-in_0.3s_ease-out]">
+          <div className="w-full max-w-sm mb-6 animate-[fade-in_0.3s_ease-out]">
             <p className="text-caption text-muted-foreground text-center mb-2">Current Drawing</p>
-            <GameCard color="white" className="p-2">
-              <GalleryCanvas lines={lines} size={160} />
+            <GameCard color="white" className="p-3">
+              <GalleryCanvas lines={lines} size={280} />
             </GameCard>
           </div>
         )}
