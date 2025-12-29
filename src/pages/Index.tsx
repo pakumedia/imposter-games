@@ -10,16 +10,25 @@ import {
   ResultsScreen 
 } from '@/screens';
 import { useGameStore } from '@/game/store';
+import { toast } from 'sonner';
 
 type AppScreen = 'home' | 'game';
 
 const Index = () => {
   const [screen, setScreen] = useState<AppScreen>('home');
+  const [currentGameId, setCurrentGameId] = useState<string>('impostor');
   const { phase, startGame, setPhase, nextPlayer } = useGameStore();
 
   const handleSelectGame = (gameId: string) => {
     if (gameId === 'impostor') {
+      setCurrentGameId(gameId);
       setScreen('game');
+    } else {
+      // Mockup games - show coming soon toast
+      toast('Coming Soon!', {
+        description: 'This game mode is under development.',
+        duration: 2000,
+      });
     }
   };
 
