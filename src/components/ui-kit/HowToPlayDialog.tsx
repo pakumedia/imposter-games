@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { PillButton } from './PillButton';
 import { cn } from '@/lib/utils';
 
 interface HowToPlayStep {
@@ -304,14 +303,18 @@ export function HowToPlayDialog({ open, onOpenChange, gameMode }: HowToPlayDialo
             <ChevronLeft className="w-5 h-5" />
           </button>
           
-          <PillButton
-            variant={gameMode === 'drawing' ? 'skyblue' : 'orange'}
-            fullWidth
+          <button
             onClick={handleNext}
-            icon={currentStep === steps.length - 1 ? undefined : <ChevronRight className="w-5 h-5" />}
+            className={cn(
+              'flex-1 h-14 rounded-full font-bold flex items-center justify-center gap-2 transition-all tap-scale shadow-button',
+              gameMode === 'drawing' 
+                ? 'bg-[#70BBED] text-white hover:bg-[#5AAAD8]' 
+                : 'bg-game-orange text-white hover:bg-game-orange-dark'
+            )}
           >
             {currentStep === steps.length - 1 ? "Los geht's!" : 'Weiter'}
-          </PillButton>
+            {currentStep < steps.length - 1 && <ChevronRight className="w-5 h-5" />}
+          </button>
         </div>
       </DialogContent>
     </Dialog>
