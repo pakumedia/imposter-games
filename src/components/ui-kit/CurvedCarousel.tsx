@@ -10,9 +10,8 @@ interface CurvedCarouselProps {
 export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIndex }: CurvedCarouselProps) {
   const [internalIndex, setInternalIndex] = useState(0);
   const selectedIndex = controlledIndex ?? internalIndex;
-  const containerRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
-  const isDraggingRef = useRef(false);
+  const hasMoved = useRef(false);
 
   const handleSelect = (index: number) => {
     const clampedIndex = Math.max(0, Math.min(children.length - 1, index));
@@ -20,33 +19,20 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
     onSelect?.(clampedIndex);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startXRef.current = e.touches[0].clientX;
-    isDraggingRef.current = true;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current) return;
-    const endX = e.changedTouches[0].clientX;
-    const diff = startXRef.current - endX;
-    
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        handleSelect(selectedIndex + 1);
-      } else {
-        handleSelect(selectedIndex - 1);
-      }
-    }
-    isDraggingRef.current = false;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
     startXRef.current = e.clientX;
-    isDraggingRef.current = true;
+    hasMoved.current = false;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current) return;
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const diff = Math.abs(e.clientX - startXRef.current);
+    if (diff > 10) {
+      hasMoved.current = true;
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
     const diff = startXRef.current - e.clientX;
     
     if (Math.abs(diff) > 50) {
@@ -56,14 +42,12 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
         handleSelect(selectedIndex - 1);
       }
     }
-    isDraggingRef.current = false;
   };
 
   const getCardStyle = (index: number) => {
     const diff = index - selectedIndex;
     const absDiff = Math.abs(diff);
     
-    // Arc parameters
     const rotateY = diff * 35;
     const translateZ = -absDiff * 80;
     const translateX = diff * 180;
@@ -88,27 +72,22 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
   return (
     <div className="relative">
       <div 
-        ref={containerRef}
-        className="relative h-[480px] w-full touch-pan-y"
-        style={{ perspective: '1200px' }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => { isDraggingRef.current = false; }}
+        className="relative h-[480px] w-full cursor-grab active:cursor-grabbing select-none"
+        style={{ perspective: '1200px', touchAction: 'pan-y' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
       >
         {/* 3D Scene */}
         <div 
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center"
           style={{ transformStyle: 'preserve-3d' }}
         >
           {children.map((child, index) => (
             <div
               key={index}
-              onClick={() => handleSelect(index)}
-              className={cn(
-                'absolute w-[280px] cursor-pointer pointer-events-auto',
-              )}
+              onClick={() => !hasMoved.current && handleSelect(index)}
+              className="absolute w-[280px]"
               style={{
                 ...getCardStyle(index),
                 transformStyle: 'preserve-3d',
@@ -120,7 +99,7 @@ export function CurvedCarousel({ children, onSelect, selectedIndex: controlledIn
         </div>
       </div>
 
-      {/* Progress indicators - outside the carousel */}
+      {/* Progress indicators */}
       <div className="flex justify-center gap-2 mt-4">
         {children.map((_, index) => (
           <button
