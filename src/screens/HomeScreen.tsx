@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Flame, Gamepad2, User } from 'lucide-react';
+import { Gamepad2, User } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { 
   AppShell, 
@@ -76,7 +76,6 @@ const GAMES: GameInfo[] = [
 ];
 
 const NAV_ITEMS = [
-  { id: 'hot', icon: <Flame className="w-5 h-5" /> },
   { id: 'games', icon: <Gamepad2 className="w-5 h-5" /> },
   { id: 'profile', icon: <User className="w-5 h-5" /> },
 ];
