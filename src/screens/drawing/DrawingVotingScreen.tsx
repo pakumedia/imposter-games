@@ -78,7 +78,7 @@ export function DrawingVotingScreen({ onComplete }: DrawingVotingScreenProps) {
           </div>
           <TimerChip 
             seconds={timeLeft} 
-            variant={timeLeft <= 10 ? 'danger' : 'default'}
+            isWarning={timeLeft <= 10}
           />
         </div>
 
@@ -125,7 +125,7 @@ export function DrawingVotingScreen({ onComplete }: DrawingVotingScreenProps) {
                     )}
                   </div>
                 }
-                highlight={selectedPlayerId === player.id}
+                isHighlighted={selectedPlayerId === player.id}
               />
             </button>
           ))}

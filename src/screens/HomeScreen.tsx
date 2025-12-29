@@ -38,7 +38,7 @@ const GAMES: GameInfo[] = [
   {
     id: 'impostor-drawing',
     title: 'Impostor Drawing',
-    subtitle: 'Draw without knowing • 4-8 Players',
+    subtitle: 'Fake Artist • 4-8 Players',
     color: 'blue',
     mascotVariant: 'blue',
     onlineCount: 892,

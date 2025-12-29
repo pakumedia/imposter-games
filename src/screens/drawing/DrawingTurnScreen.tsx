@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { AppShell, GameCard, PillButton, TimerChip } from '@/components/ui-kit';
 import { DrawingCanvas } from '@/components/drawing';
 import { useDrawingStore } from '@/game/drawing-store';
@@ -24,9 +24,21 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
   const currentPlayer = players[currentPlayerIndex];
   const [timeLeft, setTimeLeft] = useState(drawingTimePerPlayer);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const hasFinishedRef = useRef(false);
+
+  const handleFinishTurn = useCallback(() => {
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+    finishDrawingTurn();
+    onTurnComplete();
+  }, [finishDrawingTurn, onTurnComplete]);
 
   // Timer countdown
   useEffect(() => {
+    hasFinishedRef.current = false;
+    setHasDrawn(false);
+    setTimeLeft(drawingTimePerPlayer);
+    
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -39,17 +51,12 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [currentPlayerIndex, drawingTimePerPlayer, handleFinishTurn]);
 
   const handleLineComplete = useCallback((line: DrawingLine) => {
     addLine(line);
     setHasDrawn(true);
   }, [addLine]);
-
-  const handleFinishTurn = useCallback(() => {
-    finishDrawingTurn();
-    onTurnComplete();
-  }, [finishDrawingTurn, onTurnComplete]);
 
   return (
     <AppShell>
@@ -70,7 +77,7 @@ export function DrawingTurnScreen({ onTurnComplete }: DrawingTurnScreenProps) {
               </p>
             </div>
           </div>
-          <TimerChip seconds={timeLeft} variant={timeLeft <= 3 ? 'danger' : 'default'} />
+          <TimerChip seconds={timeLeft} isWarning={timeLeft <= 3} />
         </div>
 
         {/* Canvas area */}

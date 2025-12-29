@@ -48,8 +48,7 @@ export function DrawingDiscussionScreen({ onGoToVoting }: DrawingDiscussionScree
           </div>
           <TimerChip 
             seconds={timeLeft} 
-            variant={timeLeft <= 10 ? 'danger' : 'default'}
-            showLabel
+            isWarning={timeLeft <= 10}
           />
         </div>
 
