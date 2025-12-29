@@ -9,7 +9,7 @@ import {
 } from '@/components/ui-kit';
 import { Mascot } from '@/components/mascots';
 import { CardColor } from '@/components/ui-kit/GameCard';
-import impostorSecretWordBg from '@/assets/impostor-secret-word-bg.jpg';
+import impostorSecretWordVideo from '@/assets/impostor-secret-word-bg.mp4';
 
 interface HomeScreenProps {
   onSelectGame: (gameId: string) => void;
@@ -23,6 +23,7 @@ interface GameInfo {
   mascotVariant: 'yellow' | 'blue' | 'purple' | 'pink' | 'orange';
   onlineCount: number;
   backgroundImage?: string;
+  backgroundVideo?: string;
   buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
 }
 
@@ -34,7 +35,7 @@ const GAMES: GameInfo[] = [
     color: 'dark',
     mascotVariant: 'yellow',
     onlineCount: 1247,
-    backgroundImage: impostorSecretWordBg,
+    backgroundVideo: impostorSecretWordVideo,
     buttonVariant: 'orange',
   },
   {
@@ -137,8 +138,9 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
                   color={game.color}
                   onlineCount={game.onlineCount}
                   backgroundImage={game.backgroundImage}
+                  backgroundVideo={game.backgroundVideo}
                   buttonVariant={game.buttonVariant}
-                  mascot={!game.backgroundImage ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
+                  mascot={!game.backgroundImage && !game.backgroundVideo ? <Mascot variant={game.mascotVariant} size="lg" /> : undefined}
                   onPlay={() => onSelectGame(game.id)}
                 />
               </div>

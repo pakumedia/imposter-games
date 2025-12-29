@@ -11,6 +11,7 @@ interface HeroGameCardProps {
   color: CardColor;
   mascot?: React.ReactNode;
   backgroundImage?: string;
+  backgroundVideo?: string;
   buttonVariant?: 'primary' | 'secondary' | 'dark' | 'orange';
   onPlay?: () => void;
   className?: string;
@@ -23,14 +24,30 @@ export function HeroGameCard({
   color,
   mascot,
   backgroundImage,
+  backgroundVideo,
   buttonVariant = 'dark',
   onPlay,
   className = ''
 }: HeroGameCardProps) {
+  const hasBackground = backgroundImage || backgroundVideo;
+  
   return (
     <GameCard color={color} className={cn('relative h-[500px] sm:h-[550px] md:h-[620px] flex flex-col overflow-hidden', className)}>
-      {/* Background image */}
-      {backgroundImage && (
+      {/* Background video */}
+      {backgroundVideo && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={backgroundVideo} type="video/mp4" />
+        </video>
+      )}
+      
+      {/* Background image (fallback if no video) */}
+      {backgroundImage && !backgroundVideo && (
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -59,8 +76,8 @@ export function HeroGameCard({
           </div>
         )}
         
-        {/* Mascot area - only show if no background image */}
-        {!backgroundImage && (
+        {/* Mascot area - only show if no background */}
+        {!hasBackground && (
           <div className="flex-1 relative flex items-end justify-center pb-24 pt-4">
             <Sparkles className="absolute inset-0" />
             {mascot && (
@@ -71,8 +88,8 @@ export function HeroGameCard({
           </div>
         )}
         
-        {/* Spacer when background image is used */}
-        {backgroundImage && <div className="flex-1" />}
+        {/* Spacer when background is used */}
+        {hasBackground && <div className="flex-1" />}
         
         {/* Play button */}
         <div className="absolute bottom-5 left-5 right-5">
