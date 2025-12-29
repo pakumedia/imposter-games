@@ -24,7 +24,7 @@ export function HeroGameCard({
   className = ''
 }: HeroGameCardProps) {
   return (
-    <GameCard color={color} className={cn('relative h-[480px] flex flex-col', className)}>
+    <GameCard color={color} className={cn('relative h-[380px] sm:h-[420px] md:h-[480px] flex flex-col', className)}>
       {/* Title bubble */}
       <div className="p-5">
         <div className="inline-block bg-card/95 backdrop-blur-sm rounded-card px-5 py-3 shadow-soft">
