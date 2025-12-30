@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 interface ResultsScreenProps {
   onPlayAgain: () => void;
   onBackToLobby: () => void;
+  onEndGame: () => void;
 }
 
-export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps) {
+export function ResultsScreen({ onPlayAgain, onBackToLobby, onEndGame }: ResultsScreenProps) {
   const { players, impostorIds, secretWord, category, votes } = useGameStore();
   const [showResult, setShowResult] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -206,6 +207,12 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
               >
                 Back to Lobby
               </PillButton>
+              <button 
+                onClick={onEndGame}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-destructive hover:bg-destructive/80 text-destructive-foreground rounded-2xl transition-colors tap-scale"
+              >
+                <span className="font-bold">Spiel beenden</span>
+              </button>
             </div>
           </div>
         )}

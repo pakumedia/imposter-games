@@ -158,6 +158,7 @@ const Index = () => {
           <SimpleRoundEndScreen 
             onRestartRound={handleImpostorPlayAgain} 
             onAdjustGame={handleImpostorBackToLobby}
+            onEndGame={handleBackToHome}
           />
         );
       case 'discussion':
@@ -169,6 +170,7 @@ const Index = () => {
           <ResultsScreen 
             onPlayAgain={handleImpostorPlayAgain} 
             onBackToLobby={handleImpostorBackToLobby}
+            onEndGame={handleBackToHome}
           />
         );
       default:
@@ -196,6 +198,7 @@ const Index = () => {
           <DrawingSimpleRoundEndScreen 
             onRestartRound={handleDrawingPlayAgain} 
             onAdjustGame={handleDrawingBackToLobby}
+            onEndGame={handleBackToHome}
           />
         );
       case 'discussion':
@@ -207,6 +210,7 @@ const Index = () => {
           <DrawingResultsScreen 
             onPlayAgain={handleDrawingPlayAgain} 
             onBackToLobby={handleDrawingBackToLobby}
+            onEndGame={handleBackToHome}
           />
         );
       default:

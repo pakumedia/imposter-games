@@ -9,9 +9,10 @@ import { cn } from '@/lib/utils';
 interface DrawingResultsScreenProps {
   onPlayAgain: () => void;
   onBackToLobby: () => void;
+  onEndGame: () => void;
 }
 
-export function DrawingResultsScreen({ onPlayAgain, onBackToLobby }: DrawingResultsScreenProps) {
+export function DrawingResultsScreen({ onPlayAgain, onBackToLobby, onEndGame }: DrawingResultsScreenProps) {
   const { players, impostorId, lines, calculateResults } = useDrawingStore();
   const [result, setResult] = useState<{ impostorCaught: boolean; impostorName: string } | null>(null);
   const [showReveal, setShowReveal] = useState(false);
@@ -198,6 +199,12 @@ export function DrawingResultsScreen({ onPlayAgain, onBackToLobby }: DrawingResu
           >
             Back to Lobby
           </PillButton>
+          <button 
+            onClick={onEndGame}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-destructive hover:bg-destructive/80 text-destructive-foreground rounded-2xl transition-colors tap-scale"
+          >
+            <span className="font-bold">Spiel beenden</span>
+          </button>
         </div>
       </div>
     </AppShell>

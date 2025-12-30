@@ -6,9 +6,10 @@ import { useGameStore } from '@/game/store';
 interface SimpleRoundEndScreenProps {
   onRestartRound: () => void;
   onAdjustGame: () => void;
+  onEndGame: () => void;
 }
 
-export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRoundEndScreenProps) {
+export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEndGame }: SimpleRoundEndScreenProps) {
   const { players, impostorIds, secretWord, category, roundNumber } = useGameStore();
   
   const [wordRevealed, setWordRevealed] = useState(false);
@@ -95,6 +96,13 @@ export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRou
           >
             <Settings className="w-5 h-5" />
             <span className="font-bold">Spiel anpassen</span>
+          </button>
+          
+          <button 
+            onClick={onEndGame}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-destructive hover:bg-destructive/80 text-destructive-foreground rounded-2xl transition-colors tap-scale"
+          >
+            <span className="font-bold">Spiel beenden</span>
           </button>
         </div>
       </div>
