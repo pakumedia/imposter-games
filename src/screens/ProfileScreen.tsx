@@ -23,10 +23,14 @@ interface SettingsItem {
   rightElement?: React.ReactNode;
 }
 
-// Language flags mapping
-const LANGUAGE_FLAGS: Record<string, string> = {
-  de: '🇩🇪',
-  en: '🇬🇧',
+// Language to flag code mapping
+const LANGUAGE_FLAG_CODES: Record<string, 'de' | 'gb' | 'fr' | 'it' | 'pt' | 'es'> = {
+  de: 'de',
+  en: 'gb',
+  fr: 'fr',
+  it: 'it',
+  pt: 'pt',
+  es: 'es',
 };
 
 function SettingsRow({ item }: { item: SettingsItem }) {
@@ -63,7 +67,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [copiedCustomerId, setCopiedCustomerId] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  const languageFlag = LANGUAGE_FLAGS[language] || '🌐';
+  const languageFlagCode = LANGUAGE_FLAG_CODES[language] || 'gb';
   const customerId = 'USR-2024-ABCD-1234';
 
   const handleCopyCustomerId = () => {
@@ -90,7 +94,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       label: t('language'), 
       rightElement: (
         <div className="flex items-center gap-2">
-          <FlagIcon country={language === 'de' ? 'de' : 'gb'} className="w-6 h-4" />
+          <FlagIcon country={languageFlagCode} className="w-6 h-4" />
           <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
         </div>
       ),

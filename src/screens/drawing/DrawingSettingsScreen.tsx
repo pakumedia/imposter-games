@@ -546,6 +546,7 @@ export function DrawingSettingsScreen({
                 onCheckedChange={(checked) => 
                   onUpdateSettings({ showCategoryToImpostor: checked })
                 }
+                accentColor="#0046FF"
               />
             </div>
           </SettingsRow>
