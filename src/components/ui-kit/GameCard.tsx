@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 export type CardColor = 'yellow' | 'orange' | 'blue' | 'purple' | 'pink' | 'teal' | 'dark' | 'white' | 'subtle';
@@ -22,14 +22,15 @@ const colorClasses: Record<CardColor, string> = {
   subtle: 'bg-card-subtle shadow-embedded border border-border/30',
 };
 
-export function GameCard({ 
+export const GameCard = forwardRef<HTMLDivElement, GameCardProps>(({ 
   children, 
   color = 'white',
   className = '',
   onClick
-}: GameCardProps) {
+}, ref) => {
   return (
     <div
+      ref={ref}
       onClick={onClick}
       className={cn(
         'rounded-card shadow-card overflow-hidden',
@@ -41,4 +42,6 @@ export function GameCard({
       {children}
     </div>
   );
-}
+});
+
+GameCard.displayName = 'GameCard';
