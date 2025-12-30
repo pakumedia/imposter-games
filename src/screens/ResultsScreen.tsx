@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { AppShell, GameCard, PillButton, ListRowPill, Sparkles } from '@/components/ui-kit';
 import { Mascot, ImpostorMascot } from '@/components/mascots';
-import { Trophy, RotateCcw, Home, Users } from 'lucide-react';
+import { RotateCcw, Home, Users, Eye } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { cn } from '@/lib/utils';
 
@@ -11,8 +11,10 @@ interface ResultsScreenProps {
 }
 
 export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps) {
-  const { players, impostorIds, secretWord, category, crewWins, impostorWins, votes } = useGameStore();
+  const { players, impostorIds, secretWord, category, votes } = useGameStore();
   const [showResult, setShowResult] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   const impostors = players.filter(p => impostorIds.includes(p.id));
   
@@ -30,6 +32,24 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
     const timer = setTimeout(() => setShowResult(true), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleReveal = useCallback(() => {
+    if (isRevealed) return;
+    
+    // Start shake animation
+    setIsShaking(true);
+    
+    // Trigger haptic feedback if available
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+    
+    // After 1 second, reveal the content
+    setTimeout(() => {
+      setIsShaking(false);
+      setIsRevealed(true);
+    }, 1000);
+  }, [isRevealed]);
 
   return (
     <AppShell>
@@ -79,27 +99,60 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
               </div>
             </GameCard>
 
-            {/* The Impostor(s) reveal */}
-            <GameCard color="dark" className="p-6 mb-6">
-              <div className="flex items-center gap-4">
-                <ImpostorMascot size="sm" />
-                <div>
-                  <p className="text-caption text-primary-foreground/60">
-                    {impostors.length > 1 ? 'The Impostors were' : 'The Impostor was'}
+            {/* The Impostor(s) reveal - tap to show */}
+            <GameCard 
+              color="dark" 
+              className={cn(
+                "p-6 mb-6 cursor-pointer transition-all",
+                isShaking && "animate-shake"
+              )}
+              onClick={handleReveal}
+            >
+              {!isRevealed ? (
+                <div className="flex flex-col items-center justify-center py-4">
+                  <div className="w-14 h-14 rounded-full bg-primary-foreground/20 flex items-center justify-center mb-3">
+                    <Eye className="w-7 h-7 text-primary-foreground/60" />
+                  </div>
+                  <p className="text-body text-primary-foreground/60 font-medium">
+                    Tippe zum Enthüllen
                   </p>
-                  <h2 className="text-h2 text-primary-foreground">
-                    {impostors.map(p => p.name).join(' & ')}
-                  </h2>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center gap-4 animate-scale-in">
+                  <ImpostorMascot size="sm" />
+                  <div>
+                    <p className="text-caption text-primary-foreground/60">
+                      {impostors.length > 1 ? 'The Impostors were' : 'The Impostor was'}
+                    </p>
+                    <h2 className="text-h2 text-primary-foreground">
+                      {impostors.map(p => p.name).join(' & ')}
+                    </h2>
+                  </div>
+                </div>
+              )}
             </GameCard>
 
-            {/* The secret word */}
-            <GameCard color="yellow" className="p-5 mb-6">
-              <div className="text-center">
-                <p className="text-caption text-foreground/70 mb-1">{category}</p>
-                <h2 className="text-h1 text-foreground">{secretWord}</h2>
-              </div>
+            {/* The secret word - tap to show */}
+            <GameCard 
+              color="yellow" 
+              className={cn(
+                "p-5 mb-6 cursor-pointer transition-all",
+                isShaking && "animate-shake"
+              )}
+              onClick={handleReveal}
+            >
+              {!isRevealed ? (
+                <div className="flex flex-col items-center justify-center py-2">
+                  <p className="text-body text-foreground/60 font-medium">
+                    Tippe zum Enthüllen
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center animate-scale-in">
+                  <p className="text-caption text-foreground/70 mb-1">{category}</p>
+                  <h2 className="text-h1 text-foreground">{secretWord}</h2>
+                </div>
+              )}
             </GameCard>
 
             {/* Vote breakdown */}
@@ -123,7 +176,7 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
                         )}>
                         {player.voteCount} votes
                         </span>
-                        {impostorIds.includes(player.id) && (
+                        {impostorIds.includes(player.id) && isRevealed && (
                           <span className="text-caption">🎭</span>
                         )}
                       </div>
@@ -132,21 +185,6 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
                 ))}
               </div>
             </div>
-
-            {/* Score */}
-            <GameCard color="white" className="p-4 mb-6">
-              <div className="flex justify-around text-center">
-                <div>
-                  <p className="text-caption text-muted-foreground">Crew Wins</p>
-                  <p className="text-h2 text-game-teal">{crewWins}</p>
-                </div>
-                <div className="w-px bg-border" />
-                <div>
-                  <p className="text-caption text-muted-foreground">Impostor Wins</p>
-                  <p className="text-h2 text-destructive">{impostorWins}</p>
-                </div>
-              </div>
-            </GameCard>
 
             {/* Actions */}
             <div className="space-y-3">

@@ -547,16 +547,7 @@ export function DrawingSettingsScreen({
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
         <p className="text-body text-muted-foreground mb-6">Passe dein Spiel an</p>
 
-        {/* 0. Game Mode Selector */}
-        <SettingsGroup className="mb-6">
-          <CardHeader emoji="🎮" title="Spielmodus" />
-          <SettingsRow isLast>
-            <DrawingGameModeSelector
-              mode={settings.gameMode}
-              onChange={(mode) => onUpdateSettings({ gameMode: mode })}
-            />
-          </SettingsRow>
-        </SettingsGroup>
+        {/* Drawing is always guided, no game mode selector needed */}
 
         {/* 1. Drawing Settings Section */}
         <SettingsGroup>
