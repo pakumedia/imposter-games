@@ -67,8 +67,8 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         </div>
 
         {/* Add player input */}
-        <GameCard color="subtle" className="p-5 mb-5 bg-[#FF6D1F]">
-          <div className="flex gap-3">
+        <GameCard color="subtle" className="p-4 mb-5 bg-[#FF6D1F]">
+          <div className="flex gap-3 items-center">
             <input
               type="text"
               value={newPlayerName}
@@ -78,15 +78,13 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
               className="flex-1 h-12 px-4 rounded-pill bg-white/20 text-white placeholder:text-white/70 text-body-sm font-medium outline-none focus:ring-2 focus:ring-white/30"
               maxLength={20}
             />
-            <IconButton
-              variant="ghost"
-              size="lg"
+            <button
               onClick={handleAddPlayer}
               disabled={!newPlayerName.trim()}
-              className="bg-white hover:bg-white/90"
+              className="w-12 h-12 rounded-full bg-white hover:bg-white/90 flex items-center justify-center flex-shrink-0 transition-all tap-scale disabled:opacity-50"
             >
-              <Plus className="w-5 h-5 text-[#FF6D1F]" />
-            </IconButton>
+              <Plus className="w-6 h-6 text-[#FF6D1F]" />
+            </button>
           </div>
         </GameCard>
 
