@@ -1,5 +1,6 @@
 import { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+// GameCard component with forwardRef support
 
 export type CardColor = 'yellow' | 'orange' | 'blue' | 'purple' | 'pink' | 'teal' | 'dark' | 'white' | 'subtle';
 

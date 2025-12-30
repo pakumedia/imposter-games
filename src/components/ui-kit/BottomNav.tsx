@@ -1,5 +1,6 @@
 import { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+// BottomNav component with forwardRef support
 
 interface NavItem {
   id: string;
