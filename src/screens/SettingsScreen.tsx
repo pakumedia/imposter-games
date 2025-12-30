@@ -147,9 +147,9 @@ function CategoryCard({
       className={cn(
         "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full",
         isPro 
-          ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/50"
+          ? "bg-muted/30 border border-amber-200/50 opacity-60"
           : isSelected 
-            ? "bg-[#FF6D1F]/10 border-2 border-[#FF6D1F]" 
+            ? "bg-muted/40 border-2 border-[#FF6D1F]" 
             : "bg-muted/40 border border-border hover:border-muted-foreground/30"
       )}
     >
@@ -159,27 +159,28 @@ function CategoryCard({
       {/* Text Content */}
       <span className={cn(
         "font-semibold text-sm truncate text-left flex-1",
-        isPro ? "text-amber-700/70" : "text-foreground"
+        isPro ? "text-muted-foreground" : "text-foreground"
       )}>
         {name}
       </span>
-      
-      {/* Lock icon for Pro */}
-      {isLocked && (
-        <Lock className="w-4 h-4 text-amber-600/50" />
-      )}
     </button>
   );
 }
 
-// Premium Divider Component
-function PremiumDivider() {
+// Premium Divider Component with lock notice
+function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
   return (
-    <div className="relative py-3 px-5 bg-gradient-to-r from-amber-500/10 via-yellow-400/15 to-amber-500/10 border-y border-amber-300/30">
-      <div className="flex items-center gap-2">
-        <span className="text-lg">👑</span>
-        <span className="font-bold text-amber-700 text-sm">PRO Kategorien</span>
-      </div>
+    <div className="px-4 pt-4 pb-2">
+      <button 
+        onClick={onUnlock}
+        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-100/80 to-amber-50/60 border border-amber-300/50 tap-scale"
+      >
+        <div className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-amber-600" />
+          <span className="font-semibold text-sm text-amber-700">PRO Kategorien</span>
+        </div>
+        <span className="text-xs text-amber-600/80 font-medium">Kein Zugriff</span>
+      </button>
     </div>
   );
 }
@@ -503,7 +504,7 @@ export function SettingsScreen({
           </div>
           
           {/* Premium Divider */}
-          <PremiumDivider />
+          <PremiumDivider onUnlock={handleProCategoryClick} />
           
           {/* Pro Categories - 2x3 Grid */}
           <div className="p-4 grid grid-cols-2 gap-3">
