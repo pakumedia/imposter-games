@@ -7,9 +7,10 @@ import { GalleryCanvas } from '@/components/drawing';
 interface DrawingSimpleRoundEndScreenProps {
   onRestartRound: () => void;
   onAdjustGame: () => void;
+  onEndGame: () => void;
 }
 
-export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: DrawingSimpleRoundEndScreenProps) {
+export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEndGame }: DrawingSimpleRoundEndScreenProps) {
   const { players, impostorId, secretWord, category, roundNumber, lines } = useDrawingStore();
   
   const [drawingRevealed, setDrawingRevealed] = useState(false);
@@ -117,6 +118,13 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: Dr
           >
             <Settings className="w-5 h-5" />
             <span className="font-bold">Spiel anpassen</span>
+          </button>
+          
+          <button 
+            onClick={onEndGame}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-destructive hover:bg-destructive/80 text-destructive-foreground rounded-2xl transition-colors tap-scale"
+          >
+            <span className="font-bold">Spiel beenden</span>
           </button>
         </div>
       </div>
