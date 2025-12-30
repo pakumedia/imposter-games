@@ -1,4 +1,4 @@
-import { ArrowLeft, Crown, Lock, Check } from 'lucide-react';
+import { ArrowLeft, Crown, Lock } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -86,17 +86,19 @@ function SectionHeader({ emoji, title, rightContent }: { emoji: string; title: s
   );
 }
 
-// Category Chip Component (2-column grid)
-function CategoryChip({ 
+// Category Row Component (iOS-style full width row)
+function CategoryRow({ 
   name, 
   isSelected, 
   isPro = false, 
   onToggle,
+  isLast = false,
 }: { 
   name: string; 
   isSelected: boolean; 
   isPro?: boolean;
   onToggle: () => void;
+  isLast?: boolean;
 }) {
   const isLocked = isPro;
   const emoji = CATEGORY_EMOJIS[name] || '📁';
@@ -106,29 +108,30 @@ function CategoryChip({
       onClick={!isLocked ? onToggle : undefined}
       disabled={isLocked}
       className={cn(
-        "flex items-center gap-2.5 py-3 px-4 rounded-xl transition-all",
-        isLocked 
-          ? "bg-muted/50 opacity-60" 
-          : isSelected
-            ? "bg-[#FF6D1F]/15 border-2 border-[#FF6D1F]"
-            : "bg-card border-2 border-transparent shadow-soft tap-scale active:scale-95"
+        "flex items-center gap-3 py-3.5 px-4 w-full transition-all text-left",
+        !isLast && "border-b border-border",
+        isLocked && "opacity-60",
+        isSelected && "bg-[#FF6D1F]/10"
       )}
     >
-      <span className="text-lg">{emoji}</span>
+      <div className={cn(
+        "w-8 h-8 rounded-lg flex items-center justify-center text-lg",
+        isSelected ? "bg-[#FF6D1F]/20" : "bg-muted"
+      )}>
+        {emoji}
+      </div>
       <span className={cn(
-        "font-medium text-body-sm flex-1 text-left truncate",
+        "font-medium text-body flex-1",
         isLocked ? "text-muted-foreground" : "text-foreground"
       )}>
         {name}
       </span>
       {isLocked ? (
-        <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <Lock className="w-4 h-4 text-muted-foreground" />
       ) : isSelected ? (
-        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center flex-shrink-0">
-          <Check className="w-3 h-3 text-white" />
-        </div>
+        <div className="w-5 h-5 rounded-full bg-[#FF6D1F]" />
       ) : (
-        <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 flex-shrink-0" />
+        <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
       )}
     </button>
   );
@@ -211,44 +214,45 @@ export function SettingsScreen({
           }
         />
         
-        {/* Free Categories - 2 column grid */}
+        {/* Free Categories */}
         <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide">
           Free
         </p>
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {FREE_CATEGORY_NAMES.map((category) => (
-            <CategoryChip
+        <SettingsGroup className="mb-4">
+          {FREE_CATEGORY_NAMES.map((category, index) => (
+            <CategoryRow
               key={category}
               name={category}
               isSelected={settings.selectedCategories.includes(category)}
               onToggle={() => handleCategoryToggle(category)}
+              isLast={index === FREE_CATEGORY_NAMES.length - 1}
             />
           ))}
-        </div>
+        </SettingsGroup>
 
-        {/* PRO Categories - 2 column grid */}
+        {/* PRO Categories */}
         <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide flex items-center gap-1">
           <Crown className="w-3 h-3 text-[#FF6D1F]" />
           Pro
         </p>
-        <div className="grid grid-cols-2 gap-2">
-          {/* Custom Category first */}
-          <CategoryChip
+        <SettingsGroup>
+          <CategoryRow
             name="Custom Category"
             isSelected={false}
             isPro={true}
             onToggle={() => {}}
           />
-          {PRO_CATEGORY_NAMES.map((category) => (
-            <CategoryChip
+          {PRO_CATEGORY_NAMES.map((category, index) => (
+            <CategoryRow
               key={category}
               name={category}
               isSelected={false}
               isPro={true}
               onToggle={() => {}}
+              isLast={index === PRO_CATEGORY_NAMES.length - 1}
             />
           ))}
-        </div>
+        </SettingsGroup>
 
         {/* Impostor Helpers Section */}
         <SectionHeader emoji="💡" title="Impostor Hilfen" />
