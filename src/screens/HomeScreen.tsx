@@ -111,7 +111,7 @@ export function HomeScreen({ onSelectGame }: HomeScreenProps) {
       <main className="flex-1 pb-28 animate-fade-in overflow-hidden">
         {/* Title */}
         <div className="screen-padding mt-4 mb-4">
-          <h1 className="text-h1 text-foreground leading-tight">
+          <h1 className="font-poppins text-h1 text-foreground leading-tight font-black">
             Pick Game<br />To Play
           </h1>
         </div>
