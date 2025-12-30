@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users, ArrowLeft, HelpCircle, Settings } from 'lucide-react';
-import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog, GameSettingsSheet } from '@/components/ui-kit';
+import { Plus, X, Play, Users, ArrowLeft, HelpCircle } from 'lucide-react';
+import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog, InlineGameSettings } from '@/components/ui-kit';
 import { useGameStore } from '@/game/store';
 import { getMaxImpostors } from '@/game/types';
 
@@ -12,7 +12,6 @@ interface LobbyScreenProps {
 export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const { players, addPlayer, removePlayer, settings, updateSettings } = useGameStore();
 
   const handleAddPlayer = () => {
@@ -29,11 +28,10 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   };
 
   const canStart = players.length >= 3;
-  const maxImpostors = getMaxImpostors(players.length);
 
   return (
     <AppShell>
-      <div className="flex-1 screen-padding py-6 pb-32 animate-fade-in">
+      <div className="flex-1 screen-padding py-6 pb-32 animate-fade-in overflow-y-auto">
         {/* Back button */}
         {onBack && (
           <button 
@@ -46,43 +44,13 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         )}
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-h1 text-foreground leading-tight">
-              Impostor<br />Secret Word
-            </h1>
-            <p className="text-body text-muted-foreground mt-2">
-              Pass & Play • 3-10 Players
-            </p>
-          </div>
-          <IconButton
-            variant="ghost"
-            size="lg"
-            onClick={() => setShowSettings(true)}
-            className="bg-secondary"
-          >
-            <Settings className="w-5 h-5" />
-          </IconButton>
-        </div>
-
-        {/* Active Settings Preview */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <span className="px-3 py-1 rounded-full bg-destructive/10 text-destructive text-caption font-semibold">
-            {Math.min(settings.impostorCount, maxImpostors)} Impostor{settings.impostorCount > 1 ? 's' : ''}
-          </span>
-          {settings.showCategoryToImpostor && (
-            <span className="px-3 py-1 rounded-full bg-game-blue/10 text-game-blue text-caption font-semibold">
-              Category ON
-            </span>
-          )}
-          {settings.showHintToImpostor && (
-            <span className="px-3 py-1 rounded-full bg-game-orange/10 text-game-orange text-caption font-semibold">
-              Hint ON
-            </span>
-          )}
-          <span className="px-3 py-1 rounded-full bg-secondary text-muted-foreground text-caption font-semibold">
-            {settings.selectedCategories.length} categories
-          </span>
+        <div className="mb-6">
+          <h1 className="text-h1 text-foreground leading-tight">
+            Impostor<br />Secret Word
+          </h1>
+          <p className="text-body text-muted-foreground mt-2">
+            Pass & Play • 3-10 Players
+          </p>
         </div>
 
         {/* Add player input */}
@@ -109,7 +77,7 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         </GameCard>
 
         {/* Players list */}
-        <div className="mb-5">
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-h3 text-foreground flex items-center gap-2">
               <Users className="w-5 h-5" />
@@ -149,6 +117,16 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
           </div>
         </div>
 
+        {/* Game Settings - Inline */}
+        <div className="mb-6">
+          <h2 className="text-h3 text-foreground mb-3">Game Settings</h2>
+          <InlineGameSettings
+            settings={settings}
+            playerCount={players.length || 3}
+            onUpdateSettings={updateSettings}
+          />
+        </div>
+
         {/* Start button */}
         <div className="mt-8">
           <PillButton
@@ -177,15 +155,6 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         open={showHowToPlay} 
         onOpenChange={setShowHowToPlay}
         gameMode="secret-word"
-      />
-
-      {/* Settings Sheet */}
-      <GameSettingsSheet
-        open={showSettings}
-        onOpenChange={setShowSettings}
-        settings={settings}
-        playerCount={players.length || 3}
-        onUpdateSettings={updateSettings}
       />
     </AppShell>
   );

@@ -12,6 +12,8 @@ export { ListRowPill } from './ListRowPill';
 export { ProgressDots } from './ProgressDots';
 export { BottomNav } from './BottomNav';
 export { AnswerPill } from './AnswerPill';
+export { InlineGameSettings } from './InlineGameSettings';
+export { LearnRulesDialog } from './LearnRulesDialog';
 export { TimerChip } from './TimerChip';
 export { LanguageDialog } from './LanguageDialog';
 export { HowToPlayDialog } from './HowToPlayDialog';

@@ -92,17 +92,19 @@ export function HeroGameCard({
         {/* Spacer when background is used */}
         {hasBackground && <div className="flex-1" />}
         
-        {/* Play button */}
-        <div className="absolute bottom-5 left-5 right-5">
-          <PillButton
-            variant={buttonVariant}
-            fullWidth
-            icon={<Play className="w-5 h-5 fill-current" />}
-            onClick={onPlay}
-          >
-            Play Game
-          </PillButton>
-        </div>
+        {/* Play button - hide for coming soon */}
+        {!comingSoon && (
+          <div className="absolute bottom-5 left-5 right-5">
+            <PillButton
+              variant={buttonVariant}
+              fullWidth
+              icon={<Play className="w-5 h-5 fill-current" />}
+              onClick={onPlay}
+            >
+              Play Game
+            </PillButton>
+          </div>
+        )}
       </div>
     </GameCard>
   );
