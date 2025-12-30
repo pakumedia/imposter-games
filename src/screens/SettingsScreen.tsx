@@ -1,4 +1,4 @@
-import { ArrowLeft, Crown, Lock } from 'lucide-react';
+import { ArrowLeft, Lock } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -71,13 +71,13 @@ function SettingsRow({
   );
 }
 
-// Section Header Component
-function SectionHeader({ emoji, title, rightContent }: { emoji: string; title: string; rightContent?: ReactNode }) {
+// Card Header Component (inside card)
+function CardHeader({ emoji, title, rightContent, className }: { emoji: string; title: string; rightContent?: ReactNode; className?: string }) {
   return (
-    <div className="flex items-center justify-between mt-8 mb-3 px-1">
-      <div className="flex items-center gap-2">
+    <div className={cn("flex items-center justify-between py-3.5 px-4 border-b border-border", className)}>
+      <div className="flex items-center gap-2.5">
         <span className="text-lg">{emoji}</span>
-        <h2 className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="text-body font-bold text-foreground">
           {title}
         </h2>
       </div>
@@ -186,8 +186,8 @@ export function SettingsScreen({
         <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
 
         {/* Impostor Count Section */}
-        <SectionHeader emoji="🕵️" title="Impostors" />
-        <SettingsGroup>
+        <SettingsGroup className="mt-6">
+          <CardHeader emoji="🕵️" title="Impostors" />
           <SettingsRow isLast>
             <p className="text-caption text-muted-foreground mb-4">
               Max {maxImpostors} für {playerCount} Spieler
@@ -200,25 +200,20 @@ export function SettingsScreen({
           </SettingsRow>
         </SettingsGroup>
 
-        {/* Categories Section */}
-        <SectionHeader 
-          emoji="📂" 
-          title="Kategorien" 
-          rightContent={
-            <button 
-              onClick={handleSelectAllFree}
-              className="text-caption text-[#FF6D1F] font-semibold tap-scale"
-            >
-              Alle Free
-            </button>
-          }
-        />
-        
         {/* Free Categories */}
-        <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide">
-          Free
-        </p>
-        <SettingsGroup className="mb-4">
+        <SettingsGroup className="mt-6">
+          <CardHeader 
+            emoji="📂" 
+            title="Kategorien (Free)" 
+            rightContent={
+              <button 
+                onClick={handleSelectAllFree}
+                className="text-caption text-[#FF6D1F] font-semibold tap-scale"
+              >
+                Alle auswählen
+              </button>
+            }
+          />
           {FREE_CATEGORY_NAMES.map((category, index) => (
             <CategoryRow
               key={category}
@@ -231,11 +226,17 @@ export function SettingsScreen({
         </SettingsGroup>
 
         {/* PRO Categories */}
-        <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide flex items-center gap-1">
-          <Crown className="w-3 h-3 text-[#FF6D1F]" />
-          Pro
-        </p>
-        <SettingsGroup>
+        <SettingsGroup className="mt-6">
+          <CardHeader 
+            emoji="👑" 
+            title="Kategorien (Pro)" 
+            rightContent={
+              <span className="text-caption text-muted-foreground flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                Premium
+              </span>
+            }
+          />
           <CategoryRow
             name="Custom Category"
             isSelected={false}
@@ -255,13 +256,16 @@ export function SettingsScreen({
         </SettingsGroup>
 
         {/* Impostor Helpers Section */}
-        <SectionHeader emoji="💡" title="Impostor Hilfen" />
-        <SettingsGroup>
+        <SettingsGroup className="mt-6">
+          <CardHeader emoji="💡" title="Impostor Hilfen" />
           <SettingsRow>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xl">👁️</span>
-                <p className="font-medium text-body text-foreground">Kategorie zeigen</p>
+                <div>
+                  <p className="font-medium text-body text-foreground">Kategorie zeigen</p>
+                  <p className="text-caption text-muted-foreground">Impostor sieht die aktive Kategorie</p>
+                </div>
               </div>
               <Switch
                 checked={settings.showCategoryToImpostor}
@@ -275,7 +279,10 @@ export function SettingsScreen({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xl">💬</span>
-                <p className="font-medium text-body text-foreground">Hinweis zeigen</p>
+                <div>
+                  <p className="font-medium text-body text-foreground">Hinweis zeigen</p>
+                  <p className="text-caption text-muted-foreground">Impostor bekommt einen hilfreichen Tipp</p>
+                </div>
               </div>
               <Switch
                 checked={settings.showHintToImpostor}
@@ -288,12 +295,15 @@ export function SettingsScreen({
         </SettingsGroup>
 
         {/* Time Settings Section */}
-        <SectionHeader emoji="⏱️" title="Zeiten" />
-        <SettingsGroup>
+        <SettingsGroup className="mt-6">
+          <CardHeader emoji="⏱️" title="Zeiten" />
           <SettingsRow>
-            <p className="text-body text-muted-foreground mb-3 flex items-center gap-2">
-              <span>💬</span> Diskussion
-            </p>
+            <div className="mb-3">
+              <p className="font-medium text-body text-foreground flex items-center gap-2">
+                <span>💬</span> Diskussion
+              </p>
+              <p className="text-caption text-muted-foreground ml-7">Zeit zum Diskutieren</p>
+            </div>
             <div className="flex gap-2 flex-wrap">
               {DISCUSSION_TIMES.map((time) => (
                 <button
@@ -312,9 +322,12 @@ export function SettingsScreen({
             </div>
           </SettingsRow>
           <SettingsRow isLast>
-            <p className="text-body text-muted-foreground mb-3 flex items-center gap-2">
-              <span>🗳️</span> Abstimmung
-            </p>
+            <div className="mb-3">
+              <p className="font-medium text-body text-foreground flex items-center gap-2">
+                <span>🗳️</span> Abstimmung
+              </p>
+              <p className="text-caption text-muted-foreground ml-7">Zeit zum Abstimmen</p>
+            </div>
             <div className="flex gap-2 flex-wrap">
               {VOTING_TIMES.map((time) => (
                 <button
