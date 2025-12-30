@@ -8,8 +8,8 @@ interface DiscussionScreenProps {
 }
 
 export function DiscussionScreen({ onGoToVoting }: DiscussionScreenProps) {
-  const { players, discussionTimeSeconds, category } = useGameStore();
-  const [timeLeft, setTimeLeft] = useState(discussionTimeSeconds);
+  const { players, settings, category } = useGameStore();
+  const [timeLeft, setTimeLeft] = useState(settings.discussionTimeSeconds);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {

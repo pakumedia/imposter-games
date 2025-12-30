@@ -12,10 +12,10 @@ interface RevealScreenProps {
 export function RevealScreen({ onDone }: RevealScreenProps) {
   const [isRevealed, setIsRevealed] = useState(false);
   const [autoHideTimer, setAutoHideTimer] = useState<number | null>(null);
-  const { players, currentPlayerIndex, secretWord, category, impostorId } = useGameStore();
+  const { players, currentPlayerIndex, secretWord, secretHint, category, impostorIds, settings } = useGameStore();
   
   const currentPlayer = players[currentPlayerIndex];
-  const isImpostor = currentPlayer.id === impostorId;
+  const isImpostor = impostorIds.includes(currentPlayer.id);
 
   useEffect(() => {
     if (isRevealed) {
@@ -89,9 +89,35 @@ export function RevealScreen({ onDone }: RevealScreenProps) {
                     <h2 className="text-h1 text-destructive mb-2 animate-pulse-soft">
                       IMPOSTOR
                     </h2>
+                    
+                    {/* Show category to impostor if enabled */}
+                    {settings.showCategoryToImpostor && (
+                      <div className="bg-primary-foreground/10 rounded-card px-4 py-2 mb-3">
+                        <span className="text-caption text-primary-foreground/60 uppercase tracking-wide">
+                          Category
+                        </span>
+                        <p className="text-body font-bold text-primary-foreground">
+                          {category}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Show hint to impostor if enabled */}
+                    {settings.showHintToImpostor && secretHint && (
+                      <div className="bg-game-orange/20 rounded-card px-4 py-2 mb-3">
+                        <span className="text-caption text-primary-foreground/60 uppercase tracking-wide">
+                          Hint
+                        </span>
+                        <p className="text-body font-bold text-game-orange">
+                          {secretHint}
+                        </p>
+                      </div>
+                    )}
+                    
                     <p className="text-body text-primary-foreground/70">
-                      You don't know the word!<br />
-                      Blend in and don't get caught.
+                      {!settings.showCategoryToImpostor && !settings.showHintToImpostor 
+                        ? "You don't know the word!\nBlend in and don't get caught."
+                        : "Blend in and don't get caught!"}
                     </p>
                   </>
                 ) : (
