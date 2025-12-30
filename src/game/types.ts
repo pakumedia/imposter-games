@@ -392,7 +392,7 @@ export function getMaxImpostors(playerCount: number): number {
 // Default settings
 export function createDefaultSettings(): GameSettings {
   return {
-    gameMode: 'guided',
+    gameMode: 'simple',
     impostorCount: 1,
     showCategoryToImpostor: false,
     showHintToImpostor: false,
