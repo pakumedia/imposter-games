@@ -4,7 +4,6 @@ import {
   LobbyScreen, 
   PassScreen, 
   RevealScreen, 
-  LockScreen,
   DiscussionScreen,
   VotingScreen,
   ResultsScreen,
@@ -77,10 +76,6 @@ const Index = () => {
   };
 
   const handleImpostorRevealDone = () => {
-    setImpostorPhase('lockScreen');
-  };
-
-  const handleImpostorLockContinue = () => {
     nextImpostorPlayer();
   };
 
@@ -158,8 +153,6 @@ const Index = () => {
         return <PassScreen onConfirm={handleImpostorConfirmPlayer} />;
       case 'reveal':
         return <RevealScreen onDone={handleImpostorRevealDone} />;
-      case 'lockScreen':
-        return <LockScreen onContinue={handleImpostorLockContinue} />;
       case 'simpleRoundEnd':
         return (
           <SimpleRoundEndScreen 

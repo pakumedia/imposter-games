@@ -122,7 +122,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   markPlayerRevealed: () => {
-    set({ phase: 'lockScreen' });
+    // No longer used, kept for backwards compatibility
   },
 
   castVote: (voterId: string, votedForId: string) => {

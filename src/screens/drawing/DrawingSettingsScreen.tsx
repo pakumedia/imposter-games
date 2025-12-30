@@ -126,7 +126,7 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
   );
 }
 
-// Game Mode Selector Component for Drawing
+// Game Mode Selector Component for Drawing - Vertical layout
 function DrawingGameModeSelector({ 
   mode, 
   onChange 
@@ -135,57 +135,57 @@ function DrawingGameModeSelector({
   onChange: (mode: DrawingGameMode) => void;
 }) {
   return (
-    <div className="flex gap-3">
+    <div className="space-y-2">
       <button
         onClick={() => onChange('simple')}
         className={cn(
-          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          "w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all tap-scale",
           mode === 'simple'
             ? "border-[#0046FF] bg-[#0046FF]/10"
             : "border-border bg-card hover:border-muted-foreground/30"
         )}
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center",
-            mode === 'simple' ? "bg-[#0046FF]" : "bg-muted"
-          )}>
-            <Zap className={cn("w-5 h-5", mode === 'simple' ? "text-white" : "text-muted-foreground")} />
-          </div>
+        <div className={cn(
+          "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
+          mode === 'simple' ? "bg-[#0046FF]" : "bg-muted"
+        )}>
+          <Zap className={cn("w-4 h-4", mode === 'simple' ? "text-white" : "text-muted-foreground")} />
+        </div>
+        <div className="flex-1 text-left">
           <span className={cn(
-            "font-bold text-body",
+            "font-bold text-sm",
             mode === 'simple' ? "text-foreground" : "text-muted-foreground"
           )}>Einfach</span>
+          <p className="text-xs text-muted-foreground">
+            Spielt selbst ohne Timer
+          </p>
         </div>
-        <p className="text-caption text-muted-foreground text-left">
-          Spielt selbst ohne Timer
-        </p>
       </button>
       
       <button
         onClick={() => onChange('guided')}
         className={cn(
-          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          "w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all tap-scale",
           mode === 'guided'
             ? "border-[#0046FF] bg-[#0046FF]/10"
             : "border-border bg-card hover:border-muted-foreground/30"
         )}
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center",
-            mode === 'guided' ? "bg-[#0046FF]" : "bg-muted"
-          )}>
-            <Cog className={cn("w-5 h-5", mode === 'guided' ? "text-white" : "text-muted-foreground")} />
-          </div>
+        <div className={cn(
+          "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
+          mode === 'guided' ? "bg-[#0046FF]" : "bg-muted"
+        )}>
+          <Cog className={cn("w-4 h-4", mode === 'guided' ? "text-white" : "text-muted-foreground")} />
+        </div>
+        <div className="flex-1 text-left">
           <span className={cn(
-            "font-bold text-body",
+            "font-bold text-sm",
             mode === 'guided' ? "text-foreground" : "text-muted-foreground"
           )}>Erweitert</span>
+          <p className="text-xs text-muted-foreground">
+            Mit Timer und Voting
+          </p>
         </div>
-        <p className="text-caption text-muted-foreground text-left">
-          Mit Timer und Voting
-        </p>
       </button>
     </div>
   );
