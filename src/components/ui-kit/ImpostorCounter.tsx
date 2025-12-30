@@ -29,38 +29,37 @@ export function ImpostorCounter({
   };
 
   return (
-    <div className={cn("flex items-center gap-4", className)}>
+    <div className={cn("flex items-center justify-center gap-6", className)}>
       <button
         onClick={handleDecrement}
         disabled={value <= min}
         className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
+          "w-9 h-9 rounded-full flex items-center justify-center transition-all tap-scale",
+          "bg-muted/60 text-muted-foreground",
           value <= min 
-            ? "bg-muted text-muted-foreground cursor-not-allowed" 
-            : "bg-game-orange text-white hover:bg-game-orange/80"
+            ? "opacity-40 cursor-not-allowed" 
+            : "hover:bg-muted active:scale-95"
         )}
       >
-        <Minus className="w-5 h-5" />
+        <Minus className="w-4 h-4 stroke-[2.5]" />
       </button>
       
-      <div className="flex flex-col items-center min-w-[60px]">
-        <span className="text-h1 text-foreground font-bold">{value}</span>
-        <span className="text-caption text-muted-foreground">
-          of {max} max
-        </span>
+      <div className="flex flex-col items-center min-w-[40px]">
+        <span className="text-2xl font-semibold text-foreground">{value}</span>
       </div>
       
       <button
         onClick={handleIncrement}
         disabled={value >= max}
         className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
+          "w-9 h-9 rounded-full flex items-center justify-center transition-all tap-scale",
+          "bg-muted/60 text-muted-foreground",
           value >= max 
-            ? "bg-muted text-muted-foreground cursor-not-allowed" 
-            : "bg-game-teal text-white hover:bg-game-teal/80"
+            ? "opacity-40 cursor-not-allowed" 
+            : "hover:bg-muted active:scale-95"
         )}
       >
-        <Plus className="w-5 h-5" />
+        <Plus className="w-4 h-4 stroke-[2.5]" />
       </button>
     </div>
   );

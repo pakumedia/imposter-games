@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Check, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, Lock, Check, X, Sparkles, ChevronDown } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -8,12 +8,18 @@ import {
   PRO_CATEGORY_NAMES 
 } from '@/game/types';
 import { cn } from '@/lib/utils';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogOverlay,
 } from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 
 interface SettingsScreenProps {
   settings: GameSettings;
@@ -120,19 +126,17 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
   );
 }
 
-// Category Row Component (iOS-style full width row)
-function CategoryRow({ 
+// Category Card Component (Apple-style 2x3 grid cards)
+function CategoryCard({ 
   name, 
   isSelected, 
   isPro = false, 
   onToggle,
-  isLast = false,
 }: { 
   name: string; 
   isSelected: boolean; 
   isPro?: boolean;
   onToggle: () => void;
-  isLast?: boolean;
 }) {
   const isLocked = isPro;
   const emoji = CATEGORY_EMOJIS[name] || '📁';
@@ -141,36 +145,47 @@ function CategoryRow({
     <button
       onClick={onToggle}
       className={cn(
-        "flex items-center gap-3 py-3.5 px-5 w-full transition-all text-left tap-scale",
-        !isLast && "border-b border-border",
-        isPro && "bg-gradient-to-r from-amber-50/50 to-transparent",
-        isSelected && !isPro && "bg-[#FF6D1F]/10"
+        "relative flex items-center gap-3 p-3 rounded-xl transition-all tap-scale w-full",
+        "border",
+        isPro 
+          ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200/50"
+          : isSelected 
+            ? "bg-[#FF6D1F]/10 border-[#FF6D1F]/30" 
+            : "bg-muted/40 border-border hover:border-muted-foreground/30"
       )}
     >
+      {/* Emoji Box */}
       <div className={cn(
-        "w-9 h-9 rounded-xl flex items-center justify-center text-lg",
+        "w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0",
         isPro 
-          ? "bg-gradient-to-br from-amber-100 to-amber-200/50 border border-amber-300/30"
+          ? "bg-gradient-to-br from-amber-200/80 to-amber-300/50"
           : isSelected 
             ? "bg-[#FF6D1F]/20" 
-            : "bg-muted"
+            : "bg-background shadow-sm"
       )}>
         {emoji}
       </div>
-      <span className={cn(
-        "font-medium text-body flex-1",
-        isPro ? "text-amber-800/60" : "text-foreground"
-      )}>
-        {name}
-      </span>
-      {isLocked ? (
-        <Lock className="w-5 h-5 text-amber-600/50" />
-      ) : isSelected ? (
-        <div className="w-6 h-6 rounded-full bg-[#FF6D1F] flex items-center justify-center">
-          <Check className="w-4 h-4 text-white stroke-[3]" />
+      
+      {/* Text Content */}
+      <div className="flex flex-col items-start flex-1 min-w-0">
+        <span className={cn(
+          "font-semibold text-sm truncate w-full text-left",
+          isPro ? "text-amber-700/70" : "text-foreground"
+        )}>
+          {name}
+        </span>
+      </div>
+      
+      {/* Lock icon for Pro */}
+      {isLocked && (
+        <Lock className="w-4 h-4 text-amber-600/50 absolute top-2 right-2" />
+      )}
+      
+      {/* Selection indicator */}
+      {isSelected && !isPro && (
+        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center absolute top-2 right-2">
+          <Check className="w-3 h-3 text-white stroke-[3]" />
         </div>
-      ) : (
-        <div className="w-6 h-6 rounded-full border-2 border-muted-foreground/30" />
       )}
     </button>
   );
@@ -291,39 +306,121 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
   );
 }
 
-// Time Selector Component
-function TimeSelector({ 
-  times, 
-  selectedTime, 
-  onSelect, 
-  formatTime 
+// Time Picker Trigger Component
+function TimePickerTrigger({ 
+  label,
+  sublabel,
+  emoji,
+  value,
+  onClick 
 }: { 
-  times: number[]; 
-  selectedTime: number; 
-  onSelect: (time: number) => void;
-  formatTime: (time: number) => string;
+  label: string;
+  sublabel: string;
+  emoji: string;
+  value: string;
+  onClick: () => void;
 }) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-      {times.map((time) => {
-        const isSelected = selectedTime === time;
-        return (
-          <button
-            key={time}
-            onClick={() => onSelect(time)}
-            className={cn(
-              "relative px-5 py-3 rounded-2xl text-sm font-semibold transition-all tap-scale flex-shrink-0",
-              "border-2",
-              isSelected
-                ? "bg-gradient-to-br from-[#FF6D1F] to-[#FF8A47] text-white border-transparent shadow-lg shadow-[#FF6D1F]/25"
-                : "bg-card text-foreground border-border hover:border-[#FF6D1F]/30 hover:bg-[#FF6D1F]/5"
-            )}
+    <button
+      onClick={onClick}
+      className="flex items-center justify-between w-full py-1 tap-scale"
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-xl">{emoji}</span>
+        <div>
+          <p className="font-medium text-body text-foreground text-left">{label}</p>
+          <p className="text-caption text-muted-foreground">{sublabel}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-1 bg-muted/60 px-3 py-1.5 rounded-lg">
+        <span className="font-semibold text-foreground">{value}</span>
+        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+      </div>
+    </button>
+  );
+}
+
+// Time Picker Drawer Component  
+function TimePickerDrawer({
+  open,
+  onOpenChange,
+  title,
+  times,
+  selectedTime,
+  onSelect,
+  formatTime
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  times: number[];
+  selectedTime: number;
+  onSelect: (time: number) => void;
+  formatTime: (seconds: number) => string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="pb-safe">
+        <DrawerHeader className="pb-2">
+          <DrawerTitle className="text-center">{title}</DrawerTitle>
+        </DrawerHeader>
+        
+        {/* Wheel-style picker */}
+        <div className="relative h-[200px] overflow-hidden">
+          {/* Selection highlight */}
+          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 h-12 bg-muted/60 rounded-xl pointer-events-none z-0" />
+          
+          {/* Scrollable options */}
+          <div 
+            ref={containerRef}
+            className="h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide relative z-10"
+            style={{ scrollSnapType: 'y mandatory' }}
           >
-            {formatTime(time)}
+            {/* Top padding for centering */}
+            <div className="h-[76px]" />
+            
+            {times.map((time) => {
+              const isSelected = selectedTime === time;
+              return (
+                <button
+                  key={time}
+                  onClick={() => {
+                    onSelect(time);
+                    onOpenChange(false);
+                  }}
+                  className={cn(
+                    "w-full h-12 flex items-center justify-center snap-center transition-all",
+                    isSelected
+                      ? "text-foreground font-bold text-xl"
+                      : "text-muted-foreground text-lg"
+                  )}
+                >
+                  {formatTime(time)}
+                </button>
+              );
+            })}
+            
+            {/* Bottom padding for centering */}
+            <div className="h-[76px]" />
+          </div>
+          
+          {/* Fade gradients */}
+          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent pointer-events-none z-20" />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none z-20" />
+        </div>
+        
+        <div className="p-4">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="w-full py-3 rounded-xl bg-[#FF6D1F] text-white font-semibold tap-scale"
+          >
+            Fertig
           </button>
-        );
-      })}
-    </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
@@ -335,6 +432,8 @@ export function SettingsScreen({
 }: SettingsScreenProps) {
   const maxImpostors = getMaxImpostors(playerCount);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showDiscussionPicker, setShowDiscussionPicker] = useState(false);
+  const [showVotingPicker, setShowVotingPicker] = useState(false);
 
   const handleCategoryToggle = (category: string) => {
     const current = settings.selectedCategories;
@@ -410,36 +509,39 @@ export function SettingsScreen({
             }
           />
           
-          {/* Free Categories */}
-          {FREE_CATEGORY_NAMES.map((category) => (
-            <CategoryRow
-              key={category}
-              name={category}
-              isSelected={settings.selectedCategories.includes(category)}
-              onToggle={() => handleCategoryToggle(category)}
-            />
-          ))}
+          {/* Free Categories - 2x3 Grid */}
+          <div className="p-4 grid grid-cols-2 gap-3">
+            {FREE_CATEGORY_NAMES.map((category) => (
+              <CategoryCard
+                key={category}
+                name={category}
+                isSelected={settings.selectedCategories.includes(category)}
+                onToggle={() => handleCategoryToggle(category)}
+              />
+            ))}
+          </div>
           
           {/* Premium Divider */}
           <PremiumDivider />
           
-          {/* Pro Categories (locked) */}
-          <CategoryRow
-            name="Custom Category"
-            isSelected={false}
-            isPro={true}
-            onToggle={handleProCategoryClick}
-          />
-          {PRO_CATEGORY_NAMES.map((category, index) => (
-            <CategoryRow
-              key={category}
-              name={category}
+          {/* Pro Categories - 2x3 Grid */}
+          <div className="p-4 grid grid-cols-2 gap-3">
+            <CategoryCard
+              name="Custom Category"
               isSelected={false}
               isPro={true}
               onToggle={handleProCategoryClick}
-              isLast={index === PRO_CATEGORY_NAMES.length - 1}
             />
-          ))}
+            {PRO_CATEGORY_NAMES.map((category) => (
+              <CategoryCard
+                key={category}
+                name={category}
+                isSelected={false}
+                isPro={true}
+                onToggle={handleProCategoryClick}
+              />
+            ))}
+          </div>
         </SettingsGroup>
 
         {/* Impostor Helpers Section */}
@@ -485,31 +587,21 @@ export function SettingsScreen({
         <SettingsGroup className="mt-6">
           <CardHeader emoji="⏱️" title="Zeiten" />
           <SettingsRow>
-            <div className="mb-4">
-              <p className="font-medium text-body text-foreground flex items-center gap-2">
-                <span>💬</span> Diskussion
-              </p>
-              <p className="text-caption text-muted-foreground ml-7">Zeit zum Diskutieren</p>
-            </div>
-            <TimeSelector
-              times={DISCUSSION_TIMES}
-              selectedTime={settings.discussionTimeSeconds}
-              onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
-              formatTime={formatTime}
+            <TimePickerTrigger
+              label="Diskussion"
+              sublabel="Zeit zum Diskutieren"
+              emoji="💬"
+              value={formatTime(settings.discussionTimeSeconds)}
+              onClick={() => setShowDiscussionPicker(true)}
             />
           </SettingsRow>
           <SettingsRow isLast>
-            <div className="mb-4">
-              <p className="font-medium text-body text-foreground flex items-center gap-2">
-                <span>🗳️</span> Abstimmung
-              </p>
-              <p className="text-caption text-muted-foreground ml-7">Zeit zum Abstimmen</p>
-            </div>
-            <TimeSelector
-              times={VOTING_TIMES}
-              selectedTime={settings.votingTimeSeconds}
-              onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
-              formatTime={formatVotingTime}
+            <TimePickerTrigger
+              label="Abstimmung"
+              sublabel="Zeit zum Abstimmen"
+              emoji="🗳️"
+              value={formatVotingTime(settings.votingTimeSeconds)}
+              onClick={() => setShowVotingPicker(true)}
             />
           </SettingsRow>
         </SettingsGroup>
@@ -517,6 +609,26 @@ export function SettingsScreen({
 
       {/* Paywall Dialog */}
       <PaywallDialog open={showPaywall} onOpenChange={setShowPaywall} />
+      
+      {/* Time Picker Drawers */}
+      <TimePickerDrawer
+        open={showDiscussionPicker}
+        onOpenChange={setShowDiscussionPicker}
+        title="Diskussionszeit"
+        times={DISCUSSION_TIMES}
+        selectedTime={settings.discussionTimeSeconds}
+        onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
+        formatTime={formatTime}
+      />
+      <TimePickerDrawer
+        open={showVotingPicker}
+        onOpenChange={setShowVotingPicker}
+        title="Abstimmungszeit"
+        times={VOTING_TIMES}
+        selectedTime={settings.votingTimeSeconds}
+        onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
+        formatTime={formatVotingTime}
+      />
     </AppShell>
   );
 }
