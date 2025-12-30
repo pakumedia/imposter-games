@@ -1,4 +1,5 @@
-import { RotateCcw, Settings, Users } from 'lucide-react';
+import { useState } from 'react';
+import { RotateCcw, Settings, Users, Eye } from 'lucide-react';
 import { AppShell, GameCard, PillButton } from '@/components/ui-kit';
 import { useGameStore } from '@/game/store';
 
@@ -8,12 +9,47 @@ interface SimpleRoundEndScreenProps {
 }
 
 export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRoundEndScreenProps) {
-  const { players, impostorIds, secretWord, category, crewWins, impostorWins, roundNumber } = useGameStore();
+  const { players, impostorIds, secretWord, category, roundNumber } = useGameStore();
+  
+  const [wordRevealed, setWordRevealed] = useState(false);
+  const [impostorRevealed, setImpostorRevealed] = useState(false);
+  const [wordShaking, setWordShaking] = useState(false);
+  const [impostorShaking, setImpostorShaking] = useState(false);
   
   const impostorNames = players
     .filter(p => impostorIds.includes(p.id))
     .map(p => p.name)
     .join(', ');
+
+  const handleRevealWord = () => {
+    if (wordRevealed) return;
+    setWordShaking(true);
+    
+    // Trigger haptic feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+    
+    setTimeout(() => {
+      setWordShaking(false);
+      setWordRevealed(true);
+    }, 1000);
+  };
+
+  const handleRevealImpostor = () => {
+    if (impostorRevealed) return;
+    setImpostorShaking(true);
+    
+    // Trigger haptic feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+    
+    setTimeout(() => {
+      setImpostorShaking(false);
+      setImpostorRevealed(true);
+    }, 1000);
+  };
 
   return (
     <AppShell>
@@ -24,37 +60,49 @@ export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRou
           <p className="text-body text-muted-foreground">Diskutiert und stimmt selbst ab!</p>
         </div>
 
-        {/* Word Reveal Card */}
-        <GameCard color="orange" className="p-6 mb-5 text-center">
-          <p className="text-caption text-white/80 mb-1">Das geheime Wort war</p>
-          <h2 className="text-h1 text-white mb-2">{secretWord}</h2>
-          <p className="text-body text-white/70">Kategorie: {category}</p>
-        </GameCard>
-
-        {/* Impostor Reveal */}
-        <GameCard color="dark" className="p-5 mb-5">
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-2xl">🕵️</span>
-            <div>
-              <p className="text-caption text-white/60">
-                {impostorIds.length > 1 ? 'Die Impostors waren' : 'Der Impostor war'}
-              </p>
-              <p className="text-h3 text-white">{impostorNames}</p>
+        {/* Word Reveal Card - Tap to reveal */}
+        <GameCard 
+          color="orange" 
+          className={`p-6 mb-5 text-center cursor-pointer transition-all ${wordShaking ? 'animate-shake' : ''}`}
+          onClick={handleRevealWord}
+        >
+          {wordRevealed ? (
+            <>
+              <p className="text-caption text-white/80 mb-1">Das geheime Wort war</p>
+              <h2 className="text-h1 text-white mb-2">{secretWord}</h2>
+              <p className="text-body text-white/70">Kategorie: {category}</p>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2 py-4">
+              <Eye className="w-8 h-8 text-white/60" />
+              <p className="text-body text-white/80">Tippe um das Wort zu enthüllen</p>
             </div>
-          </div>
+          )}
         </GameCard>
 
-        {/* Score */}
-        <div className="flex gap-3 mb-6">
-          <GameCard color="subtle" className="flex-1 p-4 text-center">
-            <p className="text-caption text-muted-foreground mb-1">Crew</p>
-            <p className="text-h2 text-foreground">{crewWins}</p>
-          </GameCard>
-          <GameCard color="subtle" className="flex-1 p-4 text-center">
-            <p className="text-caption text-muted-foreground mb-1">Impostor</p>
-            <p className="text-h2 text-foreground">{impostorWins}</p>
-          </GameCard>
-        </div>
+        {/* Impostor Reveal - Tap to reveal */}
+        <GameCard 
+          color="dark" 
+          className={`p-5 mb-5 cursor-pointer transition-all ${impostorShaking ? 'animate-shake' : ''}`}
+          onClick={handleRevealImpostor}
+        >
+          {impostorRevealed ? (
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-2xl">🕵️</span>
+              <div>
+                <p className="text-caption text-white/60">
+                  {impostorIds.length > 1 ? 'Die Impostors waren' : 'Der Impostor war'}
+                </p>
+                <p className="text-h3 text-white">{impostorNames}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 py-2">
+              <Eye className="w-6 h-6 text-white/60" />
+              <p className="text-body text-white/80">Tippe um den Impostor zu enthüllen</p>
+            </div>
+          )}
+        </GameCard>
 
         {/* Players count */}
         <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
