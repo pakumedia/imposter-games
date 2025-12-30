@@ -88,7 +88,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       label: t('language'), 
       rightElement: (
         <div className="flex items-center gap-2">
-          <span className="text-xl">{languageFlag}</span>
+          <FlagIcon country={language === 'de' ? 'de' : 'gb'} className="w-6 h-4" />
           <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
         </div>
       ),

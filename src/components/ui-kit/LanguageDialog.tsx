@@ -7,15 +7,16 @@ import {
 } from '@/components/ui/dialog';
 import { useLanguageStore, Language } from '@/i18n';
 import { cn } from '@/lib/utils';
+import { FlagIcon } from './FlagIcon';
 
 interface LanguageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const LANGUAGES: { id: Language; label: string; flag: string }[] = [
-  { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { id: 'en', label: 'English', flag: '🇬🇧' },
+const LANGUAGES: { id: Language; label: string; flagCode: 'de' | 'gb' }[] = [
+  { id: 'de', label: 'Deutsch', flagCode: 'de' },
+  { id: 'en', label: 'English', flagCode: 'gb' },
 ];
 
 export function LanguageDialog({ open, onOpenChange }: LanguageDialogProps) {
@@ -28,7 +29,7 @@ export function LanguageDialog({ open, onOpenChange }: LanguageDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[340px] bg-card border-border/20">
+      <DialogContent className="sm:max-w-[340px] w-[calc(100%-24px)] bg-card border-border/20 rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-h3 text-foreground">
             {t('selectLanguage')}
@@ -46,7 +47,7 @@ export function LanguageDialog({ open, onOpenChange }: LanguageDialogProps) {
                   : 'bg-background/50 hover:bg-background/80 border-2 border-transparent'
               )}
             >
-              <span className="text-2xl">{lang.flag}</span>
+              <FlagIcon country={lang.flagCode} className="w-7 h-5" />
               <span className="flex-1 text-left text-body font-medium text-foreground">
                 {lang.label}
               </span>
