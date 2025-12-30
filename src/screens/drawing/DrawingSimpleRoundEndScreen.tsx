@@ -22,7 +22,7 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEn
 
   return (
     <AppShell>
-      <div className="flex-1 screen-padding py-6 pb-32 animate-fade-in overflow-y-auto flex flex-col">
+      <div className="flex-1 flex flex-col screen-padding py-6 animate-fade-in overflow-y-auto">
         {/* Header */}
         <div className="text-center mb-5">
           <h1 className="text-h1 text-foreground mb-2">Runde {roundNumber}</h1>
@@ -98,11 +98,11 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEn
           <span className="text-body">{players.length} Spieler</span>
         </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
+        {/* Spacer to push buttons to bottom */}
+        <div className="flex-1 min-h-8" />
 
-        {/* Actions */}
-        <div className="space-y-3">
+        {/* Actions - always at bottom */}
+        <div className="space-y-3 pb-8">
           <PillButton
             variant="skyblue"
             fullWidth
@@ -114,7 +114,7 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEn
           
           <button 
             onClick={onAdjustGame}
-            className="w-full flex items-center justify-center gap-2 py-4 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl transition-colors tap-scale"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-muted-foreground/20 hover:bg-muted-foreground/30 text-foreground rounded-2xl transition-colors tap-scale"
           >
             <Settings className="w-5 h-5" />
             <span className="font-bold">Spiel anpassen</span>
