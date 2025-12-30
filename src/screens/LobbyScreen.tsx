@@ -113,7 +113,6 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
                   key={player.id}
                   avatarColor={player.avatarColor}
                   name={player.name}
-                  subtitle={player.name}
                   rightContent={
                     <IconButton
                       variant="ghost"
