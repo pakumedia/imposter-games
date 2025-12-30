@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Check, X, Sparkles, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -49,7 +49,7 @@ const CATEGORY_EMOJIS: Record<string, string> = {
   'Games': '🎮',
   'Anime': '🎌',
   'Countries': '🌍',
-  'Custom Category': '✨',
+  'Custom': '✨',
 };
 
 // Pricing plans
@@ -108,16 +108,16 @@ function SettingsRow({
   );
 }
 
-// Card Header Component with accent highlight
+// Card Header Component with accent color
 function CardHeader({ emoji, title, rightContent, className }: { emoji: string; title: string; rightContent?: ReactNode; className?: string }) {
   return (
     <div className={cn(
-      "flex items-center justify-between py-4 px-5 bg-gradient-to-r from-[#FF6D1F]/10 to-[#FF6D1F]/5 border-b border-[#FF6D1F]/20",
+      "flex items-center justify-between py-4 px-5 bg-[#FF6D1F] rounded-t-2xl",
       className
     )}>
       <div className="flex items-center gap-3">
         <span className="text-2xl">{emoji}</span>
-        <h2 className="text-lg font-bold text-foreground">
+        <h2 className="text-lg font-bold text-white">
           {title}
         </h2>
       </div>
@@ -147,10 +147,10 @@ function CategoryCard({
       className={cn(
         "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full",
         isPro 
-          ? "bg-muted/30 border border-amber-200/50 opacity-60"
+          ? "bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/60"
           : isSelected 
-            ? "bg-muted/40 border-2 border-[#FF6D1F]" 
-            : "bg-muted/40 border border-border hover:border-muted-foreground/30"
+            ? "bg-card border-2 border-[#FF6D1F]" 
+            : "bg-card border border-border hover:border-muted-foreground/30"
       )}
     >
       {/* Emoji - no box */}
@@ -159,7 +159,7 @@ function CategoryCard({
       {/* Text Content */}
       <span className={cn(
         "font-semibold text-sm truncate text-left flex-1",
-        isPro ? "text-muted-foreground" : "text-foreground"
+        isPro ? "text-amber-700" : "text-foreground"
       )}>
         {name}
       </span>
@@ -288,25 +288,40 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
   );
 }
 
-// Time Picker Trigger Component
-function TimePickerTrigger({ 
+// Time Counter Component (like ImpostorCounter but for time)
+function TimeCounter({ 
   label,
   sublabel,
   emoji,
-  value,
-  onClick 
+  times,
+  selectedTime,
+  onSelect,
+  formatTime
 }: { 
   label: string;
   sublabel: string;
   emoji: string;
-  value: string;
-  onClick: () => void;
+  times: number[];
+  selectedTime: number;
+  onSelect: (time: number) => void;
+  formatTime: (seconds: number) => string;
 }) {
+  const currentIndex = times.indexOf(selectedTime);
+  
+  const handleDecrement = () => {
+    if (currentIndex > 0) {
+      onSelect(times[currentIndex - 1]);
+    }
+  };
+
+  const handleIncrement = () => {
+    if (currentIndex < times.length - 1) {
+      onSelect(times[currentIndex + 1]);
+    }
+  };
+
   return (
-    <button
-      onClick={onClick}
-      className="flex items-center justify-between w-full py-1 tap-scale"
-    >
+    <div className="flex items-center justify-between w-full">
       <div className="flex items-center gap-3">
         <span className="text-xl">{emoji}</span>
         <div>
@@ -314,11 +329,40 @@ function TimePickerTrigger({
           <p className="text-caption text-muted-foreground">{sublabel}</p>
         </div>
       </div>
-      <div className="flex items-center gap-1 bg-muted/60 px-3 py-1.5 rounded-lg">
-        <span className="font-semibold text-foreground">{value}</span>
-        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleDecrement}
+          disabled={currentIndex <= 0}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "bg-muted/60 text-muted-foreground",
+            currentIndex <= 0 
+              ? "opacity-40 cursor-not-allowed" 
+              : "hover:bg-muted active:scale-95"
+          )}
+        >
+          <Minus className="w-4 h-4 stroke-[2.5]" />
+        </button>
+        
+        <span className="font-semibold text-foreground min-w-[50px] text-center">
+          {formatTime(selectedTime)}
+        </span>
+        
+        <button
+          onClick={handleIncrement}
+          disabled={currentIndex >= times.length - 1}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "bg-muted/60 text-muted-foreground",
+            currentIndex >= times.length - 1 
+              ? "opacity-40 cursor-not-allowed" 
+              : "hover:bg-muted active:scale-95"
+          )}
+        >
+          <Plus className="w-4 h-4 stroke-[2.5]" />
+        </button>
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -461,7 +505,7 @@ export function SettingsScreen({
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
         <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
 
-        {/* Impostor Count Section */}
+        {/* 1. Impostor Count Section */}
         <SettingsGroup className="mt-6">
           <CardHeader emoji="🕵️" title="Impostors" />
           <SettingsRow isLast>
@@ -476,57 +520,7 @@ export function SettingsScreen({
           </SettingsRow>
         </SettingsGroup>
 
-        {/* All Categories (Free + Pro) in one card */}
-        <SettingsGroup className="mt-6">
-          <CardHeader 
-            emoji="📂" 
-            title="Kategorien" 
-            rightContent={
-              <button 
-                onClick={handleSelectAllFree}
-                className="text-caption text-[#FF6D1F] font-semibold tap-scale"
-              >
-                Alle auswählen
-              </button>
-            }
-          />
-          
-          {/* Free Categories - 2x3 Grid */}
-          <div className="p-4 grid grid-cols-2 gap-3">
-            {FREE_CATEGORY_NAMES.map((category) => (
-              <CategoryCard
-                key={category}
-                name={category}
-                isSelected={settings.selectedCategories.includes(category)}
-                onToggle={() => handleCategoryToggle(category)}
-              />
-            ))}
-          </div>
-          
-          {/* Premium Divider */}
-          <PremiumDivider onUnlock={handleProCategoryClick} />
-          
-          {/* Pro Categories - 2x3 Grid */}
-          <div className="p-4 grid grid-cols-2 gap-3">
-            <CategoryCard
-              name="Custom Category"
-              isSelected={false}
-              isPro={true}
-              onToggle={handleProCategoryClick}
-            />
-            {PRO_CATEGORY_NAMES.map((category) => (
-              <CategoryCard
-                key={category}
-                name={category}
-                isSelected={false}
-                isPro={true}
-                onToggle={handleProCategoryClick}
-              />
-            ))}
-          </div>
-        </SettingsGroup>
-
-        {/* Impostor Helpers Section */}
+        {/* 2. Impostor Helpers Section */}
         <SettingsGroup className="mt-6">
           <CardHeader emoji="💡" title="Impostor Hilfen" />
           <SettingsRow>
@@ -565,52 +559,86 @@ export function SettingsScreen({
           </SettingsRow>
         </SettingsGroup>
 
-        {/* Time Settings Section */}
+        {/* 3. Time Settings Section */}
         <SettingsGroup className="mt-6">
           <CardHeader emoji="⏱️" title="Zeiten" />
           <SettingsRow>
-            <TimePickerTrigger
+            <TimeCounter
               label="Diskussion"
               sublabel="Zeit zum Diskutieren"
               emoji="💬"
-              value={formatTime(settings.discussionTimeSeconds)}
-              onClick={() => setShowDiscussionPicker(true)}
+              times={DISCUSSION_TIMES}
+              selectedTime={settings.discussionTimeSeconds}
+              onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
+              formatTime={formatTime}
             />
           </SettingsRow>
           <SettingsRow isLast>
-            <TimePickerTrigger
+            <TimeCounter
               label="Abstimmung"
               sublabel="Zeit zum Abstimmen"
               emoji="🗳️"
-              value={formatVotingTime(settings.votingTimeSeconds)}
-              onClick={() => setShowVotingPicker(true)}
+              times={VOTING_TIMES}
+              selectedTime={settings.votingTimeSeconds}
+              onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
+              formatTime={formatVotingTime}
             />
           </SettingsRow>
+        </SettingsGroup>
+
+        {/* 4. All Categories (Free + Pro) in one card */}
+        <SettingsGroup className="mt-6">
+          <CardHeader 
+            emoji="📂" 
+            title="Kategorien" 
+            rightContent={
+              <button 
+                onClick={handleSelectAllFree}
+                className="text-caption text-white/80 font-semibold tap-scale"
+              >
+                Alle auswählen
+              </button>
+            }
+          />
+          
+          {/* Free Categories - 2x3 Grid */}
+          <div className="p-4 grid grid-cols-2 gap-3">
+            {FREE_CATEGORY_NAMES.map((category) => (
+              <CategoryCard
+                key={category}
+                name={category}
+                isSelected={settings.selectedCategories.includes(category)}
+                onToggle={() => handleCategoryToggle(category)}
+              />
+            ))}
+          </div>
+          
+          {/* Premium Divider */}
+          <PremiumDivider onUnlock={handleProCategoryClick} />
+          
+          {/* Pro Categories - 2x3 Grid */}
+          <div className="p-4 grid grid-cols-2 gap-3">
+            <CategoryCard
+              name="Custom"
+              isSelected={false}
+              isPro={true}
+              onToggle={handleProCategoryClick}
+            />
+            {PRO_CATEGORY_NAMES.map((category) => (
+              <CategoryCard
+                key={category}
+                name={category}
+                isSelected={false}
+                isPro={true}
+                onToggle={handleProCategoryClick}
+              />
+            ))}
+          </div>
         </SettingsGroup>
       </div>
 
       {/* Paywall Dialog */}
       <PaywallDialog open={showPaywall} onOpenChange={setShowPaywall} />
-      
-      {/* Time Picker Drawers */}
-      <TimePickerDrawer
-        open={showDiscussionPicker}
-        onOpenChange={setShowDiscussionPicker}
-        title="Diskussionszeit"
-        times={DISCUSSION_TIMES}
-        selectedTime={settings.discussionTimeSeconds}
-        onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
-        formatTime={formatTime}
-      />
-      <TimePickerDrawer
-        open={showVotingPicker}
-        onOpenChange={setShowVotingPicker}
-        title="Abstimmungszeit"
-        times={VOTING_TIMES}
-        selectedTime={settings.votingTimeSeconds}
-        onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
-        formatTime={formatVotingTime}
-      />
     </AppShell>
   );
 }
