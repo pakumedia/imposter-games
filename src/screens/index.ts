@@ -1,5 +1,6 @@
 export { HomeScreen } from './HomeScreen';
 export { LobbyScreen } from './LobbyScreen';
+export { SettingsScreen } from './SettingsScreen';
 export { PassScreen } from './PassScreen';
 export { RevealScreen } from './RevealScreen';
 export { LockScreen } from './LockScreen';
