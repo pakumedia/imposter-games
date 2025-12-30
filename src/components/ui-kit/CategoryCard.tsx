@@ -8,6 +8,7 @@ interface CategoryCardProps {
   isCustom?: boolean;
   onToggle: () => void;
   className?: string;
+  compact?: boolean;
 }
 
 export function CategoryCard({ 
@@ -16,7 +17,8 @@ export function CategoryCard({
   isPro = false,
   isCustom = false,
   onToggle,
-  className 
+  className,
+  compact = false,
 }: CategoryCardProps) {
   const isLocked = isPro;
 
@@ -25,7 +27,8 @@ export function CategoryCard({
       onClick={!isLocked ? onToggle : undefined}
       disabled={isLocked}
       className={cn(
-        "relative p-4 rounded-2xl border-2 transition-all text-left",
+        "relative rounded-2xl border-2 transition-all text-left",
+        compact ? "p-2.5" : "p-4",
         isLocked 
           ? "bg-muted/50 border-muted cursor-not-allowed opacity-60"
           : isSelected
@@ -35,7 +38,7 @@ export function CategoryCard({
       )}
     >
       {/* PRO Badge */}
-      {isPro && (
+      {isPro && !compact && (
         <div className="absolute -top-2 -right-2 bg-game-orange text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
           <Crown className="w-3 h-3" />
           PRO
@@ -43,30 +46,46 @@ export function CategoryCard({
       )}
       
       {/* Custom badge for Custom Category */}
-      {isCustom && (
+      {isCustom && !compact && (
         <div className="absolute -top-2 left-2 bg-game-purple text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
           PREMIUM
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className={cn(
+        "flex items-center",
+        compact ? "justify-center" : "justify-between"
+      )}>
         <span className={cn(
-          "font-semibold text-body",
+          "font-semibold",
+          compact ? "text-caption" : "text-body",
           isLocked ? "text-muted-foreground" : "text-foreground"
         )}>
           {name}
         </span>
         
-        {isLocked ? (
-          <Lock className="w-4 h-4 text-muted-foreground" />
-        ) : isSelected ? (
-          <div className="w-5 h-5 rounded-full bg-game-teal flex items-center justify-center">
-            <Check className="w-3 h-3 text-white" />
-          </div>
-        ) : (
-          <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
+        {!compact && (
+          isLocked ? (
+            <Lock className="w-4 h-4 text-muted-foreground" />
+          ) : isSelected ? (
+            <div className="w-5 h-5 rounded-full bg-game-teal flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" />
+            </div>
+          ) : (
+            <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
+          )
         )}
       </div>
+      
+      {compact && isSelected && (
+        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-game-teal flex items-center justify-center">
+          <Check className="w-2.5 h-2.5 text-white" />
+        </div>
+      )}
+      
+      {compact && isPro && (
+        <Lock className="absolute top-1 right-1 w-3 h-3 text-muted-foreground" />
+      )}
     </button>
   );
 }

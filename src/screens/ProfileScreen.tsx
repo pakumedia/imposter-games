@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ChevronRight, Globe, Bell, Volume2, Moon, Shield, HelpCircle, LogOut, User } from 'lucide-react';
-import { AppShell } from '@/components/ui-kit';
+import { ChevronRight, Globe, Star, MessageSquare, Smartphone, Info, Copy, Crown, BookOpen, Check, ExternalLink } from 'lucide-react';
+import { AppShell, LearnRulesDialog } from '@/components/ui-kit';
 import { LanguageDialog } from '@/components/ui-kit/LanguageDialog';
 import { useLanguageStore } from '@/i18n';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface ProfileScreenProps {
   onBack?: () => void;
@@ -15,6 +16,7 @@ interface SettingsItem {
   label: string;
   value?: string;
   onClick?: () => void;
+  rightElement?: React.ReactNode;
 }
 
 function SettingsRow({ item }: { item: SettingsItem }) {
@@ -37,7 +39,9 @@ function SettingsRow({ item }: { item: SettingsItem }) {
       {item.value && (
         <span className="text-caption text-muted-foreground">{item.value}</span>
       )}
-      <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+      {item.rightElement ? item.rightElement : (
+        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+      )}
     </button>
   );
 }
@@ -45,37 +49,52 @@ function SettingsRow({ item }: { item: SettingsItem }) {
 export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const { t, language } = useLanguageStore();
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
+  const [learnRulesOpen, setLearnRulesOpen] = useState(false);
+  const [copiedCustomerId, setCopiedCustomerId] = useState(false);
 
   const languageDisplay = language === 'de' ? 'Deutsch' : 'English';
+  const customerId = 'USR-2024-ABCD-1234';
 
-  const settingsSections = [
-    {
-      title: t('profile'),
-      items: [
-        { id: 'account', icon: <User className="w-5 h-5" />, label: t('account'), value: t('guest') },
-      ],
+  const handleCopyCustomerId = () => {
+    navigator.clipboard.writeText(customerId);
+    setCopiedCustomerId(true);
+    toast.success('Customer ID copied!');
+    setTimeout(() => setCopiedCustomerId(false), 2000);
+  };
+
+  const generalSection: SettingsItem[] = [
+    { 
+      id: 'rules', 
+      icon: <BookOpen className="w-5 h-5" />, 
+      label: 'Learn the Rules',
+      onClick: () => setLearnRulesOpen(true),
     },
-    {
-      title: t('settings'),
-      items: [
-        { 
-          id: 'language', 
-          icon: <Globe className="w-5 h-5" />, 
-          label: t('language'), 
-          value: languageDisplay,
-          onClick: () => setLanguageDialogOpen(true),
-        },
-        { id: 'notifications', icon: <Bell className="w-5 h-5" />, label: t('notifications') },
-        { id: 'sound', icon: <Volume2 className="w-5 h-5" />, label: t('soundVibration') },
-        { id: 'theme', icon: <Moon className="w-5 h-5" />, label: t('appearance'), value: t('system') },
-      ],
+    { 
+      id: 'language', 
+      icon: <Globe className="w-5 h-5" />, 
+      label: t('language'), 
+      value: languageDisplay,
+      onClick: () => setLanguageDialogOpen(true),
     },
-    {
-      title: t('more'),
-      items: [
-        { id: 'privacy', icon: <Shield className="w-5 h-5" />, label: t('privacy') },
-        { id: 'help', icon: <HelpCircle className="w-5 h-5" />, label: t('helpSupport') },
-      ],
+    { 
+      id: 'rate', 
+      icon: <Star className="w-5 h-5" />, 
+      label: 'Rate App',
+    },
+    { 
+      id: 'feedback', 
+      icon: <MessageSquare className="w-5 h-5" />, 
+      label: 'Send Feedback',
+    },
+  ];
+
+  const appInfoSection: SettingsItem[] = [
+    { 
+      id: 'version', 
+      icon: <Info className="w-5 h-5" />, 
+      label: 'App Version',
+      value: '1.0.1',
+      rightElement: <span className="text-caption text-muted-foreground">1.0.1</span>,
     },
   ];
 
@@ -88,46 +107,114 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         </div>
       </div>
 
-      {/* Profile Avatar Section */}
-      <div className="screen-padding mb-6">
-        <div className="flex items-center gap-4 p-4 bg-card/50 rounded-2xl">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-            <User className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-h3 text-foreground font-bold">{t('guest')}</h2>
-            <p className="text-caption text-muted-foreground">{t('tapToLogin')}</p>
-          </div>
-          <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
-        </div>
-      </div>
-
       {/* Settings Sections */}
       <div className="screen-padding space-y-6 pb-32">
-        {settingsSections.map((section) => (
-          <div key={section.title}>
-            <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
-              {section.title}
-            </h3>
-            <div className="rounded-2xl overflow-hidden">
-              {section.items.map((item) => (
-                <SettingsRow key={item.id} item={item} />
-              ))}
+        {/* Premium Upgrade Card */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-game-orange via-game-orange to-game-yellow p-5 shadow-lg">
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+          
+          <div className="relative flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Crown className="w-7 h-7 text-white" />
             </div>
+            <div className="flex-1">
+              <h2 className="text-h3 text-white font-bold">Upgrade to Premium</h2>
+              <p className="text-body-sm text-white/80">and unlock infinite fun</p>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/70" />
           </div>
-        ))}
+        </div>
 
-        {/* Logout Button */}
-        <button className="w-full flex items-center justify-center gap-2 py-3.5 text-destructive hover:bg-destructive/10 rounded-2xl transition-colors tap-scale">
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">{t('logout')}</span>
-        </button>
+        {/* General Section */}
+        <div>
+          <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
+            General
+          </h3>
+          <div className="rounded-2xl overflow-hidden">
+            {generalSection.map((item) => (
+              <SettingsRow key={item.id} item={item} />
+            ))}
+          </div>
+        </div>
+
+        {/* Other Apps Section */}
+        <div>
+          <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
+            Other Apps
+          </h3>
+          <div className="rounded-2xl overflow-hidden">
+            <button className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl">
+              {/* App Icon */}
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-game-blue to-game-purple flex items-center justify-center shadow-md">
+                <span className="text-2xl">🔤</span>
+              </div>
+              
+              <div className="flex-1 text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-body text-foreground">Tap Words Game</span>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-game-yellow fill-game-yellow" />
+                    <span className="text-caption font-semibold text-foreground">4.8</span>
+                  </div>
+                  <span className="text-caption text-muted-foreground">•</span>
+                  <span className="text-caption text-game-teal font-medium">Recently Updated</span>
+                </div>
+              </div>
+              
+              <ExternalLink className="w-5 h-5 text-muted-foreground/50" />
+            </button>
+          </div>
+        </div>
+
+        {/* App Information Section */}
+        <div>
+          <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
+            App Information
+          </h3>
+          <div className="rounded-2xl overflow-hidden">
+            {appInfoSection.map((item) => (
+              <SettingsRow key={item.id} item={item} />
+            ))}
+          </div>
+        </div>
+
+        {/* Customer ID */}
+        <div className="bg-card/30 rounded-2xl p-4">
+          <p className="text-caption text-muted-foreground mb-2">Customer ID</p>
+          <div className="flex items-center justify-between">
+            <code className="text-body-sm text-foreground font-mono">{customerId}</code>
+            <button
+              onClick={handleCopyCustomerId}
+              className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all tap-scale",
+                copiedCustomerId 
+                  ? "bg-game-green text-white" 
+                  : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+              )}
+            >
+              {copiedCustomerId ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Language Dialog */}
       <LanguageDialog 
         open={languageDialogOpen} 
         onOpenChange={setLanguageDialogOpen} 
+      />
+
+      {/* Learn Rules Dialog */}
+      <LearnRulesDialog
+        open={learnRulesOpen}
+        onOpenChange={setLearnRulesOpen}
       />
     </AppShell>
   );
