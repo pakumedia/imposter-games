@@ -11,10 +11,10 @@ interface ResultsScreenProps {
 }
 
 export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps) {
-  const { players, impostorId, secretWord, category, crewWins, impostorWins, votes } = useGameStore();
+  const { players, impostorIds, secretWord, category, crewWins, impostorWins, votes } = useGameStore();
   const [showResult, setShowResult] = useState(false);
 
-  const impostor = players.find(p => p.id === impostorId)!;
+  const impostors = players.filter(p => impostorIds.includes(p.id));
   
   // Calculate who got most votes
   const voteCounts = players.map(p => ({
@@ -23,7 +23,7 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
   }));
   const sortedByVotes = [...voteCounts].sort((a, b) => b.voteCount - a.voteCount);
   const mostVoted = sortedByVotes[0];
-  const impostorCaught = mostVoted.id === impostorId;
+  const impostorCaught = impostorIds.includes(mostVoted.id);
 
   useEffect(() => {
     // Dramatic reveal delay
@@ -79,13 +79,17 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
               </div>
             </GameCard>
 
-            {/* The Impostor reveal */}
+            {/* The Impostor(s) reveal */}
             <GameCard color="dark" className="p-6 mb-6">
               <div className="flex items-center gap-4">
                 <ImpostorMascot size="sm" />
                 <div>
-                  <p className="text-caption text-primary-foreground/60">The Impostor was</p>
-                  <h2 className="text-h2 text-primary-foreground">{impostor.name}</h2>
+                  <p className="text-caption text-primary-foreground/60">
+                    {impostors.length > 1 ? 'The Impostors were' : 'The Impostor was'}
+                  </p>
+                  <h2 className="text-h2 text-primary-foreground">
+                    {impostors.map(p => p.name).join(' & ')}
+                  </h2>
                 </div>
               </div>
             </GameCard>
@@ -117,9 +121,9 @@ export function ResultsScreen({ onPlayAgain, onBackToLobby }: ResultsScreenProps
                           "font-bold",
                           player.id === mostVoted.id ? "text-primary-foreground" : "text-foreground"
                         )}>
-                          {player.voteCount} votes
+                        {player.voteCount} votes
                         </span>
-                        {player.id === impostorId && (
+                        {impostorIds.includes(player.id) && (
                           <span className="text-caption">🎭</span>
                         )}
                       </div>

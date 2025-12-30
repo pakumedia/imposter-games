@@ -16,3 +16,6 @@ export { TimerChip } from './TimerChip';
 export { LanguageDialog } from './LanguageDialog';
 export { HowToPlayDialog } from './HowToPlayDialog';
 export { CurvedCarousel } from './CurvedCarousel';
+export { ImpostorCounter } from './ImpostorCounter';
+export { CategoryCard } from './CategoryCard';
+export { GameSettingsSheet } from './GameSettingsSheet';
