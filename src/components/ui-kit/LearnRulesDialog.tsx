@@ -53,7 +53,7 @@ export function LearnRulesDialog({ open, onOpenChange }: LearnRulesDialogProps) 
   return (
     <>
       <Dialog open={open && !selectedMode} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[340px] bg-card border-border/20 p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[340px] w-[calc(100%-24px)] bg-card border-border/20 p-0 overflow-hidden rounded-3xl">
           <div className="p-5">
             <DialogHeader>
               <div className="flex items-center justify-between mb-4">

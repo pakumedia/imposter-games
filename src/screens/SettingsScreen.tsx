@@ -142,10 +142,10 @@ function CategoryCard({
     <button
       onClick={onToggle}
       className={cn(
-        "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full overflow-hidden",
+        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden",
         isSelected 
-          ? "bg-card border-2 border-[#FF6D1F] shadow-md" 
-          : "bg-card border-2 border-border hover:border-muted-foreground/30"
+          ? "bg-card border border-[#FF6D1F] shadow-md" 
+          : "bg-card border border-border hover:border-muted-foreground/30"
       )}
     >
       <span className="text-lg flex-shrink-0">{emoji}</span>
@@ -166,7 +166,7 @@ function ProCategoryCard({
   
   return (
     <div
-      className="relative flex items-center gap-2.5 p-3 rounded-xl w-full overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60"
+      className="relative flex items-center gap-2.5 p-3 rounded-2xl w-full overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border border-amber-300/60"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
       <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
@@ -204,7 +204,7 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
-      <DialogContent className="sm:max-w-md p-0 gap-0 bg-gradient-to-b from-white to-amber-50/30 border-0 rounded-3xl overflow-hidden">
+      <DialogContent className="sm:max-w-md w-[calc(100%-24px)] p-0 gap-0 bg-gradient-to-b from-white to-amber-50/30 border-0 rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="relative pt-8 pb-6 px-6 text-center bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500">
           <button 

@@ -140,10 +140,10 @@ function CategoryCard({
     <button
       onClick={onToggle}
       className={cn(
-        "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full overflow-hidden",
+        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden",
         isSelected 
-          ? "bg-card border-2 border-[#0046FF] shadow-md" 
-          : "bg-card border-2 border-border hover:border-muted-foreground/30"
+          ? "bg-card border border-[#0046FF] shadow-md" 
+          : "bg-card border border-border hover:border-muted-foreground/30"
       )}
     >
       <span className="text-lg flex-shrink-0">{emoji}</span>
@@ -164,11 +164,11 @@ function ProCategoryCard({
   
   return (
     <div
-      className="relative flex items-center gap-2.5 p-3 rounded-xl w-full overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60"
+      className="relative flex items-center gap-2.5 p-3 rounded-2xl w-full overflow-hidden bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-50 border border-[#0046FF]/40"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
       <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
-      <span className="font-semibold text-sm truncate text-left flex-1 relative z-10 text-amber-700">
+      <span className="font-semibold text-sm truncate text-left flex-1 relative z-10 text-[#0046FF]">
         {name}
       </span>
     </div>
@@ -181,13 +181,13 @@ function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
     <div className="px-4 pt-4 pb-2">
       <button 
         onClick={onUnlock}
-        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-100/80 to-amber-50/60 border border-amber-300/50 tap-scale group"
+        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-100/80 to-blue-50/60 border border-[#0046FF]/30 tap-scale group"
       >
         <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-amber-600" />
-          <span className="font-semibold text-sm text-amber-700">PRO Kategorien</span>
+          <Lock className="w-4 h-4 text-[#0046FF]" />
+          <span className="font-semibold text-sm text-[#0046FF]">PRO Kategorien</span>
         </div>
-        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white text-xs font-bold shadow-lg group-hover:shadow-amber-300/50 transition-all">
+        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#0046FF] via-[#0055FF] to-[#0046FF] text-white text-xs font-bold shadow-lg group-hover:shadow-blue-300/50 transition-all">
           Freischalten
         </span>
       </button>
@@ -202,8 +202,8 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
-      <DialogContent className="sm:max-w-md p-0 gap-0 bg-gradient-to-b from-white to-amber-50/30 border-0 rounded-3xl overflow-hidden">
-        <div className="relative pt-8 pb-6 px-6 text-center bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500">
+      <DialogContent className="sm:max-w-md w-[calc(100%-24px)] p-0 gap-0 bg-gradient-to-b from-white to-blue-50/30 border-0 rounded-3xl overflow-hidden">
+        <div className="relative pt-8 pb-6 px-6 text-center bg-gradient-to-br from-[#0046FF] via-[#0055FF] to-[#0046FF]">
           <button 
             onClick={() => onOpenChange(false)}
             className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center tap-scale"
@@ -227,7 +227,7 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
               'Früher Zugang zu neuen Features',
             ].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#0046FF] to-[#0055FF] flex items-center justify-center flex-shrink-0">
                   <Check className="w-3 h-3 text-white stroke-[3]" />
                 </div>
                 <span className="text-sm text-foreground">{feature}</span>
@@ -244,12 +244,12 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
               className={cn(
                 "w-full p-4 rounded-2xl border-2 transition-all relative tap-scale",
                 selectedPlan === plan.id
-                  ? "border-amber-500 bg-amber-50/50"
-                  : "border-border bg-card hover:border-amber-300"
+                  ? "border-[#0046FF] bg-blue-50/50"
+                  : "border-border bg-card hover:border-[#0046FF]/50"
               )}
             >
               {plan.popular && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold rounded-full">
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-[#0046FF] to-[#0055FF] text-white text-xs font-semibold rounded-full">
                   Beliebt
                 </span>
               )}
@@ -257,7 +257,7 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 <div className="text-left">
                   <p className="font-semibold text-foreground">{plan.name}</p>
                   {plan.savings && (
-                    <p className="text-xs text-amber-600 font-medium">{plan.savings}</p>
+                    <p className="text-xs text-[#0046FF] font-medium">{plan.savings}</p>
                   )}
                 </div>
                 <div className="text-right">
@@ -269,7 +269,7 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
               <div className={cn(
                 "absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
                 selectedPlan === plan.id
-                  ? "border-amber-500 bg-amber-500"
+                  ? "border-[#0046FF] bg-[#0046FF]"
                   : "border-muted-foreground/30"
               )}>
                 {selectedPlan === plan.id && (
@@ -281,7 +281,7 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
         </div>
 
         <div className="px-6 pb-6">
-          <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all tap-scale">
+          <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#0046FF] to-[#0055FF] text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all tap-scale">
             Jetzt freischalten
           </button>
           <p className="text-center text-xs text-muted-foreground mt-3">
@@ -606,7 +606,7 @@ export function DrawingSettingsScreen({
               onClick={handleProCategoryClick}
               className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-black/5 to-black/20 rounded-b-2xl tap-scale"
             >
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0046FF] to-[#0055FF] flex items-center justify-center shadow-xl">
                 <Lock className="w-8 h-8 text-white" />
               </div>
             </button>

@@ -232,7 +232,7 @@ export function HowToPlayDialog({ open, onOpenChange, gameMode }: HowToPlayDialo
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[380px] bg-card border-border/20 p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[380px] w-[calc(100%-24px)] bg-card border-border/20 p-0 overflow-hidden rounded-3xl">
         {/* Header */}
         <div className={cn(
           'p-4 pb-3',
