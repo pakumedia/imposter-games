@@ -48,7 +48,7 @@ export function CategoryCard({
       {/* Custom badge for Custom Category */}
       {isCustom && !compact && (
         <div className="absolute -top-2 left-2 bg-game-purple text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-          PREMIUM
+          ✨ Custom
         </div>
       )}
 

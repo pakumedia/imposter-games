@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users, ArrowLeft, HelpCircle } from 'lucide-react';
-import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog, InlineGameSettings } from '@/components/ui-kit';
+import { Plus, X, Play, Users, ArrowLeft, HelpCircle, Settings } from 'lucide-react';
+import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog } from '@/components/ui-kit';
 import { useGameStore } from '@/game/store';
-import { getMaxImpostors } from '@/game/types';
+import { SettingsScreen } from './SettingsScreen';
 
 interface LobbyScreenProps {
   onStart: () => void;
@@ -12,6 +12,7 @@ interface LobbyScreenProps {
 export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const { players, addPlayer, removePlayer, settings, updateSettings } = useGameStore();
 
   const handleAddPlayer = () => {
@@ -28,6 +29,18 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
   };
 
   const canStart = players.length >= 3;
+
+  // Show Settings Screen
+  if (showSettings) {
+    return (
+      <SettingsScreen
+        settings={settings}
+        playerCount={players.length || 3}
+        onUpdateSettings={updateSettings}
+        onBack={() => setShowSettings(false)}
+      />
+    );
+  }
 
   return (
     <AppShell>
@@ -54,7 +67,7 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         </div>
 
         {/* Add player input */}
-        <GameCard color="subtle" className="p-5 mb-5 bg-game-teal/5">
+        <GameCard color="subtle" className="p-5 mb-5 bg-game-orange/10">
           <div className="flex gap-3">
             <input
               type="text"
@@ -117,18 +130,17 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
           </div>
         </div>
 
-        {/* Game Settings - Inline */}
-        <div className="mb-6">
-          <h2 className="text-h3 text-foreground mb-3">Game Settings</h2>
-          <InlineGameSettings
-            settings={settings}
-            playerCount={players.length || 3}
-            onUpdateSettings={updateSettings}
-          />
-        </div>
+        {/* Settings Button */}
+        <button 
+          onClick={() => setShowSettings(true)}
+          className="w-full mb-6 flex items-center justify-center gap-2 py-4 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl transition-colors tap-scale"
+        >
+          <Settings className="w-5 h-5" />
+          <span className="font-bold">Einstellungen</span>
+        </button>
 
         {/* Start button */}
-        <div className="mt-8">
+        <div className="mt-4">
           <PillButton
             variant="primary"
             fullWidth
