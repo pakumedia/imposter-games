@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
@@ -13,12 +13,15 @@ interface BottomNavProps {
   className?: string;
 }
 
-export function BottomNav({ items, activeId, onSelect, className = '' }: BottomNavProps) {
+export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(({ items, activeId, onSelect, className = '' }, ref) => {
   return (
-    <nav className={cn(
-      'fixed bottom-6 left-1/2 -translate-x-1/2 z-50',
-      className
-    )}>
+    <nav 
+      ref={ref}
+      className={cn(
+        'fixed bottom-6 left-1/2 -translate-x-1/2 z-50',
+        className
+      )}
+    >
       <div className="bg-game-dark rounded-pill h-14 flex items-center px-2 shadow-card gap-1">
         {items.map((item) => {
           const isActive = item.id === activeId;
@@ -40,4 +43,6 @@ export function BottomNav({ items, activeId, onSelect, className = '' }: BottomN
       </div>
     </nav>
   );
-}
+});
+
+BottomNav.displayName = 'BottomNav';
