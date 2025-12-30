@@ -66,15 +66,17 @@ export function HeroGameCard({
       
       {/* Content overlay */}
       <div className="relative z-10 flex flex-col h-full">
-        {/* Title bubble */}
-        <div className="p-5">
-          <div className="inline-block bg-card/95 backdrop-blur-sm rounded-card px-5 py-3 shadow-soft">
-            <h2 className="text-h2 text-foreground leading-tight">{title}</h2>
-            {subtitle && (
-              <p className="text-caption text-muted-foreground mt-1">{subtitle}</p>
-            )}
+        {/* Title bubble - hide for coming soon */}
+        {!comingSoon && (
+          <div className="p-5">
+            <div className="inline-block bg-card/95 backdrop-blur-sm rounded-card px-5 py-3 shadow-soft">
+              <h2 className="text-h2 text-foreground leading-tight">{title}</h2>
+              {subtitle && (
+                <p className="text-caption text-muted-foreground mt-1">{subtitle}</p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         
         
         {/* Mascot area - only show if no background */}

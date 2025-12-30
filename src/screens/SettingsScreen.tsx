@@ -145,47 +145,28 @@ function CategoryCard({
     <button
       onClick={onToggle}
       className={cn(
-        "relative flex items-center gap-3 p-3 rounded-xl transition-all tap-scale w-full",
-        "border",
+        "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full",
         isPro 
-          ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200/50"
+          ? "bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/50"
           : isSelected 
-            ? "bg-[#FF6D1F]/10 border-[#FF6D1F]/30" 
-            : "bg-muted/40 border-border hover:border-muted-foreground/30"
+            ? "bg-[#FF6D1F]/10 border-2 border-[#FF6D1F]" 
+            : "bg-muted/40 border border-border hover:border-muted-foreground/30"
       )}
     >
-      {/* Emoji Box */}
-      <div className={cn(
-        "w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0",
-        isPro 
-          ? "bg-gradient-to-br from-amber-200/80 to-amber-300/50"
-          : isSelected 
-            ? "bg-[#FF6D1F]/20" 
-            : "bg-background shadow-sm"
-      )}>
-        {emoji}
-      </div>
+      {/* Emoji - no box */}
+      <span className="text-lg flex-shrink-0">{emoji}</span>
       
       {/* Text Content */}
-      <div className="flex flex-col items-start flex-1 min-w-0">
-        <span className={cn(
-          "font-semibold text-sm truncate w-full text-left",
-          isPro ? "text-amber-700/70" : "text-foreground"
-        )}>
-          {name}
-        </span>
-      </div>
+      <span className={cn(
+        "font-semibold text-sm truncate text-left flex-1",
+        isPro ? "text-amber-700/70" : "text-foreground"
+      )}>
+        {name}
+      </span>
       
       {/* Lock icon for Pro */}
       {isLocked && (
-        <Lock className="w-4 h-4 text-amber-600/50 absolute top-2 right-2" />
-      )}
-      
-      {/* Selection indicator */}
-      {isSelected && !isPro && (
-        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center absolute top-2 right-2">
-          <Check className="w-3 h-3 text-white stroke-[3]" />
-        </div>
+        <Lock className="w-4 h-4 text-amber-600/50" />
       )}
     </button>
   );
