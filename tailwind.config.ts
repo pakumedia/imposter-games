@@ -59,6 +59,7 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          subtle: "hsl(var(--card-subtle))",
         },
         game: {
           yellow: "hsl(var(--game-yellow))",
@@ -108,6 +109,7 @@ export default {
         'card': 'var(--shadow-card)',
         'button': 'var(--shadow-button)',
         'soft': 'var(--shadow-soft)',
+        'embedded': 'var(--shadow-embedded)',
       },
       keyframes: {
         "accordion-down": {
