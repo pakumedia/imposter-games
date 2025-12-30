@@ -7,3 +7,4 @@ export { DrawingGalleryScreen } from './DrawingGalleryScreen';
 export { DrawingDiscussionScreen } from './DrawingDiscussionScreen';
 export { DrawingVotingScreen } from './DrawingVotingScreen';
 export { DrawingResultsScreen } from './DrawingResultsScreen';
+export { DrawingSimpleRoundEndScreen } from './DrawingSimpleRoundEndScreen';

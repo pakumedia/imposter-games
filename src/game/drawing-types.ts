@@ -19,7 +19,10 @@ export type DrawingGamePhase =
   | 'gallery'
   | 'discussion'
   | 'voting'
-  | 'results';
+  | 'results'
+  | 'simpleRoundEnd';
+
+export type DrawingGameMode = 'simple' | 'guided';
 
 // Standard drawing colors for the palette
 export const PALETTE_COLORS = [
@@ -48,6 +51,7 @@ export interface DrawingPlayer {
 
 export interface DrawingGameState {
   phase: DrawingGamePhase;
+  gameMode: DrawingGameMode;
   players: DrawingPlayer[];
   currentPlayerIndex: number;
   secretWord: string;
@@ -59,6 +63,7 @@ export interface DrawingGameState {
   drawingTimePerPlayer: number;
   discussionTimeSeconds: number;
   votingTimeSeconds: number;
+  showCategoryToImpostor: boolean;
   votes: Record<string, string>;
   roundNumber: number;
   crewWins: number;
@@ -89,6 +94,7 @@ export const DRAWING_WORD_CATEGORIES: Record<string, string[]> = {
 export function createDrawingInitialState(): DrawingGameState {
   return {
     phase: 'lobby',
+    gameMode: 'guided',
     players: [],
     currentPlayerIndex: 0,
     secretWord: '',
@@ -100,6 +106,7 @@ export function createDrawingInitialState(): DrawingGameState {
     drawingTimePerPlayer: 10,
     discussionTimeSeconds: 60,
     votingTimeSeconds: 45,
+    showCategoryToImpostor: false,
     votes: {},
     roundNumber: 0,
     crewWins: 0,

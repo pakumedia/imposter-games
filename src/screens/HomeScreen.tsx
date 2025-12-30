@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Gamepad2, User } from 'lucide-react';
+import { Gamepad2, Settings } from 'lucide-react';
 import { 
   AppShell, 
   TopBar, 
@@ -79,7 +79,7 @@ const GAMES: GameInfo[] = [
 
 const NAV_ITEMS = [
   { id: 'games', icon: <Gamepad2 className="w-5 h-5" /> },
-  { id: 'profile', icon: <User className="w-5 h-5" /> },
+  { id: 'profile', icon: <Settings className="w-5 h-5" /> },
 ];
 
 export function HomeScreen({ onSelectGame }: HomeScreenProps) {

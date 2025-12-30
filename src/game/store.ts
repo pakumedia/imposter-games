@@ -108,12 +108,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setPhase: (phase: GamePhase) => set({ phase }),
 
   nextPlayer: () => {
-    const { currentPlayerIndex, players } = get();
+    const { currentPlayerIndex, players, settings } = get();
     const nextIndex = currentPlayerIndex + 1;
     
     if (nextIndex >= players.length) {
       // All players have seen their cards
-      set({ phase: 'discussion', currentPlayerIndex: 0 });
+      // Check game mode - simple goes to simpleRoundEnd, guided goes to discussion
+      const nextPhase = settings.gameMode === 'simple' ? 'simpleRoundEnd' : 'discussion';
+      set({ phase: nextPhase, currentPlayerIndex: 0 });
     } else {
       set({ phase: 'pass', currentPlayerIndex: nextIndex });
     }
