@@ -156,7 +156,7 @@ export function RevealScreen({ onDone }: RevealScreenProps) {
                 icon={<EyeOff className="w-5 h-5" />}
                 onClick={onDone}
               >
-                Got it! Pass the phone
+                Got it! Next player
               </PillButton>
             ) : (
               <p className="text-center text-caption text-muted-foreground">

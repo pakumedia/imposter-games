@@ -11,7 +11,6 @@ export type GamePhase =
   | 'lobby'
   | 'pass'
   | 'reveal'
-  | 'lockScreen'
   | 'discussion'
   | 'voting'
   | 'results'
