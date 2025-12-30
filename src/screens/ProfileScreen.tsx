@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronRight, Globe, Star, MessageSquare, Info, Copy, Crown, BookOpen, Check, ExternalLink } from 'lucide-react';
 import { AppShell, LearnRulesDialog } from '@/components/ui-kit';
 import { LanguageDialog } from '@/components/ui-kit/LanguageDialog';
+import { FlagIcon } from '@/components/ui-kit/FlagIcon';
 import { useLanguageStore } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -149,23 +150,22 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </div>
         </div>
 
-        {/* Other Apps Section */}
+        {/* Our Other Apps Section */}
         <div>
           <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
-            Other Apps
+            Our Other Apps
           </h3>
-          <div className="rounded-2xl overflow-hidden">
+          <div className="space-y-2">
+            {/* Tap Words Game */}
             <button 
               onClick={handleOpenAppStore}
               className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl"
             >
-              {/* App Icon */}
               <img 
                 src={tapWordsIcon} 
                 alt="Tap Words Game"
                 className="w-14 h-14 rounded-xl shadow-md"
               />
-              
               <div className="flex-1 text-left">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-body text-foreground">Tap Words Game</span>
@@ -179,7 +179,30 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
                   <span className="text-caption text-game-teal font-medium">Recently Updated</span>
                 </div>
               </div>
-              
+              <ExternalLink className="w-5 h-5 text-muted-foreground/50" />
+            </button>
+            
+            {/* Wavelength: Headsynch */}
+            <button 
+              onClick={() => window.open('https://apps.apple.com/de/app/perfect-match-headsynch/id6753659486', '_blank')}
+              className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl"
+            >
+              <div className="w-14 h-14 rounded-xl shadow-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <span className="text-2xl">🎧</span>
+              </div>
+              <div className="flex-1 text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-body text-foreground">Wavelength: Headsynch</span>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-game-yellow fill-game-yellow" />
+                    <span className="text-caption font-semibold text-foreground">4.7</span>
+                  </div>
+                  <span className="text-caption text-muted-foreground">•</span>
+                  <span className="text-caption text-game-teal font-medium">Recently Updated</span>
+                </div>
+              </div>
               <ExternalLink className="w-5 h-5 text-muted-foreground/50" />
             </button>
           </div>
