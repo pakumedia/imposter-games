@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 
 interface FlagIconProps {
-  country: 'de' | 'en' | 'gb';
+  country: 'de' | 'en' | 'gb' | 'fr' | 'it' | 'pt' | 'es';
   className?: string;
 }
 
@@ -32,6 +32,46 @@ export function FlagIcon({ country, className }: FlagIconProps) {
         <path d="M12,0 V24 M0,12 H24" stroke="#FFFFFF" strokeWidth="6" />
         {/* Red cross */}
         <path d="M12,0 V24 M0,12 H24" stroke="#C8102E" strokeWidth="4" />
+      </svg>
+    );
+  }
+
+  if (country === 'fr') {
+    return (
+      <svg viewBox="0 0 24 24" className={flagClass}>
+        <rect width="8" height="24" x="0" fill="#002395" />
+        <rect width="8" height="24" x="8" fill="#FFFFFF" />
+        <rect width="8" height="24" x="16" fill="#ED2939" />
+      </svg>
+    );
+  }
+
+  if (country === 'it') {
+    return (
+      <svg viewBox="0 0 24 24" className={flagClass}>
+        <rect width="8" height="24" x="0" fill="#009246" />
+        <rect width="8" height="24" x="8" fill="#FFFFFF" />
+        <rect width="8" height="24" x="16" fill="#CE2B37" />
+      </svg>
+    );
+  }
+
+  if (country === 'pt') {
+    return (
+      <svg viewBox="0 0 24 24" className={flagClass}>
+        <rect width="24" height="24" fill="#FF0000" />
+        <rect width="9" height="24" fill="#006600" />
+        <circle cx="9" cy="12" r="4" fill="#FFCC00" />
+      </svg>
+    );
+  }
+
+  if (country === 'es') {
+    return (
+      <svg viewBox="0 0 24 24" className={flagClass}>
+        <rect width="24" height="6" y="0" fill="#AA151B" />
+        <rect width="24" height="12" y="6" fill="#F1BF00" />
+        <rect width="24" height="6" y="18" fill="#AA151B" />
       </svg>
     );
   }

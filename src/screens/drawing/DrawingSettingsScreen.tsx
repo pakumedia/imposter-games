@@ -140,10 +140,10 @@ function CategoryCard({
     <button
       onClick={onToggle}
       className={cn(
-        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden",
+        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden border-2",
         isSelected 
-          ? "bg-card border border-[#0046FF] shadow-md" 
-          : "bg-card border border-border hover:border-muted-foreground/30"
+          ? "bg-card border-[#0046FF] shadow-md" 
+          : "bg-card border-border hover:border-muted-foreground/30"
       )}
     >
       <span className="text-lg flex-shrink-0">{emoji}</span>
@@ -181,10 +181,10 @@ function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
     <div className="px-4 pt-4 pb-2">
       <button 
         onClick={onUnlock}
-        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-100/80 to-blue-50/60 border border-[#0046FF]/30 tap-scale group"
+        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#0046FF]/20 to-[#0046FF]/10 border border-[#0046FF]/30 tap-scale group"
       >
         <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-[#0046FF]" />
+          <span className="text-base">🔒</span>
           <span className="font-semibold text-sm text-[#0046FF]">PRO Kategorien</span>
         </div>
         <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#0046FF] via-[#0055FF] to-[#0046FF] text-white text-xs font-bold shadow-lg group-hover:shadow-blue-300/50 transition-all">
@@ -266,16 +266,6 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 </div>
               </div>
               
-              <div className={cn(
-                "absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                selectedPlan === plan.id
-                  ? "border-[#0046FF] bg-[#0046FF]"
-                  : "border-muted-foreground/30"
-              )}>
-                {selectedPlan === plan.id && (
-                  <Check className="w-3 h-3 text-white stroke-[3]" />
-                )}
-              </div>
             </button>
           ))}
         </div>
@@ -604,10 +594,10 @@ export function DrawingSettingsScreen({
             {/* Lock Overlay */}
             <button 
               onClick={handleProCategoryClick}
-              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-black/5 to-black/20 rounded-b-2xl tap-scale"
+              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-[#0046FF]/5 to-[#0046FF]/20 rounded-b-2xl tap-scale"
             >
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0046FF] to-[#0055FF] flex items-center justify-center shadow-xl">
-                <Lock className="w-8 h-8 text-white" />
+                <span className="text-3xl">🔒</span>
               </div>
             </button>
           </div>
