@@ -1,8 +1,9 @@
-import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus, Zap, Cog } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
   GameSettings, 
+  GameMode,
   getMaxImpostors, 
   FREE_CATEGORY_NAMES, 
   PRO_CATEGORY_NAMES 
@@ -122,6 +123,71 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
         </h2>
       </div>
       {rightContent}
+    </div>
+  );
+}
+
+// Game Mode Selector Component
+function GameModeSelector({ 
+  mode, 
+  onChange 
+}: { 
+  mode: GameMode; 
+  onChange: (mode: GameMode) => void;
+}) {
+  return (
+    <div className="flex gap-3">
+      <button
+        onClick={() => onChange('simple')}
+        className={cn(
+          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          mode === 'simple'
+            ? "border-[#FF6D1F] bg-[#FF6D1F]/10"
+            : "border-border bg-card hover:border-muted-foreground/30"
+        )}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            mode === 'simple' ? "bg-[#FF6D1F]" : "bg-muted"
+          )}>
+            <Zap className={cn("w-5 h-5", mode === 'simple' ? "text-white" : "text-muted-foreground")} />
+          </div>
+          <span className={cn(
+            "font-bold text-body",
+            mode === 'simple' ? "text-foreground" : "text-muted-foreground"
+          )}>Einfach</span>
+        </div>
+        <p className="text-caption text-muted-foreground text-left">
+          Spielt selbst ohne Timer
+        </p>
+      </button>
+      
+      <button
+        onClick={() => onChange('guided')}
+        className={cn(
+          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          mode === 'guided'
+            ? "border-[#FF6D1F] bg-[#FF6D1F]/10"
+            : "border-border bg-card hover:border-muted-foreground/30"
+        )}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            mode === 'guided' ? "bg-[#FF6D1F]" : "bg-muted"
+          )}>
+            <Cog className={cn("w-5 h-5", mode === 'guided' ? "text-white" : "text-muted-foreground")} />
+          </div>
+          <span className={cn(
+            "font-bold text-body",
+            mode === 'guided' ? "text-foreground" : "text-muted-foreground"
+          )}>Erweitert</span>
+        </div>
+        <p className="text-caption text-muted-foreground text-left">
+          Mit Timer und Voting
+        </p>
+      </button>
     </div>
   );
 }
@@ -504,10 +570,21 @@ export function SettingsScreen({
 
         {/* Header */}
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
-        <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
+        <p className="text-body text-muted-foreground mb-6">Passe dein Spiel an</p>
+
+        {/* 0. Game Mode Selector */}
+        <SettingsGroup className="mb-6">
+          <CardHeader emoji="🎮" title="Spielmodus" />
+          <SettingsRow isLast>
+            <GameModeSelector
+              mode={settings.gameMode}
+              onChange={(mode) => onUpdateSettings({ gameMode: mode })}
+            />
+          </SettingsRow>
+        </SettingsGroup>
 
         {/* 1. Impostor Count Section */}
-        <SettingsGroup className="mt-6">
+        <SettingsGroup>
           <CardHeader emoji="🕵️" title="Impostors" />
           <SettingsRow isLast>
             <p className="text-caption text-muted-foreground mb-4">
@@ -561,29 +638,40 @@ export function SettingsScreen({
         </SettingsGroup>
 
         {/* 3. Time Settings Section */}
-        <SettingsGroup className="mt-6">
+        <SettingsGroup className={cn("mt-6", settings.gameMode === 'simple' && "opacity-50")}>
           <CardHeader emoji="⏱️" title="Zeiten" />
+          {settings.gameMode === 'simple' && (
+            <div className="px-5 py-3 bg-muted/50 border-b border-border">
+              <p className="text-caption text-muted-foreground text-center">
+                ⚡ Nur im erweiterten Modus verfügbar
+              </p>
+            </div>
+          )}
           <SettingsRow>
-            <TimeCounter
-              label="Diskussion"
-              sublabel="Zeit zum Diskutieren"
-              emoji="💬"
-              times={DISCUSSION_TIMES}
-              selectedTime={settings.discussionTimeSeconds}
-              onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
-              formatTime={formatTime}
-            />
+            <div className={settings.gameMode === 'simple' ? 'pointer-events-none' : ''}>
+              <TimeCounter
+                label="Diskussion"
+                sublabel="Zeit zum Diskutieren"
+                emoji="💬"
+                times={DISCUSSION_TIMES}
+                selectedTime={settings.discussionTimeSeconds}
+                onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
+                formatTime={formatTime}
+              />
+            </div>
           </SettingsRow>
           <SettingsRow isLast>
-            <TimeCounter
-              label="Abstimmung"
-              sublabel="Zeit zum Abstimmen"
-              emoji="🗳️"
-              times={VOTING_TIMES}
-              selectedTime={settings.votingTimeSeconds}
-              onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
-              formatTime={formatVotingTime}
-            />
+            <div className={settings.gameMode === 'simple' ? 'pointer-events-none' : ''}>
+              <TimeCounter
+                label="Abstimmung"
+                sublabel="Zeit zum Abstimmen"
+                emoji="🗳️"
+                times={VOTING_TIMES}
+                selectedTime={settings.votingTimeSeconds}
+                onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
+                formatTime={formatVotingTime}
+              />
+            </div>
           </SettingsRow>
         </SettingsGroup>
 

@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus, Zap, Cog } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell } from '@/components/ui-kit';
 import { cn } from '@/lib/utils';
@@ -9,9 +9,11 @@ import {
   DialogOverlay,
 } from '@/components/ui/dialog';
 import { FREE_CATEGORY_NAMES, PRO_CATEGORY_NAMES } from '@/game/types';
+import { DrawingGameMode } from '@/game/drawing-types';
 
 interface DrawingSettingsScreenProps {
   settings: {
+    gameMode: DrawingGameMode;
     drawingTimePerPlayer: number;
     maxDrawingRounds: number;
     discussionTimeSeconds: number;
@@ -120,6 +122,71 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
         </h2>
       </div>
       {rightContent}
+    </div>
+  );
+}
+
+// Game Mode Selector Component for Drawing
+function DrawingGameModeSelector({ 
+  mode, 
+  onChange 
+}: { 
+  mode: DrawingGameMode; 
+  onChange: (mode: DrawingGameMode) => void;
+}) {
+  return (
+    <div className="flex gap-3">
+      <button
+        onClick={() => onChange('simple')}
+        className={cn(
+          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          mode === 'simple'
+            ? "border-[#0046FF] bg-[#0046FF]/10"
+            : "border-border bg-card hover:border-muted-foreground/30"
+        )}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            mode === 'simple' ? "bg-[#0046FF]" : "bg-muted"
+          )}>
+            <Zap className={cn("w-5 h-5", mode === 'simple' ? "text-white" : "text-muted-foreground")} />
+          </div>
+          <span className={cn(
+            "font-bold text-body",
+            mode === 'simple' ? "text-foreground" : "text-muted-foreground"
+          )}>Einfach</span>
+        </div>
+        <p className="text-caption text-muted-foreground text-left">
+          Spielt selbst ohne Timer
+        </p>
+      </button>
+      
+      <button
+        onClick={() => onChange('guided')}
+        className={cn(
+          "flex-1 p-4 rounded-2xl border-2 transition-all tap-scale",
+          mode === 'guided'
+            ? "border-[#0046FF] bg-[#0046FF]/10"
+            : "border-border bg-card hover:border-muted-foreground/30"
+        )}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className={cn(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            mode === 'guided' ? "bg-[#0046FF]" : "bg-muted"
+          )}>
+            <Cog className={cn("w-5 h-5", mode === 'guided' ? "text-white" : "text-muted-foreground")} />
+          </div>
+          <span className={cn(
+            "font-bold text-body",
+            mode === 'guided' ? "text-foreground" : "text-muted-foreground"
+          )}>Erweitert</span>
+        </div>
+        <p className="text-caption text-muted-foreground text-left">
+          Mit Timer und Voting
+        </p>
+      </button>
     </div>
   );
 }
@@ -478,10 +545,21 @@ export function DrawingSettingsScreen({
 
         {/* Header */}
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
-        <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
+        <p className="text-body text-muted-foreground mb-6">Passe dein Spiel an</p>
+
+        {/* 0. Game Mode Selector */}
+        <SettingsGroup className="mb-6">
+          <CardHeader emoji="🎮" title="Spielmodus" />
+          <SettingsRow isLast>
+            <DrawingGameModeSelector
+              mode={settings.gameMode}
+              onChange={(mode) => onUpdateSettings({ gameMode: mode })}
+            />
+          </SettingsRow>
+        </SettingsGroup>
 
         {/* 1. Drawing Settings Section */}
-        <SettingsGroup className="mt-6">
+        <SettingsGroup>
           <CardHeader emoji="🎨" title="Zeichnen" />
           <SettingsRow>
             <TimeCounter

@@ -10,11 +10,14 @@ import {
 } from './drawing-types';
 import { getRandomElement, shuffleArray, AVATAR_COLORS } from './types';
 
+import { DrawingGameMode } from './drawing-types';
+
 interface DrawingGameStore extends DrawingGameState {
   addPlayer: (name: string) => void;
   removePlayer: (id: string) => void;
   startGame: () => void;
   setPhase: (phase: DrawingGamePhase) => void;
+  setGameMode: (mode: DrawingGameMode) => void;
   nextPlayer: () => void;
   addLine: (line: DrawingLine) => void;
   undoLastLine: (playerId: string) => boolean;
@@ -25,6 +28,9 @@ interface DrawingGameStore extends DrawingGameState {
   resetGame: () => void;
   setDrawingTime: (seconds: number) => void;
   setMaxRounds: (rounds: number) => void;
+  setShowCategoryToImpostor: (show: boolean) => void;
+  setDiscussionTime: (seconds: number) => void;
+  setVotingTime: (seconds: number) => void;
 }
 
 export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
@@ -90,6 +96,8 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
 
   setPhase: (phase: DrawingGamePhase) => set({ phase }),
 
+  setGameMode: (mode: DrawingGameMode) => set({ gameMode: mode }),
+
   nextPlayer: () => {
     const { currentPlayerIndex, players, phase } = get();
     const nextIndex = currentPlayerIndex + 1;
@@ -128,7 +136,7 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
   },
 
   finishDrawingTurn: () => {
-    const { currentPlayerIndex, players, currentRound, maxDrawingRounds } = get();
+    const { currentPlayerIndex, players, currentRound, maxDrawingRounds, gameMode } = get();
     const nextIndex = currentPlayerIndex + 1;
     
     // Mark current player as having drawn this round
@@ -139,12 +147,22 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
     if (nextIndex >= players.length) {
       // All players have drawn this round
       if (currentRound >= maxDrawingRounds) {
-        // All rounds complete - go to gallery
-        set({ 
-          phase: 'gallery', 
-          players: updatedPlayers,
-          currentPlayerIndex: 0 
-        });
+        // All rounds complete - check game mode
+        if (gameMode === 'simple') {
+          // Simple mode: go directly to simpleRoundEnd
+          set({ 
+            phase: 'simpleRoundEnd', 
+            players: updatedPlayers,
+            currentPlayerIndex: 0 
+          });
+        } else {
+          // Guided mode: go to gallery then discussion
+          set({ 
+            phase: 'gallery', 
+            players: updatedPlayers,
+            currentPlayerIndex: 0 
+          });
+        }
       } else {
         // Next round - show pass screen for first player
         const resetPlayers = updatedPlayers.map(p => ({ ...p, hasDrawn: false }));
@@ -229,5 +247,17 @@ export const useDrawingStore = create<DrawingGameStore>((set, get) => ({
 
   setMaxRounds: (rounds: number) => {
     set({ maxDrawingRounds: rounds });
+  },
+
+  setShowCategoryToImpostor: (show: boolean) => {
+    set({ showCategoryToImpostor: show });
+  },
+
+  setDiscussionTime: (seconds: number) => {
+    set({ discussionTimeSeconds: seconds });
+  },
+
+  setVotingTime: (seconds: number) => {
+    set({ votingTimeSeconds: seconds });
   },
 }));

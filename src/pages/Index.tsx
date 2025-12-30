@@ -7,7 +7,8 @@ import {
   LockScreen,
   DiscussionScreen,
   VotingScreen,
-  ResultsScreen 
+  ResultsScreen,
+  SimpleRoundEndScreen,
 } from '@/screens';
 import {
   DrawingLobbyScreen,
@@ -19,6 +20,7 @@ import {
   DrawingDiscussionScreen,
   DrawingVotingScreen,
   DrawingResultsScreen,
+  DrawingSimpleRoundEndScreen,
 } from '@/screens/drawing';
 import { useGameStore } from '@/game/store';
 import { useDrawingStore } from '@/game/drawing-store';
@@ -158,6 +160,13 @@ const Index = () => {
         return <RevealScreen onDone={handleImpostorRevealDone} />;
       case 'lockScreen':
         return <LockScreen onContinue={handleImpostorLockContinue} />;
+      case 'simpleRoundEnd':
+        return (
+          <SimpleRoundEndScreen 
+            onRestartRound={handleImpostorPlayAgain} 
+            onAdjustGame={handleImpostorBackToLobby}
+          />
+        );
       case 'discussion':
         return <DiscussionScreen onGoToVoting={handleImpostorGoToVoting} />;
       case 'voting':
@@ -189,6 +198,13 @@ const Index = () => {
         return <DrawingTurnScreen onTurnComplete={handleDrawingTurnComplete} onExit={handleBackToHome} />;
       case 'gallery':
         return <DrawingGalleryScreen onStartDiscussion={handleDrawingStartDiscussion} onExit={handleBackToHome} />;
+      case 'simpleRoundEnd':
+        return (
+          <DrawingSimpleRoundEndScreen 
+            onRestartRound={handleDrawingPlayAgain} 
+            onAdjustGame={handleDrawingBackToLobby}
+          />
+        );
       case 'discussion':
         return <DrawingDiscussionScreen onGoToVoting={handleDrawingGoToVoting} onExit={handleBackToHome} />;
       case 'voting':

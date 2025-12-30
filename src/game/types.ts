@@ -14,9 +14,13 @@ export type GamePhase =
   | 'lockScreen'
   | 'discussion'
   | 'voting'
-  | 'results';
+  | 'results'
+  | 'simpleRoundEnd';
+
+export type GameMode = 'simple' | 'guided';
 
 export interface GameSettings {
+  gameMode: GameMode;
   impostorCount: number;
   showCategoryToImpostor: boolean;
   showHintToImpostor: boolean;
@@ -389,6 +393,7 @@ export function getMaxImpostors(playerCount: number): number {
 // Default settings
 export function createDefaultSettings(): GameSettings {
   return {
+    gameMode: 'guided',
     impostorCount: 1,
     showCategoryToImpostor: false,
     showHintToImpostor: false,

@@ -25,8 +25,13 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
     drawingTimePerPlayer,
     discussionTimeSeconds,
     votingTimeSeconds,
+    gameMode,
     setMaxRounds,
-    setDrawingTime 
+    setDrawingTime,
+    setGameMode,
+    setShowCategoryToImpostor: setStoreShowCategory,
+    setDiscussionTime,
+    setVotingTime,
   } = useDrawingStore();
 
   const handleAddPlayer = () => {
@@ -43,6 +48,7 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
   };
 
   const handleUpdateSettings = (newSettings: {
+    gameMode?: 'simple' | 'guided';
     drawingTimePerPlayer?: number;
     maxDrawingRounds?: number;
     discussionTimeSeconds?: number;
@@ -50,14 +56,24 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
     showCategoryToImpostor?: boolean;
     selectedCategories?: string[];
   }) => {
+    if (newSettings.gameMode !== undefined) {
+      setGameMode(newSettings.gameMode);
+    }
     if (newSettings.drawingTimePerPlayer !== undefined) {
       setDrawingTime(newSettings.drawingTimePerPlayer);
     }
     if (newSettings.maxDrawingRounds !== undefined) {
       setMaxRounds(newSettings.maxDrawingRounds);
     }
+    if (newSettings.discussionTimeSeconds !== undefined) {
+      setDiscussionTime(newSettings.discussionTimeSeconds);
+    }
+    if (newSettings.votingTimeSeconds !== undefined) {
+      setVotingTime(newSettings.votingTimeSeconds);
+    }
     if (newSettings.showCategoryToImpostor !== undefined) {
       setShowCategoryToImpostor(newSettings.showCategoryToImpostor);
+      setStoreShowCategory(newSettings.showCategoryToImpostor);
     }
     if (newSettings.selectedCategories !== undefined) {
       setSelectedCategories(newSettings.selectedCategories);
@@ -71,6 +87,7 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
     return (
       <DrawingSettingsScreen
         settings={{
+          gameMode,
           drawingTimePerPlayer,
           maxDrawingRounds,
           discussionTimeSeconds,
