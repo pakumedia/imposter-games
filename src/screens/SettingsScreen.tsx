@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock } from 'lucide-react';
+import { ArrowLeft, Lock, Check } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -71,13 +71,16 @@ function SettingsRow({
   );
 }
 
-// Card Header Component (inside card)
+// Card Header Component with accent highlight
 function CardHeader({ emoji, title, rightContent, className }: { emoji: string; title: string; rightContent?: ReactNode; className?: string }) {
   return (
-    <div className={cn("flex items-center justify-between py-3.5 px-4 border-b border-border", className)}>
-      <div className="flex items-center gap-2.5">
-        <span className="text-lg">{emoji}</span>
-        <h2 className="text-body font-bold text-foreground">
+    <div className={cn(
+      "flex items-center justify-between py-4 px-5 bg-gradient-to-r from-[#FF6D1F]/10 to-[#FF6D1F]/5 border-b border-[#FF6D1F]/20",
+      className
+    )}>
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{emoji}</span>
+        <h2 className="text-lg font-bold text-foreground">
           {title}
         </h2>
       </div>
@@ -108,32 +111,69 @@ function CategoryRow({
       onClick={!isLocked ? onToggle : undefined}
       disabled={isLocked}
       className={cn(
-        "flex items-center gap-3 py-3.5 px-4 w-full transition-all text-left",
+        "flex items-center gap-3 py-3.5 px-5 w-full transition-all text-left",
         !isLast && "border-b border-border",
-        isLocked && "opacity-60",
-        isSelected && "bg-[#FF6D1F]/10"
+        isPro && "bg-gradient-to-r from-amber-50/50 to-transparent",
+        isSelected && !isPro && "bg-[#FF6D1F]/10"
       )}
     >
       <div className={cn(
-        "w-8 h-8 rounded-lg flex items-center justify-center text-lg",
-        isSelected ? "bg-[#FF6D1F]/20" : "bg-muted"
+        "w-9 h-9 rounded-xl flex items-center justify-center text-lg",
+        isPro 
+          ? "bg-gradient-to-br from-amber-100 to-amber-200/50 border border-amber-300/30"
+          : isSelected 
+            ? "bg-[#FF6D1F]/20" 
+            : "bg-muted"
       )}>
         {emoji}
       </div>
       <span className={cn(
         "font-medium text-body flex-1",
-        isLocked ? "text-muted-foreground" : "text-foreground"
+        isPro ? "text-amber-800/60" : "text-foreground"
       )}>
         {name}
       </span>
       {isLocked ? (
-        <Lock className="w-4 h-4 text-muted-foreground" />
+        <Lock className="w-5 h-5 text-amber-600/50" />
       ) : isSelected ? (
-        <div className="w-5 h-5 rounded-full bg-[#FF6D1F]" />
+        <div className="w-6 h-6 rounded-full bg-[#FF6D1F] flex items-center justify-center">
+          <Check className="w-4 h-4 text-white stroke-[3]" />
+        </div>
       ) : (
-        <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
+        <div className="w-6 h-6 rounded-full border-2 border-muted-foreground/30" />
       )}
     </button>
+  );
+}
+
+// Premium Divider Component
+function PremiumDivider() {
+  return (
+    <div className="relative py-4 px-5 bg-gradient-to-r from-amber-500/10 via-yellow-400/15 to-amber-500/10 border-y border-amber-300/30">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">👑</span>
+          <span className="font-bold text-amber-700">PRO Kategorien</span>
+        </div>
+        <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all tap-scale">
+          Freischalten
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Premium CTA Component
+function PremiumCTA() {
+  return (
+    <div className="py-5 px-5 text-center bg-gradient-to-r from-amber-100/30 via-amber-200/40 to-amber-100/30">
+      <p className="text-sm text-amber-700/80 mb-3">
+        🔓 Schalte alle 10+ Premium-Kategorien frei!
+      </p>
+      <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all tap-scale">
+        Premium holen
+      </button>
+    </div>
   );
 }
 
@@ -200,11 +240,11 @@ export function SettingsScreen({
           </SettingsRow>
         </SettingsGroup>
 
-        {/* Free Categories */}
+        {/* All Categories (Free + Pro) in one card */}
         <SettingsGroup className="mt-6">
           <CardHeader 
             emoji="📂" 
-            title="Kategorien (Free)" 
+            title="Kategorien" 
             rightContent={
               <button 
                 onClick={handleSelectAllFree}
@@ -214,29 +254,21 @@ export function SettingsScreen({
               </button>
             }
           />
-          {FREE_CATEGORY_NAMES.map((category, index) => (
+          
+          {/* Free Categories */}
+          {FREE_CATEGORY_NAMES.map((category) => (
             <CategoryRow
               key={category}
               name={category}
               isSelected={settings.selectedCategories.includes(category)}
               onToggle={() => handleCategoryToggle(category)}
-              isLast={index === FREE_CATEGORY_NAMES.length - 1}
             />
           ))}
-        </SettingsGroup>
-
-        {/* PRO Categories */}
-        <SettingsGroup className="mt-6">
-          <CardHeader 
-            emoji="👑" 
-            title="Kategorien (Pro)" 
-            rightContent={
-              <span className="text-caption text-muted-foreground flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                Premium
-              </span>
-            }
-          />
+          
+          {/* Premium Divider */}
+          <PremiumDivider />
+          
+          {/* Pro Categories (locked) */}
           <CategoryRow
             name="Custom Category"
             isSelected={false}
@@ -253,6 +285,9 @@ export function SettingsScreen({
               isLast={index === PRO_CATEGORY_NAMES.length - 1}
             />
           ))}
+          
+          {/* Premium CTA */}
+          <PremiumCTA />
         </SettingsGroup>
 
         {/* Impostor Helpers Section */}
