@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Nunito', 'system-ui', 'sans-serif'],
+        poppins: ['Poppins', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'h1': ['2.25rem', { lineHeight: '1.1', fontWeight: '800' }], // 36px
