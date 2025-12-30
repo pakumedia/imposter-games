@@ -110,26 +110,24 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
         </div>
 
         {/* Add player input */}
-        <div className="bg-card rounded-2xl p-5 mb-5 shadow-soft">
-          <div className="flex gap-3">
+        <div className="bg-[#0046FF] rounded-2xl p-4 mb-5 shadow-soft">
+          <div className="flex gap-3 items-center">
             <input
               type="text"
               value={newPlayerName}
               onChange={(e) => setNewPlayerName(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Enter player name..."
-              className="flex-1 h-12 px-4 rounded-pill bg-secondary text-foreground placeholder:text-muted-foreground text-body-sm font-medium outline-none focus:ring-2 focus:ring-[#0046FF]/30"
+              className="flex-1 h-12 px-4 rounded-pill bg-white/20 text-white placeholder:text-white/70 text-body-sm font-medium outline-none focus:ring-2 focus:ring-white/30"
               maxLength={20}
             />
-            <IconButton
-              variant="teal"
-              size="lg"
+            <button
               onClick={handleAddPlayer}
               disabled={!newPlayerName.trim()}
-              className="!bg-[#0046FF] hover:!bg-[#0035CC]"
+              className="w-12 h-12 rounded-full bg-white hover:bg-white/90 flex items-center justify-center flex-shrink-0 transition-all tap-scale disabled:opacity-50"
             >
-              <Plus className="w-5 h-5" />
-            </IconButton>
+              <Plus className="w-6 h-6 text-[#0046FF]" />
+            </button>
           </div>
         </div>
 
