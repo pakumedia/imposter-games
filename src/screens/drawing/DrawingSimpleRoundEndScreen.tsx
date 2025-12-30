@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RotateCcw, Settings, Users, Palette, Eye } from 'lucide-react';
+import { RotateCcw, Settings, Users, Eye } from 'lucide-react';
 import { AppShell, GameCard, PillButton } from '@/components/ui-kit';
 import { useDrawingStore } from '@/game/drawing-store';
 import { GalleryCanvas } from '@/components/drawing';
@@ -15,54 +15,9 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: Dr
   const [drawingRevealed, setDrawingRevealed] = useState(false);
   const [wordRevealed, setWordRevealed] = useState(false);
   const [impostorRevealed, setImpostorRevealed] = useState(false);
-  const [drawingShaking, setDrawingShaking] = useState(false);
-  const [wordShaking, setWordShaking] = useState(false);
-  const [impostorShaking, setImpostorShaking] = useState(false);
   
   const impostor = players.find(p => p.id === impostorId);
   const impostorName = impostor?.name || 'Unknown';
-
-  const handleRevealDrawing = () => {
-    if (drawingRevealed) return;
-    setDrawingShaking(true);
-    
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-    
-    setTimeout(() => {
-      setDrawingShaking(false);
-      setDrawingRevealed(true);
-    }, 1000);
-  };
-
-  const handleRevealWord = () => {
-    if (wordRevealed) return;
-    setWordShaking(true);
-    
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-    
-    setTimeout(() => {
-      setWordShaking(false);
-      setWordRevealed(true);
-    }, 1000);
-  };
-
-  const handleRevealImpostor = () => {
-    if (impostorRevealed) return;
-    setImpostorShaking(true);
-    
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-    
-    setTimeout(() => {
-      setImpostorShaking(false);
-      setImpostorRevealed(true);
-    }, 1000);
-  };
 
   return (
     <AppShell>
@@ -76,8 +31,8 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: Dr
         {/* Drawing Preview - Tap to reveal */}
         <GameCard 
           color="white" 
-          className={`mb-5 overflow-hidden cursor-pointer ${drawingShaking ? 'animate-shake' : ''}`}
-          onClick={handleRevealDrawing}
+          className="mb-5 overflow-hidden cursor-pointer"
+          onClick={() => setDrawingRevealed(true)}
         >
           {drawingRevealed ? (
             <div className="aspect-square bg-white">
@@ -94,8 +49,8 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: Dr
         {/* Word Reveal Card - Tap to reveal */}
         <GameCard 
           color="blue" 
-          className={`p-5 mb-4 text-center bg-[#0046FF] cursor-pointer ${wordShaking ? 'animate-shake' : ''}`}
-          onClick={handleRevealWord}
+          className="p-5 mb-4 text-center bg-[#0046FF] cursor-pointer"
+          onClick={() => setWordRevealed(true)}
         >
           {wordRevealed ? (
             <>
@@ -114,19 +69,16 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame }: Dr
         {/* Impostor Reveal - Tap to reveal */}
         <GameCard 
           color="dark" 
-          className={`p-4 mb-5 cursor-pointer ${impostorShaking ? 'animate-shake' : ''}`}
-          onClick={handleRevealImpostor}
+          className="p-4 mb-5 cursor-pointer"
+          onClick={() => setImpostorRevealed(true)}
         >
           {impostorRevealed ? (
-            <div className="flex items-center justify-center gap-3">
-              <Palette className="w-6 h-6 text-white/60" />
-              <div>
-                <p className="text-caption text-white/60">Der Fake Artist war</p>
-                <p className="text-h3 text-white">{impostorName}</p>
-              </div>
+            <div className="text-center">
+              <p className="text-caption text-white/60 mb-1">Der Fake Artist war</p>
+              <p className="text-h3 text-white">{impostorName}</p>
               {impostor && (
                 <div 
-                  className="w-6 h-6 rounded-full border-2 border-white/30"
+                  className="w-6 h-6 rounded-full border-2 border-white/30 mx-auto mt-2"
                   style={{ backgroundColor: impostor.drawingColor }}
                 />
               )}

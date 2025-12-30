@@ -13,43 +13,11 @@ export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRou
   
   const [wordRevealed, setWordRevealed] = useState(false);
   const [impostorRevealed, setImpostorRevealed] = useState(false);
-  const [wordShaking, setWordShaking] = useState(false);
-  const [impostorShaking, setImpostorShaking] = useState(false);
   
   const impostorNames = players
     .filter(p => impostorIds.includes(p.id))
     .map(p => p.name)
     .join(', ');
-
-  const handleRevealWord = () => {
-    if (wordRevealed) return;
-    setWordShaking(true);
-    
-    // Trigger haptic feedback
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-    
-    setTimeout(() => {
-      setWordShaking(false);
-      setWordRevealed(true);
-    }, 1000);
-  };
-
-  const handleRevealImpostor = () => {
-    if (impostorRevealed) return;
-    setImpostorShaking(true);
-    
-    // Trigger haptic feedback
-    if (navigator.vibrate) {
-      navigator.vibrate(100);
-    }
-    
-    setTimeout(() => {
-      setImpostorShaking(false);
-      setImpostorRevealed(true);
-    }, 1000);
-  };
 
   return (
     <AppShell>
@@ -63,8 +31,8 @@ export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRou
         {/* Word Reveal Card - Tap to reveal */}
         <GameCard 
           color="orange" 
-          className={`p-6 mb-5 text-center cursor-pointer transition-all ${wordShaking ? 'animate-shake' : ''}`}
-          onClick={handleRevealWord}
+          className="p-6 mb-5 text-center cursor-pointer"
+          onClick={() => setWordRevealed(true)}
         >
           {wordRevealed ? (
             <>
@@ -83,18 +51,15 @@ export function SimpleRoundEndScreen({ onRestartRound, onAdjustGame }: SimpleRou
         {/* Impostor Reveal - Tap to reveal */}
         <GameCard 
           color="dark" 
-          className={`p-5 mb-5 cursor-pointer transition-all ${impostorShaking ? 'animate-shake' : ''}`}
-          onClick={handleRevealImpostor}
+          className="p-5 mb-5 cursor-pointer"
+          onClick={() => setImpostorRevealed(true)}
         >
           {impostorRevealed ? (
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl">🕵️</span>
-              <div>
-                <p className="text-caption text-white/60">
-                  {impostorIds.length > 1 ? 'Die Impostors waren' : 'Der Impostor war'}
-                </p>
-                <p className="text-h3 text-white">{impostorNames}</p>
-              </div>
+            <div className="text-center">
+              <p className="text-caption text-white/60 mb-1">
+                {impostorIds.length > 1 ? 'Die Impostors waren' : 'Der Impostor war'}
+              </p>
+              <p className="text-h3 text-white">{impostorNames}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 py-2">
