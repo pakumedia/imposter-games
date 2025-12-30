@@ -107,6 +107,7 @@ export function DrawingSimpleRoundEndScreen({ onRestartRound, onAdjustGame, onEn
             variant="skyblue"
             fullWidth
             icon={<RotateCcw className="w-5 h-5" />}
+            iconPosition="left"
             onClick={onRestartRound}
           >
             Neue Runde
