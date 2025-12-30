@@ -1,55 +1,41 @@
 import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
-import { 
-  GameSettings, 
-  getMaxImpostors, 
-  FREE_CATEGORY_NAMES, 
-  PRO_CATEGORY_NAMES 
-} from '@/game/types';
 import { cn } from '@/lib/utils';
-import { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogOverlay,
 } from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+import { DRAWING_WORD_CATEGORIES } from '@/game/drawing-types';
 
-interface SettingsScreenProps {
-  settings: GameSettings;
+interface DrawingSettingsScreenProps {
+  settings: {
+    drawingTimePerPlayer: number;
+    maxDrawingRounds: number;
+    discussionTimeSeconds: number;
+    votingTimeSeconds: number;
+    showCategoryToImpostor: boolean;
+    selectedCategories: string[];
+  };
   playerCount: number;
-  onUpdateSettings: (settings: Partial<GameSettings>) => void;
+  onUpdateSettings: (settings: Partial<DrawingSettingsScreenProps['settings']>) => void;
   onBack: () => void;
 }
 
-const DISCUSSION_TIMES = [60, 120, 180, 240, 300];
-const VOTING_TIMES = [30, 60, 90, 120];
+const DRAWING_TIMES = [8, 10, 15, 20];
+const DISCUSSION_TIMES = [30, 60, 90, 120];
+const VOTING_TIMES = [30, 45, 60, 90];
+const DRAWING_ROUNDS = [1, 2, 3];
 
-// Category emoji mapping
+// Category emoji mapping for drawing
 const CATEGORY_EMOJIS: Record<string, string> = {
-  // Free
+  'Easy': '⭐',
   'Animals': '🐾',
   'Food': '🍕',
   'Objects': '🪑',
-  'Electronics': '📱',
-  // Pro
-  'Brands': '👟',
-  'Movies': '🎬',
-  'Vehicles': '🚗',
-  'Superpowers': '⚡',
-  'Fears': '😱',
-  'Inventions': '💡',
-  'Celebrities': '⭐',
-  'Games': '🎮',
-  'Anime': '🎌',
-  'Countries': '🌍',
-  'Custom': '✨',
+  'Nature': '🌿',
 };
 
 // Pricing plans
@@ -108,11 +94,11 @@ function SettingsRow({
   );
 }
 
-// Card Header Component with accent color
+// Card Header Component with blue accent color for drawing
 function CardHeader({ emoji, title, rightContent, className }: { emoji: string; title: string; rightContent?: ReactNode; className?: string }) {
   return (
     <div className={cn(
-      "flex items-center justify-between py-4 px-5 bg-[#FF6D1F] rounded-t-2xl",
+      "flex items-center justify-between py-4 px-5 bg-[#0046FF] rounded-t-2xl",
       className
     )}>
       <div className="flex items-center gap-3">
@@ -126,7 +112,7 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
   );
 }
 
-// Category Card Component (Apple-style 2x3 grid cards) with premium shiny effects
+// Category Card Component for Drawing
 function CategoryCard({ 
   name, 
   isSelected, 
@@ -148,7 +134,7 @@ function CategoryCard({
         isPro 
           ? "bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60 shadow-[0_0_20px_rgba(251,191,36,0.15)]"
           : isSelected 
-            ? "bg-card border-[3px] border-[#FF6D1F] shadow-md" 
+            ? "bg-card border-[3px] border-[#0046FF] shadow-md" 
             : "bg-card border-2 border-border hover:border-muted-foreground/30"
       )}
     >
@@ -157,10 +143,8 @@ function CategoryCard({
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
       )}
       
-      {/* Emoji - no box */}
       <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
       
-      {/* Text Content */}
       <span className={cn(
         "font-semibold text-sm truncate text-left flex-1 relative z-10",
         isPro ? "text-amber-700" : "text-foreground"
@@ -168,14 +152,12 @@ function CategoryCard({
         {name}
       </span>
       
-      {/* Selected indicator for free cards */}
       {!isPro && isSelected && (
-        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center flex-shrink-0">
+        <div className="w-5 h-5 rounded-full bg-[#0046FF] flex items-center justify-center flex-shrink-0">
           <Check className="w-3 h-3 text-white stroke-[3]" />
         </div>
       )}
       
-      {/* Lock icon for PRO cards */}
       {isPro && (
         <Lock className="w-4 h-4 text-amber-500 flex-shrink-0 relative z-10" />
       )}
@@ -183,35 +165,14 @@ function CategoryCard({
   );
 }
 
-// Premium Divider Component with unlock button
-function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
-  return (
-    <div className="px-4 pt-4 pb-2">
-      <button 
-        onClick={onUnlock}
-        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-100/80 to-amber-50/60 border border-amber-300/50 tap-scale group"
-      >
-        <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-amber-600" />
-          <span className="font-semibold text-sm text-amber-700">PRO Kategorien</span>
-        </div>
-        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white text-xs font-bold shadow-lg group-hover:shadow-amber-300/50 transition-all">
-          Freischalten
-        </span>
-      </button>
-    </div>
-  );
-}
-
-// Paywall Dialog Component - Exported for reuse
-export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+// Paywall Dialog Component
+function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [selectedPlan, setSelectedPlan] = useState('yearly');
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
       <DialogContent className="sm:max-w-md p-0 gap-0 bg-gradient-to-b from-white to-amber-50/30 border-0 rounded-3xl overflow-hidden">
-        {/* Header */}
         <div className="relative pt-8 pb-6 px-6 text-center bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500">
           <button 
             onClick={() => onOpenChange(false)}
@@ -227,7 +188,6 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           <p className="text-white/80 text-sm">Schalte alle Features frei</p>
         </div>
 
-        {/* Features */}
         <div className="px-6 py-5 border-b border-border">
           <div className="space-y-3">
             {[
@@ -246,7 +206,6 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
         </div>
 
-        {/* Pricing Options */}
         <div className="px-6 py-5 space-y-3">
           {PRICING_PLANS.map((plan) => (
             <button
@@ -277,7 +236,6 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                 </div>
               </div>
               
-              {/* Selection indicator */}
               <div className={cn(
                 "absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
                 selectedPlan === plan.id
@@ -292,7 +250,6 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           ))}
         </div>
 
-        {/* CTA Button */}
         <div className="px-6 pb-6">
           <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all tap-scale">
             Jetzt freischalten
@@ -306,7 +263,7 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   );
 }
 
-// Time Counter Component (like ImpostorCounter but for time)
+// Time Counter Component
 function TimeCounter({ 
   label,
   sublabel,
@@ -384,100 +341,83 @@ function TimeCounter({
   );
 }
 
-// Time Picker Drawer Component  
-function TimePickerDrawer({
-  open,
-  onOpenChange,
-  title,
-  times,
-  selectedTime,
-  onSelect,
-  formatTime
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  times: number[];
-  selectedTime: number;
-  onSelect: (time: number) => void;
-  formatTime: (seconds: number) => string;
+// Rounds Counter Component
+function RoundsCounter({ 
+  value, 
+  onChange 
+}: { 
+  value: number;
+  onChange: (value: number) => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const currentIndex = DRAWING_ROUNDS.indexOf(value);
   
+  const handleDecrement = () => {
+    if (currentIndex > 0) {
+      onChange(DRAWING_ROUNDS[currentIndex - 1]);
+    }
+  };
+
+  const handleIncrement = () => {
+    if (currentIndex < DRAWING_ROUNDS.length - 1) {
+      onChange(DRAWING_ROUNDS[currentIndex + 1]);
+    }
+  };
+
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="pb-safe">
-        <DrawerHeader className="pb-2">
-          <DrawerTitle className="text-center">{title}</DrawerTitle>
-        </DrawerHeader>
-        
-        {/* Wheel-style picker */}
-        <div className="relative h-[200px] overflow-hidden">
-          {/* Selection highlight */}
-          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 h-12 bg-muted/60 rounded-xl pointer-events-none z-0" />
-          
-          {/* Scrollable options */}
-          <div 
-            ref={containerRef}
-            className="h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide relative z-10"
-            style={{ scrollSnapType: 'y mandatory' }}
-          >
-            {/* Top padding for centering */}
-            <div className="h-[76px]" />
-            
-            {times.map((time) => {
-              const isSelected = selectedTime === time;
-              return (
-                <button
-                  key={time}
-                  onClick={() => {
-                    onSelect(time);
-                    onOpenChange(false);
-                  }}
-                  className={cn(
-                    "w-full h-12 flex items-center justify-center snap-center transition-all",
-                    isSelected
-                      ? "text-foreground font-bold text-xl"
-                      : "text-muted-foreground text-lg"
-                  )}
-                >
-                  {formatTime(time)}
-                </button>
-              );
-            })}
-            
-            {/* Bottom padding for centering */}
-            <div className="h-[76px]" />
-          </div>
-          
-          {/* Fade gradients */}
-          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent pointer-events-none z-20" />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none z-20" />
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-3">
+        <span className="text-xl">🔄</span>
+        <div>
+          <p className="font-medium text-body text-foreground text-left">Zeichenrunden</p>
+          <p className="text-caption text-muted-foreground">Wie oft jeder zeichnet</p>
         </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleDecrement}
+          disabled={currentIndex <= 0}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "bg-muted/60 text-muted-foreground",
+            currentIndex <= 0 
+              ? "opacity-40 cursor-not-allowed" 
+              : "hover:bg-muted active:scale-95"
+          )}
+        >
+          <Minus className="w-4 h-4 stroke-[2.5]" />
+        </button>
         
-        <div className="p-4">
-          <button
-            onClick={() => onOpenChange(false)}
-            className="w-full py-3 rounded-xl bg-[#FF6D1F] text-white font-semibold tap-scale"
-          >
-            Fertig
-          </button>
-        </div>
-      </DrawerContent>
-    </Drawer>
+        <span className="font-semibold text-foreground min-w-[50px] text-center">
+          {value}x
+        </span>
+        
+        <button
+          onClick={handleIncrement}
+          disabled={currentIndex >= DRAWING_ROUNDS.length - 1}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "bg-muted/60 text-muted-foreground",
+            currentIndex >= DRAWING_ROUNDS.length - 1 
+              ? "opacity-40 cursor-not-allowed" 
+              : "hover:bg-muted active:scale-95"
+          )}
+        >
+          <Plus className="w-4 h-4 stroke-[2.5]" />
+        </button>
+      </div>
+    </div>
   );
 }
 
-export function SettingsScreen({
+export function DrawingSettingsScreen({
   settings,
   playerCount,
   onUpdateSettings,
   onBack,
-}: SettingsScreenProps) {
-  const maxImpostors = getMaxImpostors(playerCount);
+}: DrawingSettingsScreenProps) {
   const [showPaywall, setShowPaywall] = useState(false);
-  const [showDiscussionPicker, setShowDiscussionPicker] = useState(false);
-  const [showVotingPicker, setShowVotingPicker] = useState(false);
+  
+  const categoryNames = Object.keys(DRAWING_WORD_CATEGORIES);
 
   const handleCategoryToggle = (category: string) => {
     const current = settings.selectedCategories;
@@ -490,20 +430,11 @@ export function SettingsScreen({
     }
   };
 
-  const handleProCategoryClick = () => {
-    setShowPaywall(true);
-  };
-
   const handleSelectAllFree = () => {
-    onUpdateSettings({ selectedCategories: [...FREE_CATEGORY_NAMES] });
+    onUpdateSettings({ selectedCategories: [...categoryNames] });
   };
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    return mins === 1 ? '1 min' : `${mins} min`;
-  };
-
-  const formatVotingTime = (seconds: number) => {
     return seconds < 60 ? `${seconds}s` : `${seconds / 60} min`;
   };
 
@@ -523,17 +454,24 @@ export function SettingsScreen({
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
         <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
 
-        {/* 1. Impostor Count Section */}
+        {/* 1. Drawing Settings Section */}
         <SettingsGroup className="mt-6">
-          <CardHeader emoji="🕵️" title="Impostors" />
+          <CardHeader emoji="🎨" title="Zeichnen" />
+          <SettingsRow>
+            <TimeCounter
+              label="Zeit pro Zug"
+              sublabel="Sekunden zum Zeichnen"
+              emoji="⏱️"
+              times={DRAWING_TIMES}
+              selectedTime={settings.drawingTimePerPlayer}
+              onSelect={(time) => onUpdateSettings({ drawingTimePerPlayer: time })}
+              formatTime={(s) => `${s}s`}
+            />
+          </SettingsRow>
           <SettingsRow isLast>
-            <p className="text-caption text-muted-foreground mb-4">
-              Max {maxImpostors} für {playerCount} Spieler
-            </p>
-            <ImpostorCounter
-              value={Math.min(settings.impostorCount, maxImpostors)}
-              max={maxImpostors}
-              onChange={(value) => onUpdateSettings({ impostorCount: value })}
+            <RoundsCounter
+              value={settings.maxDrawingRounds}
+              onChange={(value) => onUpdateSettings({ maxDrawingRounds: value })}
             />
           </SettingsRow>
         </SettingsGroup>
@@ -541,7 +479,7 @@ export function SettingsScreen({
         {/* 2. Impostor Helpers Section */}
         <SettingsGroup className="mt-6">
           <CardHeader emoji="💡" title="Impostor Hilfen" />
-          <SettingsRow>
+          <SettingsRow isLast>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xl">👁️</span>
@@ -554,23 +492,6 @@ export function SettingsScreen({
                 checked={settings.showCategoryToImpostor}
                 onCheckedChange={(checked) => 
                   onUpdateSettings({ showCategoryToImpostor: checked })
-                }
-              />
-            </div>
-          </SettingsRow>
-          <SettingsRow isLast>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-xl">💬</span>
-                <div>
-                  <p className="font-medium text-body text-foreground">Hinweis zeigen</p>
-                  <p className="text-caption text-muted-foreground">Impostor bekommt einen hilfreichen Tipp</p>
-                </div>
-              </div>
-              <Switch
-                checked={settings.showHintToImpostor}
-                onCheckedChange={(checked) => 
-                  onUpdateSettings({ showHintToImpostor: checked })
                 }
               />
             </div>
@@ -599,12 +520,12 @@ export function SettingsScreen({
               times={VOTING_TIMES}
               selectedTime={settings.votingTimeSeconds}
               onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
-              formatTime={formatVotingTime}
+              formatTime={formatTime}
             />
           </SettingsRow>
         </SettingsGroup>
 
-        {/* 4. All Categories (Free + Pro) in one card */}
+        {/* 4. Categories */}
         <SettingsGroup className="mt-6">
           <CardHeader 
             emoji="📂" 
@@ -619,36 +540,13 @@ export function SettingsScreen({
             }
           />
           
-          {/* Free Categories - 2x3 Grid */}
           <div className="p-4 grid grid-cols-2 gap-3">
-            {FREE_CATEGORY_NAMES.map((category) => (
+            {categoryNames.map((category) => (
               <CategoryCard
                 key={category}
                 name={category}
                 isSelected={settings.selectedCategories.includes(category)}
                 onToggle={() => handleCategoryToggle(category)}
-              />
-            ))}
-          </div>
-          
-          {/* Premium Divider */}
-          <PremiumDivider onUnlock={handleProCategoryClick} />
-          
-          {/* Pro Categories - 2x3 Grid */}
-          <div className="p-4 grid grid-cols-2 gap-3">
-            <CategoryCard
-              name="Custom"
-              isSelected={false}
-              isPro={true}
-              onToggle={handleProCategoryClick}
-            />
-            {PRO_CATEGORY_NAMES.map((category) => (
-              <CategoryCard
-                key={category}
-                name={category}
-                isSelected={false}
-                isPro={true}
-                onToggle={handleProCategoryClick}
               />
             ))}
           </div>

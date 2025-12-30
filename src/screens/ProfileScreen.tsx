@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { ChevronRight, Globe, Star, MessageSquare, Smartphone, Info, Copy, Crown, BookOpen, Check, ExternalLink } from 'lucide-react';
+import { ChevronRight, Globe, Star, MessageSquare, Info, Copy, Crown, BookOpen, Check, ExternalLink } from 'lucide-react';
 import { AppShell, LearnRulesDialog } from '@/components/ui-kit';
 import { LanguageDialog } from '@/components/ui-kit/LanguageDialog';
 import { useLanguageStore } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import tapWordsIcon from '@/assets/tap-words-icon.png';
+import { PaywallDialog } from './SettingsScreen';
 
 interface ProfileScreenProps {
   onBack?: () => void;
@@ -18,6 +20,12 @@ interface SettingsItem {
   onClick?: () => void;
   rightElement?: React.ReactNode;
 }
+
+// Language flags mapping
+const LANGUAGE_FLAGS: Record<string, string> = {
+  de: '🇩🇪',
+  en: '🇬🇧',
+};
 
 function SettingsRow({ item }: { item: SettingsItem }) {
   return (
@@ -51,8 +59,9 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
   const [learnRulesOpen, setLearnRulesOpen] = useState(false);
   const [copiedCustomerId, setCopiedCustomerId] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
-  const languageDisplay = language === 'de' ? 'Deutsch' : 'English';
+  const languageFlag = LANGUAGE_FLAGS[language] || '🌐';
   const customerId = 'USR-2024-ABCD-1234';
 
   const handleCopyCustomerId = () => {
@@ -60,6 +69,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
     setCopiedCustomerId(true);
     toast.success('Customer ID copied!');
     setTimeout(() => setCopiedCustomerId(false), 2000);
+  };
+
+  const handleOpenAppStore = () => {
+    window.open('https://apps.apple.com/de/app/tap-words-game/id6755069139', '_blank');
   };
 
   const generalSection: SettingsItem[] = [
@@ -73,7 +86,12 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       id: 'language', 
       icon: <Globe className="w-5 h-5" />, 
       label: t('language'), 
-      value: languageDisplay,
+      rightElement: (
+        <div className="flex items-center gap-2">
+          <span className="text-xl">{languageFlag}</span>
+          <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+        </div>
+      ),
       onClick: () => setLanguageDialogOpen(true),
     },
     { 
@@ -85,16 +103,6 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       id: 'feedback', 
       icon: <MessageSquare className="w-5 h-5" />, 
       label: 'Send Feedback',
-    },
-  ];
-
-  const appInfoSection: SettingsItem[] = [
-    { 
-      id: 'version', 
-      icon: <Info className="w-5 h-5" />, 
-      label: 'App Version',
-      value: '1.0.1',
-      rightElement: <span className="text-caption text-muted-foreground">1.0.1</span>,
     },
   ];
 
@@ -110,7 +118,10 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
       {/* Settings Sections */}
       <div className="screen-padding space-y-6 pb-32">
         {/* Premium Upgrade Card */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-game-orange via-game-orange to-game-yellow p-5 shadow-lg">
+        <button 
+          onClick={() => setShowPaywall(true)}
+          className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-br from-game-orange via-game-orange to-game-yellow p-5 shadow-lg text-left tap-scale"
+        >
           <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
           <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
           
@@ -124,7 +135,7 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             </div>
             <ChevronRight className="w-6 h-6 text-white/70" />
           </div>
-        </div>
+        </button>
 
         {/* General Section */}
         <div>
@@ -144,11 +155,16 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
             Other Apps
           </h3>
           <div className="rounded-2xl overflow-hidden">
-            <button className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl">
+            <button 
+              onClick={handleOpenAppStore}
+              className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl"
+            >
               {/* App Icon */}
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-game-blue to-game-purple flex items-center justify-center shadow-md">
-                <span className="text-2xl">🔤</span>
-              </div>
+              <img 
+                src={tapWordsIcon} 
+                alt="Tap Words Game"
+                className="w-14 h-14 rounded-xl shadow-md"
+              />
               
               <div className="flex-1 text-left">
                 <div className="flex items-center gap-2">
@@ -169,41 +185,54 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
           </div>
         </div>
 
-        {/* App Information Section */}
+        {/* App Information Section - Combined with Customer ID */}
         <div>
           <h3 className="text-caption text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-1">
             App Information
           </h3>
-          <div className="rounded-2xl overflow-hidden">
-            {appInfoSection.map((item) => (
-              <SettingsRow key={item.id} item={item} />
-            ))}
-          </div>
-        </div>
-
-        {/* Customer ID */}
-        <div className="bg-card/30 rounded-2xl p-4">
-          <p className="text-caption text-muted-foreground mb-2">Customer ID</p>
-          <div className="flex items-center justify-between">
-            <code className="text-body-sm text-foreground font-mono">{customerId}</code>
-            <button
-              onClick={handleCopyCustomerId}
-              className={cn(
-                "w-9 h-9 rounded-xl flex items-center justify-center transition-all tap-scale",
-                copiedCustomerId 
-                  ? "bg-game-green text-white" 
-                  : "bg-secondary text-muted-foreground hover:bg-secondary/80"
-              )}
-            >
-              {copiedCustomerId ? (
-                <Check className="w-4 h-4" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </button>
+          <div className="rounded-2xl overflow-hidden bg-card/50">
+            {/* App Version Row */}
+            <div className="flex items-center gap-4 px-4 py-3.5 border-b border-border/10">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <Info className="w-5 h-5" />
+              </div>
+              <span className="flex-1 text-left text-body font-medium text-foreground">
+                App Version
+              </span>
+              <span className="text-caption text-muted-foreground">1.0.1</span>
+            </div>
+            
+            {/* Customer ID Row */}
+            <div className="flex items-center gap-4 px-4 py-3.5">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <Copy className="w-5 h-5" />
+              </div>
+              <div className="flex-1 text-left">
+                <span className="text-body font-medium text-foreground">Customer ID</span>
+                <code className="block text-caption text-muted-foreground font-mono mt-0.5">{customerId}</code>
+              </div>
+              <button
+                onClick={handleCopyCustomerId}
+                className={cn(
+                  "w-9 h-9 rounded-xl flex items-center justify-center transition-all tap-scale",
+                  copiedCustomerId 
+                    ? "bg-game-green text-white" 
+                    : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+                )}
+              >
+                {copiedCustomerId ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Paywall Dialog */}
+      <PaywallDialog open={showPaywall} onOpenChange={setShowPaywall} />
 
       {/* Language Dialog */}
       <LanguageDialog 

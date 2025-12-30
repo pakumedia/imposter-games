@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Plus, X, Play, Users, ArrowLeft, Palette, Clock, HelpCircle } from 'lucide-react';
-import { AppShell, GameCard, PillButton, ListRowPill, IconButton, HowToPlayDialog } from '@/components/ui-kit';
+import { Plus, X, Play, Users, ArrowLeft, Settings, HelpCircle } from 'lucide-react';
+import { AppShell, PillButton, ListRowPill, IconButton, HowToPlayDialog } from '@/components/ui-kit';
 import { useDrawingStore } from '@/game/drawing-store';
+import { DrawingSettingsScreen } from './DrawingSettingsScreen';
+import { DRAWING_WORD_CATEGORIES } from '@/game/drawing-types';
 
 interface DrawingLobbyScreenProps {
   onStart: () => void;
@@ -11,12 +13,18 @@ interface DrawingLobbyScreenProps {
 export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps) {
   const [newPlayerName, setNewPlayerName] = useState('');
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(Object.keys(DRAWING_WORD_CATEGORIES));
+  const [showCategoryToImpostor, setShowCategoryToImpostor] = useState(true);
+  
   const { 
     players, 
     addPlayer, 
     removePlayer, 
     maxDrawingRounds, 
     drawingTimePerPlayer,
+    discussionTimeSeconds,
+    votingTimeSeconds,
     setMaxRounds,
     setDrawingTime 
   } = useDrawingStore();
@@ -34,7 +42,48 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
     }
   };
 
+  const handleUpdateSettings = (newSettings: {
+    drawingTimePerPlayer?: number;
+    maxDrawingRounds?: number;
+    discussionTimeSeconds?: number;
+    votingTimeSeconds?: number;
+    showCategoryToImpostor?: boolean;
+    selectedCategories?: string[];
+  }) => {
+    if (newSettings.drawingTimePerPlayer !== undefined) {
+      setDrawingTime(newSettings.drawingTimePerPlayer);
+    }
+    if (newSettings.maxDrawingRounds !== undefined) {
+      setMaxRounds(newSettings.maxDrawingRounds);
+    }
+    if (newSettings.showCategoryToImpostor !== undefined) {
+      setShowCategoryToImpostor(newSettings.showCategoryToImpostor);
+    }
+    if (newSettings.selectedCategories !== undefined) {
+      setSelectedCategories(newSettings.selectedCategories);
+    }
+  };
+
   const canStart = players.length >= 4;
+
+  // Show settings screen if open
+  if (showSettings) {
+    return (
+      <DrawingSettingsScreen
+        settings={{
+          drawingTimePerPlayer,
+          maxDrawingRounds,
+          discussionTimeSeconds,
+          votingTimeSeconds,
+          showCategoryToImpostor,
+          selectedCategories,
+        }}
+        playerCount={players.length}
+        onUpdateSettings={handleUpdateSettings}
+        onBack={() => setShowSettings(false)}
+      />
+    );
+  }
 
   return (
     <AppShell>
@@ -61,7 +110,7 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
         </div>
 
         {/* Add player input */}
-        <GameCard color="white" className="p-5 mb-5">
+        <div className="bg-card rounded-2xl p-5 mb-5 shadow-soft">
           <div className="flex gap-3">
             <input
               type="text"
@@ -69,7 +118,7 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
               onChange={(e) => setNewPlayerName(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Enter player name..."
-              className="flex-1 h-12 px-4 rounded-pill bg-secondary text-foreground placeholder:text-muted-foreground text-body-sm font-medium outline-none focus:ring-2 focus:ring-game-blue/30"
+              className="flex-1 h-12 px-4 rounded-pill bg-secondary text-foreground placeholder:text-muted-foreground text-body-sm font-medium outline-none focus:ring-2 focus:ring-[#0046FF]/30"
               maxLength={20}
             />
             <IconButton
@@ -77,62 +126,12 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
               size="lg"
               onClick={handleAddPlayer}
               disabled={!newPlayerName.trim()}
+              className="!bg-[#0046FF] hover:!bg-[#0035CC]"
             >
               <Plus className="w-5 h-5" />
             </IconButton>
           </div>
-        </GameCard>
-
-        {/* Settings */}
-        <GameCard color="blue" className="p-4 mb-5">
-          <h3 className="font-bold text-body text-foreground mb-3 flex items-center gap-2">
-            <Palette className="w-4 h-4" />
-            Game Settings
-          </h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-body-sm text-foreground/80 flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Time per turn
-              </span>
-              <div className="flex items-center gap-2">
-                {[8, 10, 15].map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => setDrawingTime(time)}
-                    className={`px-3 py-1 rounded-pill text-caption font-bold transition-all ${
-                      drawingTimePerPlayer === time
-                        ? 'bg-foreground text-card'
-                        : 'bg-card/50 text-foreground/70'
-                    }`}
-                  >
-                    {time}s
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-body-sm text-foreground/80">
-                Drawing rounds
-              </span>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3].map((rounds) => (
-                  <button
-                    key={rounds}
-                    onClick={() => setMaxRounds(rounds)}
-                    className={`px-3 py-1 rounded-pill text-caption font-bold transition-all ${
-                      maxDrawingRounds === rounds
-                        ? 'bg-foreground text-card'
-                        : 'bg-card/50 text-foreground/70'
-                    }`}
-                  >
-                    {rounds}x
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </GameCard>
+        </div>
 
         {/* Players list */}
         <div className="mb-5">
@@ -181,14 +180,24 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
           </div>
         </div>
 
+        {/* Settings Button */}
+        <button
+          onClick={() => setShowSettings(true)}
+          className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#0046FF]/10 hover:bg-[#0046FF]/20 text-[#0046FF] rounded-2xl transition-colors tap-scale mb-4"
+        >
+          <Settings className="w-5 h-5" />
+          <span className="font-bold">Einstellungen</span>
+        </button>
+
         {/* Start button */}
-        <div className="mt-8">
+        <div className="mt-4">
           <PillButton
             variant="primary"
             fullWidth
             icon={<Play className="w-5 h-5 fill-current" />}
             onClick={onStart}
             disabled={!canStart}
+            className="!bg-[#0046FF] hover:!bg-[#0035CC]"
           >
             {canStart ? 'Start Game' : `Need ${4 - players.length} more players`}
           </PillButton>
@@ -197,7 +206,7 @@ export function DrawingLobbyScreen({ onStart, onBack }: DrawingLobbyScreenProps)
         {/* How to Play Button */}
         <button 
           onClick={() => setShowHowToPlay(true)}
-          className="w-full mt-6 flex items-center justify-center gap-2 py-3.5 bg-game-blue/10 hover:bg-game-blue/20 text-game-blue rounded-2xl transition-colors tap-scale"
+          className="w-full mt-6 flex items-center justify-center gap-2 py-3.5 bg-[#0046FF]/10 hover:bg-[#0046FF]/20 text-[#0046FF] rounded-2xl transition-colors tap-scale"
         >
           <HelpCircle className="w-5 h-5" />
           <span className="font-bold">How to Play</span>
