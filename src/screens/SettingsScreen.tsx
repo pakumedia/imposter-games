@@ -142,10 +142,10 @@ function CategoryCard({
     <button
       onClick={onToggle}
       className={cn(
-        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden",
+        "relative flex items-center gap-2.5 p-3 rounded-2xl transition-all tap-scale w-full overflow-hidden border-2",
         isSelected 
-          ? "bg-card border border-[#FF6D1F] shadow-md" 
-          : "bg-card border border-border hover:border-muted-foreground/30"
+          ? "bg-card border-[#FF6D1F] shadow-md" 
+          : "bg-card border-border hover:border-muted-foreground/30"
       )}
     >
       <span className="text-lg flex-shrink-0">{emoji}</span>
@@ -183,13 +183,13 @@ function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
     <div className="px-4 pt-4 pb-2">
       <button 
         onClick={onUnlock}
-        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-100/80 to-amber-50/60 border border-amber-300/50 tap-scale group"
+        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#FF6D1F]/20 to-[#FF6D1F]/10 border border-[#FF6D1F]/30 tap-scale group"
       >
         <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-amber-600" />
-          <span className="font-semibold text-sm text-amber-700">PRO Kategorien</span>
+          <span className="text-base">🔒</span>
+          <span className="font-semibold text-sm text-[#FF6D1F]">PRO Kategorien</span>
         </div>
-        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white text-xs font-bold shadow-lg group-hover:shadow-amber-300/50 transition-all">
+        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#FF6D1F] via-[#FF8F4F] to-[#FF6D1F] text-white text-xs font-bold shadow-lg group-hover:shadow-[#FF6D1F]/50 transition-all">
           Freischalten
         </span>
       </button>
@@ -271,17 +271,6 @@ export function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                 </div>
               </div>
               
-              {/* Selection indicator */}
-              <div className={cn(
-                "absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                selectedPlan === plan.id
-                  ? "border-amber-500 bg-amber-500"
-                  : "border-muted-foreground/30"
-              )}>
-                {selectedPlan === plan.id && (
-                  <Check className="w-3 h-3 text-white stroke-[3]" />
-                )}
-              </div>
             </button>
           ))}
         </div>
@@ -641,10 +630,10 @@ export function SettingsScreen({
             {/* Lock Overlay */}
             <button 
               onClick={handleProCategoryClick}
-              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-black/5 to-black/20 rounded-b-2xl tap-scale"
+              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-[#FF6D1F]/5 to-[#FF6D1F]/20 rounded-b-2xl tap-scale"
             >
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
-                <Lock className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FF6D1F] to-[#FF8F4F] flex items-center justify-center shadow-xl">
+                <span className="text-3xl">🔒</span>
               </div>
             </button>
           </div>

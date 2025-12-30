@@ -7,6 +7,7 @@ import { useLanguageStore } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import tapWordsIcon from '@/assets/tap-words-icon.png';
+import wavelengthIcon from '@/assets/wavelength-icon.png';
 import { PaywallDialog } from './SettingsScreen';
 
 interface ProfileScreenProps {
@@ -187,9 +188,11 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
               onClick={() => window.open('https://apps.apple.com/de/app/perfect-match-headsynch/id6753659486', '_blank')}
               className="w-full flex items-center gap-4 px-4 py-4 bg-card/50 hover:bg-card/80 transition-colors tap-scale rounded-2xl"
             >
-              <div className="w-14 h-14 rounded-xl shadow-md bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                <span className="text-2xl">🎧</span>
-              </div>
+              <img 
+                src={wavelengthIcon} 
+                alt="Wavelength: Headsynch"
+                className="w-14 h-14 rounded-xl shadow-md"
+              />
               <div className="flex-1 text-left">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-body text-foreground">Wavelength: Headsynch</span>

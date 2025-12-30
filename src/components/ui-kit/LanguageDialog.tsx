@@ -14,9 +14,13 @@ interface LanguageDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const LANGUAGES: { id: Language; label: string; flagCode: 'de' | 'gb' }[] = [
+const LANGUAGES: { id: Language; label: string; flagCode: 'de' | 'gb' | 'fr' | 'it' | 'pt' | 'es' }[] = [
   { id: 'de', label: 'Deutsch', flagCode: 'de' },
   { id: 'en', label: 'English', flagCode: 'gb' },
+  { id: 'fr', label: 'Français', flagCode: 'fr' },
+  { id: 'it', label: 'Italiano', flagCode: 'it' },
+  { id: 'pt', label: 'Português', flagCode: 'pt' },
+  { id: 'es', label: 'Español', flagCode: 'es' },
 ];
 
 export function LanguageDialog({ open, onOpenChange }: LanguageDialogProps) {
