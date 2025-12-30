@@ -28,7 +28,7 @@ const variantClasses = {
   success: 'bg-game-green text-primary-foreground shadow-button hover:opacity-90',
   danger: 'bg-destructive text-destructive-foreground shadow-button hover:opacity-90',
   orange: 'bg-[#FF6D1F] text-white shadow-button hover:bg-[#E5621A]',
-  skyblue: 'bg-[#70BBED] text-primary-foreground shadow-button hover:bg-[#5AAAD8]',
+  skyblue: 'bg-[#0046FF] text-white shadow-button hover:bg-[#0039CC]',
 };
 
 export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(({ 
