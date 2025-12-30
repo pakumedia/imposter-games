@@ -54,7 +54,7 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         </div>
 
         {/* Add player input */}
-        <GameCard color="white" className="p-5 mb-5">
+        <GameCard color="subtle" className="p-5 mb-5 bg-game-teal/5">
           <div className="flex gap-3">
             <input
               type="text"
