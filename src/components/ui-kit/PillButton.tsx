@@ -27,7 +27,7 @@ const variantClasses = {
   ghost: 'bg-transparent text-foreground hover:bg-secondary',
   success: 'bg-game-green text-primary-foreground shadow-button hover:opacity-90',
   danger: 'bg-destructive text-destructive-foreground shadow-button hover:opacity-90',
-  orange: 'bg-game-orange text-primary-foreground shadow-button hover:bg-game-orange-dark',
+  orange: 'bg-[#FF6D1F] text-white shadow-button hover:bg-[#E5621A]',
   skyblue: 'bg-[#70BBED] text-primary-foreground shadow-button hover:bg-[#5AAAD8]',
 };
 
