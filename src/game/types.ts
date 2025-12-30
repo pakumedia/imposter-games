@@ -123,6 +123,28 @@ export const FREE_CATEGORIES: Record<string, WordEntry[]> = {
     { word: 'Backpack', hint: 'Bag' },
     { word: 'Headphones', hint: 'Earphones' },
   ],
+  'Electronics': [
+    { word: 'Smartphone', hint: 'Mobile phone' },
+    { word: 'Laptop', hint: 'Portable PC' },
+    { word: 'Television', hint: 'Screen box' },
+    { word: 'Headphones', hint: 'Audio device' },
+    { word: 'Tablet', hint: 'iPad' },
+    { word: 'Speaker', hint: 'Sound box' },
+    { word: 'Smartwatch', hint: 'Wrist tech' },
+    { word: 'Drone', hint: 'Flying camera' },
+    { word: 'Console', hint: 'Gaming device' },
+    { word: 'Camera', hint: 'Photo device' },
+    { word: 'Microphone', hint: 'Audio input' },
+    { word: 'Router', hint: 'WiFi box' },
+    { word: 'Keyboard', hint: 'Typing device' },
+    { word: 'Mouse', hint: 'Pointing device' },
+    { word: 'Monitor', hint: 'Display screen' },
+    { word: 'Printer', hint: 'Paper output' },
+    { word: 'USB Drive', hint: 'Flash storage' },
+    { word: 'Charger', hint: 'Power cable' },
+    { word: 'Projector', hint: 'Image display' },
+    { word: 'VR Headset', hint: 'Virtual reality' },
+  ],
 };
 
 // PRO categories (locked)

@@ -20,6 +20,27 @@ interface SettingsScreenProps {
 const DISCUSSION_TIMES = [60, 120, 180, 240, 300];
 const VOTING_TIMES = [30, 60, 90, 120];
 
+// Category emoji mapping
+const CATEGORY_EMOJIS: Record<string, string> = {
+  // Free
+  'Animals': '🐾',
+  'Food': '🍕',
+  'Objects': '🪑',
+  'Electronics': '📱',
+  // Pro
+  'Brands': '👟',
+  'Movies': '🎬',
+  'Vehicles': '🚗',
+  'Superpowers': '⚡',
+  'Fears': '😱',
+  'Inventions': '💡',
+  'Celebrities': '⭐',
+  'Games': '🎮',
+  'Anime': '🎌',
+  'Countries': '🌍',
+  'Custom Category': '✨',
+};
+
 // iOS-style Settings Group Component
 function SettingsGroup({ children, className }: { children: ReactNode; className?: string }) {
   return (
@@ -51,72 +72,63 @@ function SettingsRow({
 }
 
 // Section Header Component
-function SectionHeader({ emoji, title }: { emoji: string; title: string }) {
+function SectionHeader({ emoji, title, rightContent }: { emoji: string; title: string; rightContent?: ReactNode }) {
   return (
-    <div className="flex items-center gap-2 mt-8 mb-3 px-1">
-      <span className="text-lg">{emoji}</span>
-      <h2 className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
-      </h2>
+    <div className="flex items-center justify-between mt-8 mb-3 px-1">
+      <div className="flex items-center gap-2">
+        <span className="text-lg">{emoji}</span>
+        <h2 className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
+          {title}
+        </h2>
+      </div>
+      {rightContent}
     </div>
   );
 }
 
-// Category Row Component
-function CategoryRow({ 
+// Category Chip Component (2-column grid)
+function CategoryChip({ 
   name, 
   isSelected, 
   isPro = false, 
-  isCustom = false,
   onToggle,
-  isLast = false
 }: { 
   name: string; 
   isSelected: boolean; 
   isPro?: boolean;
-  isCustom?: boolean;
   onToggle: () => void;
-  isLast?: boolean;
 }) {
   const isLocked = isPro;
+  const emoji = CATEGORY_EMOJIS[name] || '📁';
   
   return (
     <button
       onClick={!isLocked ? onToggle : undefined}
       disabled={isLocked}
       className={cn(
-        "w-full py-4 px-5 flex items-center justify-between transition-all",
-        !isLast && "border-b border-border",
-        isLocked ? "opacity-60" : "tap-scale active:bg-muted/50"
+        "flex items-center gap-2.5 py-3 px-4 rounded-xl transition-all",
+        isLocked 
+          ? "bg-muted/50 opacity-60" 
+          : isSelected
+            ? "bg-[#FF6D1F]/15 border-2 border-[#FF6D1F]"
+            : "bg-card border-2 border-transparent shadow-soft tap-scale active:scale-95"
       )}
     >
-      <div className="flex items-center gap-3">
-        {isCustom && (
-          <span className="text-sm bg-game-purple/20 text-game-purple px-2 py-0.5 rounded-full font-semibold">
-            ✨
-          </span>
-        )}
-        {isPro && !isCustom && (
-          <span className="text-sm bg-[#FF6D1F]/10 text-[#FF6D1F] px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
-            <Crown className="w-3 h-3" />
-          </span>
-        )}
-        <span className={cn(
-          "font-medium text-body",
-          isLocked ? "text-muted-foreground" : "text-foreground"
-        )}>
-          {name}
-        </span>
-      </div>
-      
+      <span className="text-lg">{emoji}</span>
+      <span className={cn(
+        "font-medium text-body-sm flex-1 text-left truncate",
+        isLocked ? "text-muted-foreground" : "text-foreground"
+      )}>
+        {name}
+      </span>
       {isLocked ? (
-        <Lock className="w-4 h-4 text-muted-foreground" />
+        <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
       ) : isSelected ? (
-        <div className="w-6 h-6 rounded-full bg-[#FF6D1F] flex items-center justify-center">
-          <Check className="w-4 h-4 text-white" />
+        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center flex-shrink-0">
+          <Check className="w-3 h-3 text-white" />
         </div>
       ) : (
-        <div className="w-6 h-6 rounded-full border-2 border-muted-foreground/30" />
+        <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 flex-shrink-0" />
       )}
     </button>
   );
@@ -168,7 +180,7 @@ export function SettingsScreen({
 
         {/* Header */}
         <h1 className="text-h1 text-foreground mb-2">Einstellungen</h1>
-        <p className="text-body text-muted-foreground mb-6">Passe dein Spiel an</p>
+        <p className="text-body text-muted-foreground mb-4">Passe dein Spiel an</p>
 
         {/* Impostor Count Section */}
         <SectionHeader emoji="🕵️" title="Impostors" />
@@ -186,61 +198,57 @@ export function SettingsScreen({
         </SettingsGroup>
 
         {/* Categories Section */}
-        <SectionHeader emoji="📂" title="Kategorien" />
-        <div className="flex items-center justify-end mb-3 px-1">
-          <button 
-            onClick={handleSelectAllFree}
-            className="text-caption text-[#FF6D1F] font-semibold tap-scale"
-          >
-            Alle Free
-          </button>
-        </div>
+        <SectionHeader 
+          emoji="📂" 
+          title="Kategorien" 
+          rightContent={
+            <button 
+              onClick={handleSelectAllFree}
+              className="text-caption text-[#FF6D1F] font-semibold tap-scale"
+            >
+              Alle Free
+            </button>
+          }
+        />
         
-        <SettingsGroup className="mb-4">
-          {/* Custom Category */}
-          <CategoryRow
-            name="Custom Category"
-            isSelected={false}
-            isPro={true}
-            isCustom={true}
-            onToggle={() => {}}
-            isLast
-          />
-        </SettingsGroup>
-
-        {/* Free Categories */}
+        {/* Free Categories - 2 column grid */}
         <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide">
           Free
         </p>
-        <SettingsGroup className="mb-4">
-          {FREE_CATEGORY_NAMES.map((category, index) => (
-            <CategoryRow
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {FREE_CATEGORY_NAMES.map((category) => (
+            <CategoryChip
               key={category}
               name={category}
               isSelected={settings.selectedCategories.includes(category)}
               onToggle={() => handleCategoryToggle(category)}
-              isLast={index === FREE_CATEGORY_NAMES.length - 1}
             />
           ))}
-        </SettingsGroup>
+        </div>
 
-        {/* PRO Categories */}
+        {/* PRO Categories - 2 column grid */}
         <p className="text-caption text-muted-foreground mb-2 px-1 font-semibold uppercase tracking-wide flex items-center gap-1">
           <Crown className="w-3 h-3 text-[#FF6D1F]" />
           Pro
         </p>
-        <SettingsGroup>
-          {PRO_CATEGORY_NAMES.map((category, index) => (
-            <CategoryRow
+        <div className="grid grid-cols-2 gap-2">
+          {/* Custom Category first */}
+          <CategoryChip
+            name="Custom Category"
+            isSelected={false}
+            isPro={true}
+            onToggle={() => {}}
+          />
+          {PRO_CATEGORY_NAMES.map((category) => (
+            <CategoryChip
               key={category}
               name={category}
               isSelected={false}
               isPro={true}
               onToggle={() => {}}
-              isLast={index === PRO_CATEGORY_NAMES.length - 1}
             />
           ))}
-        </SettingsGroup>
+        </div>
 
         {/* Impostor Helpers Section */}
         <SectionHeader emoji="💡" title="Impostor Hilfen" />
