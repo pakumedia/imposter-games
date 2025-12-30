@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Check } from 'lucide-react';
+import { ArrowLeft, Lock, Check, X, Sparkles } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { AppShell, ImpostorCounter } from '@/components/ui-kit';
 import { 
@@ -8,7 +8,12 @@ import {
   PRO_CATEGORY_NAMES 
 } from '@/game/types';
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+} from '@/components/ui/dialog';
 
 interface SettingsScreenProps {
   settings: GameSettings;
@@ -40,6 +45,32 @@ const CATEGORY_EMOJIS: Record<string, string> = {
   'Countries': '🌍',
   'Custom Category': '✨',
 };
+
+// Pricing plans
+const PRICING_PLANS = [
+  {
+    id: 'monthly',
+    name: 'Monatlich',
+    price: '2,99€',
+    period: '/Monat',
+    popular: false,
+  },
+  {
+    id: 'yearly',
+    name: 'Jährlich',
+    price: '19,99€',
+    period: '/Jahr',
+    popular: true,
+    savings: 'Spare 44%',
+  },
+  {
+    id: 'lifetime',
+    name: 'Lifetime',
+    price: '39,99€',
+    period: 'einmalig',
+    popular: false,
+  },
+];
 
 // iOS-style Settings Group Component
 function SettingsGroup({ children, className }: { children: ReactNode; className?: string }) {
@@ -108,10 +139,9 @@ function CategoryRow({
   
   return (
     <button
-      onClick={!isLocked ? onToggle : undefined}
-      disabled={isLocked}
+      onClick={onToggle}
       className={cn(
-        "flex items-center gap-3 py-3.5 px-5 w-full transition-all text-left",
+        "flex items-center gap-3 py-3.5 px-5 w-full transition-all text-left tap-scale",
         !isLast && "border-b border-border",
         isPro && "bg-gradient-to-r from-amber-50/50 to-transparent",
         isSelected && !isPro && "bg-[#FF6D1F]/10"
@@ -149,30 +179,150 @@ function CategoryRow({
 // Premium Divider Component
 function PremiumDivider() {
   return (
-    <div className="relative py-4 px-5 bg-gradient-to-r from-amber-500/10 via-yellow-400/15 to-amber-500/10 border-y border-amber-300/30">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">👑</span>
-          <span className="font-bold text-amber-700">PRO Kategorien</span>
-        </div>
-        <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all tap-scale">
-          Freischalten
-        </button>
+    <div className="relative py-3 px-5 bg-gradient-to-r from-amber-500/10 via-yellow-400/15 to-amber-500/10 border-y border-amber-300/30">
+      <div className="flex items-center gap-2">
+        <span className="text-lg">👑</span>
+        <span className="font-bold text-amber-700 text-sm">PRO Kategorien</span>
       </div>
     </div>
   );
 }
 
-// Premium CTA Component
-function PremiumCTA() {
+// Paywall Dialog Component
+function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const [selectedPlan, setSelectedPlan] = useState('yearly');
+
   return (
-    <div className="py-5 px-5 text-center bg-gradient-to-r from-amber-100/30 via-amber-200/40 to-amber-100/30">
-      <p className="text-sm text-amber-700/80 mb-3">
-        🔓 Schalte alle 10+ Premium-Kategorien frei!
-      </p>
-      <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all tap-scale">
-        Premium holen
-      </button>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
+      <DialogContent className="sm:max-w-md p-0 gap-0 bg-gradient-to-b from-white to-amber-50/30 border-0 rounded-3xl overflow-hidden">
+        {/* Header */}
+        <div className="relative pt-8 pb-6 px-6 text-center bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500">
+          <button 
+            onClick={() => onOpenChange(false)}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center tap-scale"
+          >
+            <X className="w-5 h-5 text-white" />
+          </button>
+          
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-1">Werde Premium</h2>
+          <p className="text-white/80 text-sm">Schalte alle Features frei</p>
+        </div>
+
+        {/* Features */}
+        <div className="px-6 py-5 border-b border-border">
+          <div className="space-y-3">
+            {[
+              '10+ Premium Kategorien',
+              'Eigene Kategorien erstellen',
+              'Keine Werbung',
+              'Früher Zugang zu neuen Features',
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-white stroke-[3]" />
+                </div>
+                <span className="text-sm text-foreground">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pricing Options */}
+        <div className="px-6 py-5 space-y-3">
+          {PRICING_PLANS.map((plan) => (
+            <button
+              key={plan.id}
+              onClick={() => setSelectedPlan(plan.id)}
+              className={cn(
+                "w-full p-4 rounded-2xl border-2 transition-all relative tap-scale",
+                selectedPlan === plan.id
+                  ? "border-amber-500 bg-amber-50/50"
+                  : "border-border bg-card hover:border-amber-300"
+              )}
+            >
+              {plan.popular && (
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold rounded-full">
+                  Beliebt
+                </span>
+              )}
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <p className="font-semibold text-foreground">{plan.name}</p>
+                  {plan.savings && (
+                    <p className="text-xs text-amber-600 font-medium">{plan.savings}</p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <span className="text-xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-sm text-muted-foreground">{plan.period}</span>
+                </div>
+              </div>
+              
+              {/* Selection indicator */}
+              <div className={cn(
+                "absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                selectedPlan === plan.id
+                  ? "border-amber-500 bg-amber-500"
+                  : "border-muted-foreground/30"
+              )}>
+                {selectedPlan === plan.id && (
+                  <Check className="w-3 h-3 text-white stroke-[3]" />
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* CTA Button */}
+        <div className="px-6 pb-6">
+          <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all tap-scale">
+            Jetzt freischalten
+          </button>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Jederzeit kündbar • Sichere Bezahlung
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Time Selector Component
+function TimeSelector({ 
+  times, 
+  selectedTime, 
+  onSelect, 
+  formatTime 
+}: { 
+  times: number[]; 
+  selectedTime: number; 
+  onSelect: (time: number) => void;
+  formatTime: (time: number) => string;
+}) {
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+      {times.map((time) => {
+        const isSelected = selectedTime === time;
+        return (
+          <button
+            key={time}
+            onClick={() => onSelect(time)}
+            className={cn(
+              "relative px-5 py-3 rounded-2xl text-sm font-semibold transition-all tap-scale flex-shrink-0",
+              "border-2",
+              isSelected
+                ? "bg-gradient-to-br from-[#FF6D1F] to-[#FF8A47] text-white border-transparent shadow-lg shadow-[#FF6D1F]/25"
+                : "bg-card text-foreground border-border hover:border-[#FF6D1F]/30 hover:bg-[#FF6D1F]/5"
+            )}
+          >
+            {formatTime(time)}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -184,6 +334,7 @@ export function SettingsScreen({
   onBack,
 }: SettingsScreenProps) {
   const maxImpostors = getMaxImpostors(playerCount);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const handleCategoryToggle = (category: string) => {
     const current = settings.selectedCategories;
@@ -194,6 +345,10 @@ export function SettingsScreen({
     if (updated.length > 0) {
       onUpdateSettings({ selectedCategories: updated });
     }
+  };
+
+  const handleProCategoryClick = () => {
+    setShowPaywall(true);
   };
 
   const handleSelectAllFree = () => {
@@ -273,7 +428,7 @@ export function SettingsScreen({
             name="Custom Category"
             isSelected={false}
             isPro={true}
-            onToggle={() => {}}
+            onToggle={handleProCategoryClick}
           />
           {PRO_CATEGORY_NAMES.map((category, index) => (
             <CategoryRow
@@ -281,13 +436,10 @@ export function SettingsScreen({
               name={category}
               isSelected={false}
               isPro={true}
-              onToggle={() => {}}
+              onToggle={handleProCategoryClick}
               isLast={index === PRO_CATEGORY_NAMES.length - 1}
             />
           ))}
-          
-          {/* Premium CTA */}
-          <PremiumCTA />
         </SettingsGroup>
 
         {/* Impostor Helpers Section */}
@@ -333,55 +485,38 @@ export function SettingsScreen({
         <SettingsGroup className="mt-6">
           <CardHeader emoji="⏱️" title="Zeiten" />
           <SettingsRow>
-            <div className="mb-3">
+            <div className="mb-4">
               <p className="font-medium text-body text-foreground flex items-center gap-2">
                 <span>💬</span> Diskussion
               </p>
               <p className="text-caption text-muted-foreground ml-7">Zeit zum Diskutieren</p>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {DISCUSSION_TIMES.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => onUpdateSettings({ discussionTimeSeconds: time })}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-body-sm font-semibold transition-all tap-scale",
-                    settings.discussionTimeSeconds === time
-                      ? "bg-[#FF6D1F] text-white"
-                      : "bg-muted text-foreground hover:bg-muted/80"
-                  )}
-                >
-                  {formatTime(time)}
-                </button>
-              ))}
-            </div>
+            <TimeSelector
+              times={DISCUSSION_TIMES}
+              selectedTime={settings.discussionTimeSeconds}
+              onSelect={(time) => onUpdateSettings({ discussionTimeSeconds: time })}
+              formatTime={formatTime}
+            />
           </SettingsRow>
           <SettingsRow isLast>
-            <div className="mb-3">
+            <div className="mb-4">
               <p className="font-medium text-body text-foreground flex items-center gap-2">
                 <span>🗳️</span> Abstimmung
               </p>
               <p className="text-caption text-muted-foreground ml-7">Zeit zum Abstimmen</p>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {VOTING_TIMES.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => onUpdateSettings({ votingTimeSeconds: time })}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-body-sm font-semibold transition-all tap-scale",
-                    settings.votingTimeSeconds === time
-                      ? "bg-[#FF6D1F] text-white"
-                      : "bg-muted text-foreground hover:bg-muted/80"
-                  )}
-                >
-                  {formatVotingTime(time)}
-                </button>
-              ))}
-            </div>
+            <TimeSelector
+              times={VOTING_TIMES}
+              selectedTime={settings.votingTimeSeconds}
+              onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
+              formatTime={formatVotingTime}
+            />
           </SettingsRow>
         </SettingsGroup>
       </div>
+
+      {/* Paywall Dialog */}
+      <PaywallDialog open={showPaywall} onOpenChange={setShowPaywall} />
     </AppShell>
   );
 }
