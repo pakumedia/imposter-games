@@ -54,7 +54,7 @@ export function InlineGameSettings({
   return (
     <div className="space-y-4">
       {/* Impostor Count */}
-      <GameCard color="white" className="p-4">
+      <GameCard color="subtle" className="p-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-9 h-9 rounded-full bg-destructive/10 flex items-center justify-center">
             <Users className="w-4 h-4 text-destructive" />
@@ -76,7 +76,7 @@ export function InlineGameSettings({
       </GameCard>
 
       {/* Categories */}
-      <GameCard color="white" className="p-4">
+      <GameCard color="subtle" className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-body-sm text-foreground flex items-center gap-2">
             <Layers className="w-4 h-4 text-game-purple" />
@@ -137,7 +137,7 @@ export function InlineGameSettings({
       </GameCard>
 
       {/* Impostor Helpers */}
-      <GameCard color="white" className="p-4">
+      <GameCard color="subtle" className="p-4">
         <h3 className="font-bold text-body-sm text-foreground mb-3 flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-game-yellow" />
           Impostor Helpers
@@ -177,7 +177,7 @@ export function InlineGameSettings({
       </GameCard>
 
       {/* Time Settings */}
-      <GameCard color="white" className="p-4">
+      <GameCard color="subtle" className="p-4">
         <h3 className="font-bold text-body-sm text-foreground mb-3 flex items-center gap-2">
           <Clock className="w-4 h-4 text-game-teal" />
           Time Settings

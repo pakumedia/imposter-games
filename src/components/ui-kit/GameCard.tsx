@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-export type CardColor = 'yellow' | 'orange' | 'blue' | 'purple' | 'pink' | 'teal' | 'dark' | 'white';
+export type CardColor = 'yellow' | 'orange' | 'blue' | 'purple' | 'pink' | 'teal' | 'dark' | 'white' | 'subtle';
 
 interface GameCardProps {
   children: ReactNode;
@@ -19,6 +19,7 @@ const colorClasses: Record<CardColor, string> = {
   teal: 'game-card-teal',
   dark: 'game-card-dark text-primary-foreground',
   white: 'bg-card',
+  subtle: 'bg-card-subtle shadow-embedded border border-border/30',
 };
 
 export function GameCard({ 
