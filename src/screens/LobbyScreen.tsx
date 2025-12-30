@@ -67,7 +67,7 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         </div>
 
         {/* Add player input */}
-        <GameCard color="subtle" className="p-5 mb-5 bg-game-orange/10">
+        <GameCard color="subtle" className="p-5 mb-5 bg-[#FF6D1F]">
           <div className="flex gap-3">
             <input
               type="text"
@@ -75,16 +75,17 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
               onChange={(e) => setNewPlayerName(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Enter player name..."
-              className="flex-1 h-12 px-4 rounded-pill bg-secondary text-foreground placeholder:text-muted-foreground text-body-sm font-medium outline-none focus:ring-2 focus:ring-primary/30"
+              className="flex-1 h-12 px-4 rounded-pill bg-white/20 text-white placeholder:text-white/70 text-body-sm font-medium outline-none focus:ring-2 focus:ring-white/30"
               maxLength={20}
             />
             <IconButton
-              variant="teal"
+              variant="ghost"
               size="lg"
               onClick={handleAddPlayer}
               disabled={!newPlayerName.trim()}
+              className="bg-white hover:bg-white/90"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-5 h-5 text-[#FF6D1F]" />
             </IconButton>
           </div>
         </GameCard>
@@ -142,7 +143,7 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
         {/* Start button */}
         <div className="mt-4">
           <PillButton
-            variant="primary"
+            variant="orange"
             fullWidth
             icon={<Play className="w-5 h-5 fill-current" />}
             onClick={onStart}
