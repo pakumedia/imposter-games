@@ -126,16 +126,14 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
   );
 }
 
-// Category Card Component (Apple-style 2x3 grid cards) with premium shiny effects
+// Category Card Component (Apple-style 2x3 grid cards) - no check, reduced border
 function CategoryCard({ 
   name, 
   isSelected, 
-  isPro = false, 
   onToggle,
 }: { 
   name: string; 
   isSelected: boolean; 
-  isPro?: boolean;
   onToggle: () => void;
 }) {
   const emoji = CATEGORY_EMOJIS[name] || '📁';
@@ -145,41 +143,37 @@ function CategoryCard({
       onClick={onToggle}
       className={cn(
         "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full overflow-hidden",
-        isPro 
-          ? "bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60 shadow-[0_0_20px_rgba(251,191,36,0.15)]"
-          : isSelected 
-            ? "bg-card border-[3px] border-[#FF6D1F] shadow-md" 
-            : "bg-card border-2 border-border hover:border-muted-foreground/30"
+        isSelected 
+          ? "bg-card border-2 border-[#FF6D1F] shadow-md" 
+          : "bg-card border-2 border-border hover:border-muted-foreground/30"
       )}
     >
-      {/* Premium shimmer effect for PRO cards */}
-      {isPro && (
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
-      )}
-      
-      {/* Emoji - no box */}
-      <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
-      
-      {/* Text Content */}
-      <span className={cn(
-        "font-semibold text-sm truncate text-left flex-1 relative z-10",
-        isPro ? "text-amber-700" : "text-foreground"
-      )}>
+      <span className="text-lg flex-shrink-0">{emoji}</span>
+      <span className="font-semibold text-sm truncate text-left flex-1 text-foreground">
         {name}
       </span>
-      
-      {/* Selected indicator for free cards */}
-      {!isPro && isSelected && (
-        <div className="w-5 h-5 rounded-full bg-[#FF6D1F] flex items-center justify-center flex-shrink-0">
-          <Check className="w-3 h-3 text-white stroke-[3]" />
-        </div>
-      )}
-      
-      {/* Lock icon for PRO cards */}
-      {isPro && (
-        <Lock className="w-4 h-4 text-amber-500 flex-shrink-0 relative z-10" />
-      )}
     </button>
+  );
+}
+
+// PRO Category Card with shimmer (no individual lock)
+function ProCategoryCard({ 
+  name, 
+}: { 
+  name: string; 
+}) {
+  const emoji = CATEGORY_EMOJIS[name] || '📁';
+  
+  return (
+    <div
+      className="relative flex items-center gap-2.5 p-3 rounded-xl w-full overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
+      <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
+      <span className="font-semibold text-sm truncate text-left flex-1 relative z-10 text-amber-700">
+        {name}
+      </span>
+    </div>
   );
 }
 
@@ -339,30 +333,30 @@ function TimeCounter({
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-3">
+    <div className="w-full">
+      <div className="flex items-center gap-3 mb-3">
         <span className="text-xl">{emoji}</span>
         <div>
           <p className="font-medium text-body text-foreground text-left">{label}</p>
           <p className="text-caption text-muted-foreground">{sublabel}</p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <button
           onClick={handleDecrement}
           disabled={currentIndex <= 0}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex <= 0 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Minus className="w-4 h-4 stroke-[2.5]" />
+          <Minus className="w-5 h-5 stroke-[2.5]" />
         </button>
         
-        <span className="font-semibold text-foreground min-w-[50px] text-center">
+        <span className="font-bold text-lg text-foreground min-w-[60px] text-center">
           {formatTime(selectedTime)}
         </span>
         
@@ -370,14 +364,14 @@ function TimeCounter({
           onClick={handleIncrement}
           disabled={currentIndex >= times.length - 1}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex >= times.length - 1 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
+          <Plus className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
     </div>
@@ -634,23 +628,25 @@ export function SettingsScreen({
           {/* Premium Divider */}
           <PremiumDivider onUnlock={handleProCategoryClick} />
           
-          {/* Pro Categories - 2x3 Grid */}
-          <div className="p-4 grid grid-cols-2 gap-3">
-            <CategoryCard
-              name="Custom"
-              isSelected={false}
-              isPro={true}
-              onToggle={handleProCategoryClick}
-            />
-            {PRO_CATEGORY_NAMES.map((category) => (
-              <CategoryCard
-                key={category}
-                name={category}
-                isSelected={false}
-                isPro={true}
-                onToggle={handleProCategoryClick}
-              />
-            ))}
+          {/* Pro Categories - with overlay lock */}
+          <div className="relative p-4">
+            {/* PRO Cards Grid */}
+            <div className="grid grid-cols-2 gap-3 opacity-60">
+              <ProCategoryCard name="Custom" />
+              {PRO_CATEGORY_NAMES.map((category) => (
+                <ProCategoryCard key={category} name={category} />
+              ))}
+            </div>
+            
+            {/* Lock Overlay */}
+            <button 
+              onClick={handleProCategoryClick}
+              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-black/5 to-black/20 rounded-b-2xl tap-scale"
+            >
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
+                <Lock className="w-8 h-8 text-white" />
+              </div>
+            </button>
           </div>
         </SettingsGroup>
       </div>

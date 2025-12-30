@@ -128,15 +128,6 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
           </div>
         </div>
 
-        {/* Settings Button */}
-        <button 
-          onClick={() => setShowSettings(true)}
-          className="w-full mb-6 flex items-center justify-center gap-2 py-4 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl transition-colors tap-scale"
-        >
-          <Settings className="w-5 h-5" />
-          <span className="font-bold">Einstellungen</span>
-        </button>
-
         {/* Start button */}
         <div className="mt-4">
           <PillButton
@@ -150,13 +141,22 @@ export function LobbyScreen({ onStart, onBack }: LobbyScreenProps) {
           </PillButton>
         </div>
 
-        {/* How to Play Button */}
+        {/* Settings Button - below start button */}
+        <button 
+          onClick={() => setShowSettings(true)}
+          className="w-full mt-4 flex items-center justify-center gap-2 py-4 bg-secondary hover:bg-secondary/80 text-foreground rounded-2xl transition-colors tap-scale"
+        >
+          <Settings className="w-5 h-5" />
+          <span className="font-bold">Einstellungen</span>
+        </button>
+
+        {/* How to Play Button - text only */}
         <button 
           onClick={() => setShowHowToPlay(true)}
-          className="w-full mt-6 flex items-center justify-center gap-2 py-3.5 bg-game-orange/10 hover:bg-game-orange/20 text-game-orange rounded-2xl transition-colors tap-scale"
+          className="w-full mt-4 flex items-center justify-center gap-2 py-3 text-muted-foreground hover:text-foreground transition-colors tap-scale"
         >
           <HelpCircle className="w-5 h-5" />
-          <span className="font-bold">How to Play</span>
+          <span className="font-medium">How to Play</span>
         </button>
       </div>
 

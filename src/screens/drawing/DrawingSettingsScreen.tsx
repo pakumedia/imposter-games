@@ -1,6 +1,6 @@
 import { ArrowLeft, Lock, Check, X, Sparkles, Minus, Plus } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
-import { AppShell, ImpostorCounter } from '@/components/ui-kit';
+import { AppShell } from '@/components/ui-kit';
 import { cn } from '@/lib/utils';
 import { ReactNode, useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogOverlay,
 } from '@/components/ui/dialog';
-import { DRAWING_WORD_CATEGORIES } from '@/game/drawing-types';
+import { FREE_CATEGORY_NAMES, PRO_CATEGORY_NAMES } from '@/game/types';
 
 interface DrawingSettingsScreenProps {
   settings: {
@@ -29,13 +29,25 @@ const DISCUSSION_TIMES = [30, 60, 90, 120];
 const VOTING_TIMES = [30, 45, 60, 90];
 const DRAWING_ROUNDS = [1, 2, 3];
 
-// Category emoji mapping for drawing
+// Category emoji mapping - same as Secret Word
 const CATEGORY_EMOJIS: Record<string, string> = {
-  'Easy': '⭐',
+  // Free
   'Animals': '🐾',
   'Food': '🍕',
   'Objects': '🪑',
-  'Nature': '🌿',
+  'Electronics': '📱',
+  // Pro
+  'Brands': '👟',
+  'Movies': '🎬',
+  'Vehicles': '🚗',
+  'Superpowers': '⚡',
+  'Fears': '😱',
+  'Inventions': '💡',
+  'Celebrities': '⭐',
+  'Games': '🎮',
+  'Anime': '🎌',
+  'Countries': '🌍',
+  'Custom': '✨',
 };
 
 // Pricing plans
@@ -112,16 +124,14 @@ function CardHeader({ emoji, title, rightContent, className }: { emoji: string; 
   );
 }
 
-// Category Card Component for Drawing
+// Category Card Component - no check, reduced border
 function CategoryCard({ 
   name, 
   isSelected, 
-  isPro = false, 
   onToggle,
 }: { 
   name: string; 
   isSelected: boolean; 
-  isPro?: boolean;
   onToggle: () => void;
 }) {
   const emoji = CATEGORY_EMOJIS[name] || '📁';
@@ -131,37 +141,57 @@ function CategoryCard({
       onClick={onToggle}
       className={cn(
         "relative flex items-center gap-2.5 p-3 rounded-xl transition-all tap-scale w-full overflow-hidden",
-        isPro 
-          ? "bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60 shadow-[0_0_20px_rgba(251,191,36,0.15)]"
-          : isSelected 
-            ? "bg-card border-[3px] border-[#0046FF] shadow-md" 
-            : "bg-card border-2 border-border hover:border-muted-foreground/30"
+        isSelected 
+          ? "bg-card border-2 border-[#0046FF] shadow-md" 
+          : "bg-card border-2 border-border hover:border-muted-foreground/30"
       )}
     >
-      {/* Premium shimmer effect for PRO cards */}
-      {isPro && (
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
-      )}
-      
-      <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
-      
-      <span className={cn(
-        "font-semibold text-sm truncate text-left flex-1 relative z-10",
-        isPro ? "text-amber-700" : "text-foreground"
-      )}>
+      <span className="text-lg flex-shrink-0">{emoji}</span>
+      <span className="font-semibold text-sm truncate text-left flex-1 text-foreground">
         {name}
       </span>
-      
-      {!isPro && isSelected && (
-        <div className="w-5 h-5 rounded-full bg-[#0046FF] flex items-center justify-center flex-shrink-0">
-          <Check className="w-3 h-3 text-white stroke-[3]" />
-        </div>
-      )}
-      
-      {isPro && (
-        <Lock className="w-4 h-4 text-amber-500 flex-shrink-0 relative z-10" />
-      )}
     </button>
+  );
+}
+
+// PRO Category Card with shimmer (no individual lock)
+function ProCategoryCard({ 
+  name, 
+}: { 
+  name: string; 
+}) {
+  const emoji = CATEGORY_EMOJIS[name] || '📁';
+  
+  return (
+    <div
+      className="relative flex items-center gap-2.5 p-3 rounded-xl w-full overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100 to-yellow-50 border-2 border-amber-300/60"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
+      <span className="text-lg flex-shrink-0 relative z-10">{emoji}</span>
+      <span className="font-semibold text-sm truncate text-left flex-1 relative z-10 text-amber-700">
+        {name}
+      </span>
+    </div>
+  );
+}
+
+// Premium Divider Component with unlock button
+function PremiumDivider({ onUnlock }: { onUnlock: () => void }) {
+  return (
+    <div className="px-4 pt-4 pb-2">
+      <button 
+        onClick={onUnlock}
+        className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-100/80 to-amber-50/60 border border-amber-300/50 tap-scale group"
+      >
+        <div className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-amber-600" />
+          <span className="font-semibold text-sm text-amber-700">PRO Kategorien</span>
+        </div>
+        <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white text-xs font-bold shadow-lg group-hover:shadow-amber-300/50 transition-all">
+          Freischalten
+        </span>
+      </button>
+    </div>
   );
 }
 
@@ -263,7 +293,7 @@ function PaywallDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
   );
 }
 
-// Time Counter Component
+// Time Counter Component - vertical layout (controls below text)
 function TimeCounter({ 
   label,
   sublabel,
@@ -296,30 +326,30 @@ function TimeCounter({
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-3">
+    <div className="w-full">
+      <div className="flex items-center gap-3 mb-3">
         <span className="text-xl">{emoji}</span>
         <div>
           <p className="font-medium text-body text-foreground text-left">{label}</p>
           <p className="text-caption text-muted-foreground">{sublabel}</p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <button
           onClick={handleDecrement}
           disabled={currentIndex <= 0}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex <= 0 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Minus className="w-4 h-4 stroke-[2.5]" />
+          <Minus className="w-5 h-5 stroke-[2.5]" />
         </button>
         
-        <span className="font-semibold text-foreground min-w-[50px] text-center">
+        <span className="font-bold text-lg text-foreground min-w-[60px] text-center">
           {formatTime(selectedTime)}
         </span>
         
@@ -327,21 +357,21 @@ function TimeCounter({
           onClick={handleIncrement}
           disabled={currentIndex >= times.length - 1}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex >= times.length - 1 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
+          <Plus className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
     </div>
   );
 }
 
-// Rounds Counter Component
+// Rounds Counter Component - vertical layout
 function RoundsCounter({ 
   value, 
   onChange 
@@ -364,30 +394,30 @@ function RoundsCounter({
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center gap-3">
+    <div className="w-full">
+      <div className="flex items-center gap-3 mb-3">
         <span className="text-xl">🔄</span>
         <div>
           <p className="font-medium text-body text-foreground text-left">Zeichenrunden</p>
           <p className="text-caption text-muted-foreground">Wie oft jeder zeichnet</p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <button
           onClick={handleDecrement}
           disabled={currentIndex <= 0}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex <= 0 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Minus className="w-4 h-4 stroke-[2.5]" />
+          <Minus className="w-5 h-5 stroke-[2.5]" />
         </button>
         
-        <span className="font-semibold text-foreground min-w-[50px] text-center">
+        <span className="font-bold text-lg text-foreground min-w-[60px] text-center">
           {value}x
         </span>
         
@@ -395,14 +425,14 @@ function RoundsCounter({
           onClick={handleIncrement}
           disabled={currentIndex >= DRAWING_ROUNDS.length - 1}
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center transition-all tap-scale",
+            "w-10 h-10 rounded-full flex items-center justify-center transition-all tap-scale",
             "bg-muted/60 text-muted-foreground",
             currentIndex >= DRAWING_ROUNDS.length - 1 
               ? "opacity-40 cursor-not-allowed" 
               : "hover:bg-muted active:scale-95"
           )}
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
+          <Plus className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
     </div>
@@ -416,8 +446,6 @@ export function DrawingSettingsScreen({
   onBack,
 }: DrawingSettingsScreenProps) {
   const [showPaywall, setShowPaywall] = useState(false);
-  
-  const categoryNames = Object.keys(DRAWING_WORD_CATEGORIES);
 
   const handleCategoryToggle = (category: string) => {
     const current = settings.selectedCategories;
@@ -430,11 +458,19 @@ export function DrawingSettingsScreen({
     }
   };
 
+  const handleProCategoryClick = () => {
+    setShowPaywall(true);
+  };
+
   const handleSelectAllFree = () => {
-    onUpdateSettings({ selectedCategories: [...categoryNames] });
+    onUpdateSettings({ selectedCategories: [...FREE_CATEGORY_NAMES] });
   };
 
   const formatTime = (seconds: number) => {
+    return seconds < 60 ? `${seconds}s` : `${seconds / 60} min`;
+  };
+
+  const formatVotingTime = (seconds: number) => {
     return seconds < 60 ? `${seconds}s` : `${seconds / 60} min`;
   };
 
@@ -476,29 +512,7 @@ export function DrawingSettingsScreen({
           </SettingsRow>
         </SettingsGroup>
 
-        {/* 2. Impostor Helpers Section */}
-        <SettingsGroup className="mt-6">
-          <CardHeader emoji="💡" title="Impostor Hilfen" />
-          <SettingsRow isLast>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-xl">👁️</span>
-                <div>
-                  <p className="font-medium text-body text-foreground">Kategorie zeigen</p>
-                  <p className="text-caption text-muted-foreground">Impostor sieht die aktive Kategorie</p>
-                </div>
-              </div>
-              <Switch
-                checked={settings.showCategoryToImpostor}
-                onCheckedChange={(checked) => 
-                  onUpdateSettings({ showCategoryToImpostor: checked })
-                }
-              />
-            </div>
-          </SettingsRow>
-        </SettingsGroup>
-
-        {/* 3. Time Settings Section */}
+        {/* 2. Time Settings Section */}
         <SettingsGroup className="mt-6">
           <CardHeader emoji="⏱️" title="Zeiten" />
           <SettingsRow>
@@ -520,12 +534,34 @@ export function DrawingSettingsScreen({
               times={VOTING_TIMES}
               selectedTime={settings.votingTimeSeconds}
               onSelect={(time) => onUpdateSettings({ votingTimeSeconds: time })}
-              formatTime={formatTime}
+              formatTime={formatVotingTime}
             />
           </SettingsRow>
         </SettingsGroup>
 
-        {/* 4. Categories */}
+        {/* 3. Impostor Helpers Section - after Zeiten */}
+        <SettingsGroup className="mt-6">
+          <CardHeader emoji="💡" title="Impostor Hilfen" />
+          <SettingsRow isLast>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">👁️</span>
+                <div>
+                  <p className="font-medium text-body text-foreground">Kategorie zeigen</p>
+                  <p className="text-caption text-muted-foreground">Impostor sieht die aktive Kategorie</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.showCategoryToImpostor}
+                onCheckedChange={(checked) => 
+                  onUpdateSettings({ showCategoryToImpostor: checked })
+                }
+              />
+            </div>
+          </SettingsRow>
+        </SettingsGroup>
+
+        {/* 4. All Categories (Free + Pro) - same as Secret Word */}
         <SettingsGroup className="mt-6">
           <CardHeader 
             emoji="📂" 
@@ -540,8 +576,9 @@ export function DrawingSettingsScreen({
             }
           />
           
+          {/* Free Categories - 2x3 Grid */}
           <div className="p-4 grid grid-cols-2 gap-3">
-            {categoryNames.map((category) => (
+            {FREE_CATEGORY_NAMES.map((category) => (
               <CategoryCard
                 key={category}
                 name={category}
@@ -549,6 +586,30 @@ export function DrawingSettingsScreen({
                 onToggle={() => handleCategoryToggle(category)}
               />
             ))}
+          </div>
+          
+          {/* Premium Divider */}
+          <PremiumDivider onUnlock={handleProCategoryClick} />
+          
+          {/* Pro Categories - with overlay lock */}
+          <div className="relative p-4">
+            {/* PRO Cards Grid */}
+            <div className="grid grid-cols-2 gap-3 opacity-60">
+              <ProCategoryCard name="Custom" />
+              {PRO_CATEGORY_NAMES.map((category) => (
+                <ProCategoryCard key={category} name={category} />
+              ))}
+            </div>
+            
+            {/* Lock Overlay */}
+            <button 
+              onClick={handleProCategoryClick}
+              className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-black/5 to-black/20 rounded-b-2xl tap-scale"
+            >
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
+                <Lock className="w-8 h-8 text-white" />
+              </div>
+            </button>
           </div>
         </SettingsGroup>
       </div>
